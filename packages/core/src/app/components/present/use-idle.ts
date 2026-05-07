@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Reports whether the user has been idle (no pointer / key / touch input)
- * for at least `delayMs`. Resets on any input event. The hook starts in
+ * Reports whether the user has been idle (no pointer / touch input) for at
+ * least `delayMs`. Resets on any pointer-related event. The hook starts in
  * the non-idle state so freshly-mounted UI is visible while the user
  * orients themselves.
+ *
+ * Keyboard input is intentionally excluded — during a talk the presenter
+ * drives slides with arrow keys, and we want the cursor to stay hidden
+ * while they do.
  *
  * Pass `enabled = false` to short-circuit (useful when the player is
  * paused on an overlay and we don't want to hide chrome behind it).
@@ -27,14 +31,12 @@ export function useIdle(delayMs: number, enabled = true) {
     const opts = { passive: true } as const;
     window.addEventListener('mousemove', reset, opts);
     window.addEventListener('mousedown', reset, opts);
-    window.addEventListener('keydown', reset);
     window.addEventListener('touchstart', reset, opts);
     window.addEventListener('wheel', reset, opts);
     return () => {
       if (timer) clearTimeout(timer);
       window.removeEventListener('mousemove', reset);
       window.removeEventListener('mousedown', reset);
-      window.removeEventListener('keydown', reset);
       window.removeEventListener('touchstart', reset);
       window.removeEventListener('wheel', reset);
     };

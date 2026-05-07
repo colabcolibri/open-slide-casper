@@ -58,6 +58,7 @@ export function Player({
   const [helpOpen, setHelpOpen] = useState(false);
   const [blackout, setBlackout] = useState<'black' | 'white' | null>(null);
   const [laser, setLaser] = useState(false);
+  const [keyboardDriven, setKeyboardDriven] = useState(false);
   const [startedAt] = useState(() => Date.now());
 
   const goPrev = useCallback(() => {
@@ -181,19 +182,23 @@ export function Player({
 
       if (isNext) {
         e.preventDefault();
+        setKeyboardDriven(true);
         goNext();
         return;
       }
       if (isPrev) {
         e.preventDefault();
+        setKeyboardDriven(true);
         goPrev();
         return;
       }
       if (e.key === 'Home') {
+        setKeyboardDriven(true);
         onIndexChange(0);
         return;
       }
       if (e.key === 'End') {
+        setKeyboardDriven(true);
         onIndexChange(pages.length - 1);
         return;
       }
@@ -246,7 +251,16 @@ export function Player({
   const pointerNearBottom = usePointerNearBottom(BAR_HOTZONE_PX, controls && !overlayActive);
   const chromeVisible = pointerNearBottom || overlayActive;
   const idle = useIdle(IDLE_HIDE_MS, controls && !overlayActive);
-  const hideCursor = controls && (laser || (idle && !overlayActive && !pointerNearBottom));
+
+  useEffect(() => {
+    if (!keyboardDriven) return;
+    const clear = () => setKeyboardDriven(false);
+    window.addEventListener('mousemove', clear, { passive: true });
+    return () => window.removeEventListener('mousemove', clear);
+  }, [keyboardDriven]);
+
+  const hideCursor =
+    controls && (laser || keyboardDriven || (idle && !overlayActive && !pointerNearBottom));
 
   const PageComp = pages[index];
 
