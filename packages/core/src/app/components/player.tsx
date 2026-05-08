@@ -32,7 +32,6 @@ type Props = {
   allowExit?: boolean;
   controls?: boolean;
   slideId?: string;
-  skipped?: ReadonlySet<number>;
 };
 
 export function Player({
@@ -44,7 +43,6 @@ export function Player({
   allowExit = true,
   controls = false,
   slideId,
-  skipped,
 }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   // Mirrored as state so descendants portaling *into* the player subtree
@@ -63,33 +61,23 @@ export function Player({
   const [keyboardDriven, setKeyboardDriven] = useState(false);
   const [startedAt] = useState(() => Date.now());
 
-  const nextPlayable = useMemo(() => {
-    for (let i = index + 1; i < pages.length; i++) {
-      if (!skipped?.has(i)) return i;
-    }
-    return -1;
-  }, [index, pages.length, skipped]);
-  const prevPlayable = useMemo(() => {
-    for (let i = index - 1; i >= 0; i--) {
-      if (!skipped?.has(i)) return i;
-    }
-    return -1;
-  }, [index, skipped]);
+  const canPrev = index > 0;
+  const canNext = index < pages.length - 1;
 
   const goPrev = useCallback(() => {
-    if (prevPlayable >= 0) onIndexChange(prevPlayable);
-  }, [prevPlayable, onIndexChange]);
+    if (index > 0) onIndexChange(index - 1);
+  }, [index, onIndexChange]);
   const goNext = useCallback(() => {
-    if (nextPlayable >= 0) onIndexChange(nextPlayable);
-  }, [nextPlayable, onIndexChange]);
+    if (index < pages.length - 1) onIndexChange(index + 1);
+  }, [index, pages.length, onIndexChange]);
 
   const overlayActive = controls && (overviewOpen || helpOpen);
 
   useWheelPageNavigation({
     ref: rootRef,
     enabled: !overlayActive,
-    canPrev: prevPlayable >= 0,
-    canNext: nextPlayable >= 0,
+    canPrev,
+    canNext,
     onPrev: goPrev,
     onNext: goNext,
   });
@@ -209,14 +197,12 @@ export function Player({
       }
       if (e.key === 'Home') {
         setKeyboardDriven(true);
-        const first = firstPlayable(pages.length, skipped);
-        onIndexChange(first >= 0 ? first : 0);
+        onIndexChange(0);
         return;
       }
       if (e.key === 'End') {
         setKeyboardDriven(true);
-        const last = lastPlayable(pages.length, skipped);
-        onIndexChange(last >= 0 ? last : pages.length - 1);
+        onIndexChange(pages.length - 1);
         return;
       }
 
@@ -259,7 +245,6 @@ export function Player({
     goPrev,
     onIndexChange,
     pages.length,
-    skipped,
     slideId,
   ]);
 
@@ -298,14 +283,14 @@ export function Player({
         type="button"
         aria-label="Previous page"
         onClick={goPrev}
-        disabled={prevPlayable < 0}
+        disabled={!canPrev}
         className="absolute inset-y-0 left-0 z-10 w-[30%]"
       />
       <button
         type="button"
         aria-label="Next page"
         onClick={goNext}
-        disabled={nextPlayable < 0}
+        disabled={!canNext}
         className="absolute inset-y-0 right-0 z-10 w-[30%]"
       />
 
@@ -346,16 +331,6 @@ export function Player({
       )}
     </div>
   );
-}
-
-function firstPlayable(total: number, skipped: ReadonlySet<number> | undefined): number {
-  for (let i = 0; i < total; i++) if (!skipped?.has(i)) return i;
-  return -1;
-}
-
-function lastPlayable(total: number, skipped: ReadonlySet<number> | undefined): number {
-  for (let i = total - 1; i >= 0; i--) if (!skipped?.has(i)) return i;
-  return -1;
 }
 
 function openPresenterWindow(slideId: string) {

@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Copy, EyeOff, Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { Fragment, useEffect, useRef } from 'react';
 import {
   ContextMenu,
@@ -36,8 +36,6 @@ type Orientation = 'vertical' | 'horizontal';
 export type ThumbnailActions = {
   onDuplicate: (index: number) => void;
   onDelete: (index: number) => void;
-  onToggleSkip: (index: number) => void;
-  isSkipped: (index: number) => boolean;
 };
 
 type Props = {
@@ -85,7 +83,6 @@ export function ThumbnailRail({
           <div className="flex items-center gap-2 px-3 py-2.5">
             {pages.map((PageComp, i) => {
               const active = i === current;
-              const skipped = actions?.isSkipped(i) ?? false;
               const button = (
                 <button
                   // biome-ignore lint/suspicious/noArrayIndexKey: pages list is render-stable
@@ -100,11 +97,7 @@ export function ThumbnailRail({
                   <span
                     className={cn(
                       'font-mono text-[9.5px] font-medium tracking-[0.06em] tabular-nums uppercase',
-                      active
-                        ? 'text-brand'
-                        : skipped
-                          ? 'text-muted-foreground/50 line-through'
-                          : 'text-muted-foreground/70',
+                      active ? 'text-brand' : 'text-muted-foreground/70',
                     )}
                   >
                     {(i + 1).toString().padStart(2, '0')}
@@ -115,21 +108,12 @@ export function ThumbnailRail({
                       active
                         ? 'border-brand shadow-[0_0_0_1px_var(--brand)]'
                         : 'border-hairline group-hover/thumb:border-foreground/25',
-                      skipped && !active && 'opacity-50',
                     )}
                     style={{ width, height: HORIZONTAL_THUMB_HEIGHT }}
                   >
                     <SlideCanvas scale={scale} center={false} flat freezeMotion design={design}>
                       <PageComp />
                     </SlideCanvas>
-                    {skipped && (
-                      <span
-                        aria-hidden
-                        className="pointer-events-none absolute right-1 bottom-1 rounded-[2px] bg-foreground/80 px-1 font-mono text-[8px] font-medium tracking-[0.06em] text-background uppercase"
-                      >
-                        {t.thumbnailRail.skippedBadge}
-                      </span>
-                    )}
                   </div>
                 </button>
               );
@@ -158,13 +142,10 @@ export function ThumbnailRail({
 
   const renderThumb = (PageComp: Page, i: number) => {
     const active = i === current;
-    const skipped = actions?.isSkipped(i) ?? false;
     const inner = (
       <ThumbContents
         index={i}
         active={active}
-        skipped={skipped}
-        skippedBadge={t.thumbnailRail.skippedBadge}
         page={PageComp}
         design={design}
         scale={scale}
@@ -245,8 +226,6 @@ function thumbButtonClass(active: boolean): string {
 function ThumbContents({
   index,
   active,
-  skipped,
-  skippedBadge,
   page: PageComp,
   design,
   scale,
@@ -254,8 +233,6 @@ function ThumbContents({
 }: {
   index: number;
   active: boolean;
-  skipped: boolean;
-  skippedBadge: string;
   page: Page;
   design?: DesignSystem;
   scale: number;
@@ -266,11 +243,7 @@ function ThumbContents({
       <span
         className={cn(
           'mt-1.5 w-7 shrink-0 text-right font-mono text-[10px] font-medium tracking-[0.06em] tabular-nums uppercase',
-          active
-            ? 'text-brand'
-            : skipped
-              ? 'text-muted-foreground/50 line-through'
-              : 'text-muted-foreground/70',
+          active ? 'text-brand' : 'text-muted-foreground/70',
         )}
       >
         {(index + 1).toString().padStart(2, '0')}
@@ -281,7 +254,6 @@ function ThumbContents({
           active
             ? 'border-brand shadow-[0_0_0_1px_var(--brand)]'
             : 'border-hairline group-hover/thumb:border-foreground/25',
-          skipped && !active && 'opacity-50',
         )}
         style={{ width: VERTICAL_THUMB_WIDTH, height }}
       >
@@ -293,14 +265,6 @@ function ThumbContents({
             aria-hidden
             className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-brand"
           />
-        )}
-        {skipped && (
-          <span
-            aria-hidden
-            className="pointer-events-none absolute right-1.5 bottom-1.5 rounded-[3px] bg-foreground/80 px-1.5 py-0.5 font-mono text-[9px] font-medium tracking-[0.06em] text-background uppercase"
-          >
-            {skippedBadge}
-          </span>
         )}
       </div>
     </>
@@ -321,7 +285,6 @@ function ThumbContextMenu({
   children: React.ReactNode;
 }) {
   const t = useLocale();
-  const skipped = actions.isSkipped(index);
   const canDelete = pageCount > 1;
   return (
     <ContextMenu>
@@ -332,10 +295,6 @@ function ThumbContextMenu({
         <ContextMenuItem onSelect={() => actions.onDuplicate(index)}>
           <Copy />
           {t.thumbnailRail.duplicatePage}
-        </ContextMenuItem>
-        <ContextMenuItem onSelect={() => actions.onToggleSkip(index)}>
-          <EyeOff />
-          {skipped ? t.thumbnailRail.unskipPage : t.thumbnailRail.skipPage}
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem
@@ -394,6 +353,7 @@ function SortableThumb({
   onSelect,
   ariaLabel,
   children,
+  ...rest
 }: {
   index: number;
   active: boolean;
@@ -401,7 +361,10 @@ function SortableThumb({
   onSelect: () => void;
   ariaLabel: string;
   children: React.ReactNode;
-}) {
+} & Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'onClick' | 'aria-label' | 'aria-current' | 'type' | 'style' | 'className' | 'ref' | 'children'
+>) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: index + 1,
   });
@@ -432,6 +395,7 @@ function SortableThumb({
       )}
       {...attributes}
       {...listeners}
+      {...rest}
     >
       {children}
     </button>

@@ -26,7 +26,6 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useFolders } from '@/lib/folders';
 import { format, useLocale } from '@/lib/use-locale';
-import { useSkippedPages } from '@/lib/use-skipped-pages';
 import { useWheelPageNavigation } from '@/lib/use-wheel-page-navigation';
 import { cn } from '@/lib/utils';
 import { ClickNavZones } from '../components/click-nav-zones';
@@ -79,15 +78,6 @@ export function Slide() {
   const index = Number.isFinite(rawIndex) ? Math.max(0, Math.min(pageCount - 1, rawIndex)) : 0;
   const view = searchParams.get('view') === 'assets' ? 'assets' : 'slides';
 
-  const {
-    skipped,
-    isSkipped,
-    toggle: toggleSkip,
-    remapAfterReorder,
-    remapAfterDelete,
-    remapAfterDuplicate,
-  } = useSkippedPages(slideId, pageCount);
-
   const goTo = useCallback(
     (i: number) => {
       const clamped = Math.max(0, Math.min(pageCount - 1, i));
@@ -115,7 +105,6 @@ export function Slide() {
       const order = before.map((_, i) => i);
       const [movedIdx] = order.splice(from, 1);
       order.splice(to, 0, movedIdx);
-      remapAfterReorder(order);
 
       // Keep the user looking at the same page they were on before the drag.
       let nextIndex = index;
@@ -139,7 +128,7 @@ export function Slide() {
         toast.error(`Reorder failed: ${String((err as Error).message ?? err)}`);
       }
     },
-    [pages, index, slideId, goTo, remapAfterReorder],
+    [pages, index, slideId, goTo],
   );
 
   const duplicatePage = useCallback(
@@ -149,7 +138,6 @@ export function Slide() {
       const nextPages = [...before];
       nextPages.splice(i + 1, 0, before[i]);
       setPages(nextPages);
-      remapAfterDuplicate(i);
       if (index > i) goTo(index + 1);
 
       try {
@@ -168,7 +156,7 @@ export function Slide() {
         );
       }
     },
-    [pages, index, slideId, goTo, remapAfterDuplicate, t.thumbnailRail],
+    [pages, index, slideId, goTo, t.thumbnailRail],
   );
 
   const deletePage = useCallback(
@@ -177,7 +165,6 @@ export function Slide() {
       if (i < 0 || i >= before.length || before.length <= 1) return;
       const nextPages = before.slice(0, i).concat(before.slice(i + 1));
       setPages(nextPages);
-      remapAfterDelete(i);
       if (index >= i && index > 0) {
         const target = index === i ? Math.min(index, nextPages.length - 1) : index - 1;
         goTo(target);
@@ -199,20 +186,18 @@ export function Slide() {
         );
       }
     },
-    [pages, index, slideId, goTo, remapAfterDelete, t.thumbnailRail],
+    [pages, index, slideId, goTo, t.thumbnailRail],
   );
 
   const thumbnailActions = useMemo<ThumbnailActions | undefined>(
     () =>
       import.meta.env.DEV
         ? {
-            isSkipped,
             onDuplicate: duplicatePage,
             onDelete: deletePage,
-            onToggleSkip: toggleSkip,
           }
         : undefined,
-    [isSkipped, duplicatePage, deletePage, toggleSkip],
+    [duplicatePage, deletePage],
   );
 
   useEffect(() => {
@@ -306,7 +291,6 @@ export function Slide() {
         onIndexChange={goTo}
         onExit={() => {}}
         allowExit={false}
-        skipped={skipped}
       />
     );
   }
@@ -321,7 +305,6 @@ export function Slide() {
         onExit={() => setPlaying(false)}
         controls
         slideId={slideId}
-        skipped={skipped}
       />
     );
   }

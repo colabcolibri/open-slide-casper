@@ -309,9 +309,6 @@ export type Locale = {
     goToPageAria: string;
     duplicatePage: string;
     deletePage: string;
-    skipPage: string;
-    unskipPage: string;
-    skippedBadge: string;
     /** template: "Page {n} actions" */
     pageActionsAria: string;
     /** template: "Duplicated page {n}" */
