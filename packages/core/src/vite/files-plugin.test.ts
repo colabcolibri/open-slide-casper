@@ -4,6 +4,7 @@ import {
   mimeForFilename,
   removePageFromDefaultExportInSource,
   reorderDefaultExportPagesInSource,
+  reorderNotesArrayInSource,
   updateMetaTitleInSource,
   validateAssetName,
   validateIcon,
@@ -193,6 +194,91 @@ export default [A, B, C];
     expect(out).toContain('const A = () => null;');
     expect(out).toContain('const B = () => null;');
     expect(out).toContain('const C = () => null;');
+  });
+});
+
+describe('reorderNotesArrayInSource', () => {
+  it('returns the source unchanged when there is no notes export', () => {
+    const source = `export default [];\n`;
+    expect(reorderNotesArrayInSource(source, [])).toBe(source);
+  });
+
+  it('reorders notes alongside pages', () => {
+    const source = [
+      'export const notes: (string | undefined)[] = [',
+      '  "first",',
+      '  "second",',
+      '  "third",',
+      '];',
+      'export default [A, B, C];',
+      '',
+    ].join('\n');
+    const out = reorderNotesArrayInSource(source, [2, 0, 1]);
+    expect(out).not.toBeNull();
+    expect(out).toContain(
+      'export const notes: (string | undefined)[] = [\n  "third",\n  "first",\n  "second",\n];',
+    );
+  });
+
+  it('preserves template-literal notes verbatim', () => {
+    const source = [
+      'export const notes = [',
+      '  `multi',
+      'line`,',
+      '  "second",',
+      '];',
+      'export default [A, B];',
+      '',
+    ].join('\n');
+    const out = reorderNotesArrayInSource(source, [1, 0]);
+    expect(out).not.toBeNull();
+    expect(out).toContain('export const notes = [\n  "second",\n  `multi\nline`,\n];');
+  });
+
+  it('pads with undefined when notes is shorter than pages', () => {
+    const source = ['export const notes = ["only"];', 'export default [A, B, C];', ''].join('\n');
+    const out = reorderNotesArrayInSource(source, [2, 0, 1]);
+    expect(out).not.toBeNull();
+    expect(out).toContain('export const notes = [\n  undefined,\n  "only",\n];');
+  });
+
+  it('trims trailing undefined entries', () => {
+    const source = [
+      'export const notes = [',
+      '  undefined,',
+      '  "kept",',
+      '  undefined,',
+      '];',
+      'export default [A, B, C];',
+      '',
+    ].join('\n');
+    const out = reorderNotesArrayInSource(source, [2, 0, 1]);
+    expect(out).not.toBeNull();
+    expect(out).toContain('export const notes = [\n  undefined,\n  undefined,\n  "kept",\n];');
+  });
+
+  it('collapses to [] when reorder leaves only undefineds', () => {
+    const source = ['export const notes = [', '  "x",', '];', 'export default [A, B];', ''].join(
+      '\n',
+    );
+    const out = reorderNotesArrayInSource(source, [1, 1]);
+    expect(out).not.toBeNull();
+    expect(out).toContain('export const notes = [];');
+  });
+
+  it('returns the source unchanged for an identity-like reorder of an empty notes array', () => {
+    const source = `export const notes = [];\nexport default [A, B];\n`;
+    expect(reorderNotesArrayInSource(source, [0, 1])).toBe(source);
+  });
+
+  it('returns null on out-of-range indices', () => {
+    const source = `export const notes = ["a", "b"];\nexport default [A, B];\n`;
+    expect(reorderNotesArrayInSource(source, [-1, 0])).toBeNull();
+  });
+
+  it('returns null when notes is not an array literal', () => {
+    const source = `export const notes = "oops";\nexport default [A];\n`;
+    expect(reorderNotesArrayInSource(source, [0])).toBeNull();
   });
 });
 

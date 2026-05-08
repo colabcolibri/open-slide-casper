@@ -335,6 +335,92 @@ export function reorderDefaultExportPagesInSource(source: string, order: number[
   return source.slice(0, arrayStart) + rebuilt + source.slice(arrayEnd);
 }
 
+type NotesArrayInfo = {
+  arrayStart: number;
+  arrayEnd: number;
+  elementTexts: string[];
+};
+
+function findNotesArray(source: string): NotesArrayInfo | null | 'invalid' {
+  let ast: unknown;
+  try {
+    ast = babelParse(source, {
+      sourceType: 'module',
+      plugins: ['typescript', 'jsx'],
+      errorRecovery: true,
+    });
+  } catch {
+    return 'invalid';
+  }
+  const body = (ast as { program?: { body?: Array<Record<string, unknown>> } }).program?.body ?? [];
+  for (const stmt of body) {
+    if (stmt.type !== 'ExportNamedDeclaration') continue;
+    const decl = stmt.declaration as Record<string, unknown> | undefined;
+    if (!decl || decl.type !== 'VariableDeclaration') continue;
+    const declarations = (decl.declarations as Array<Record<string, unknown>> | undefined) ?? [];
+    for (const d of declarations) {
+      const id = d.id as Record<string, unknown> | undefined;
+      if (!id || id.type !== 'Identifier' || id.name !== 'notes') continue;
+      const init = d.init as Record<string, unknown> | undefined;
+      if (!init || init.type !== 'ArrayExpression') return 'invalid';
+      const arrayStart = init.start as number | undefined;
+      const arrayEnd = init.end as number | undefined;
+      if (typeof arrayStart !== 'number' || typeof arrayEnd !== 'number') return 'invalid';
+      const rawElements = (init.elements as Array<Record<string, unknown> | null>) ?? [];
+      const elementTexts: string[] = [];
+      for (const el of rawElements) {
+        if (el === null) {
+          elementTexts.push('undefined');
+          continue;
+        }
+        if (el.type === 'SpreadElement') return 'invalid';
+        const start = el.start as number | undefined;
+        const end = el.end as number | undefined;
+        if (typeof start !== 'number' || typeof end !== 'number') return 'invalid';
+        elementTexts.push(source.slice(start, end));
+      }
+      return { arrayStart, arrayEnd, elementTexts };
+    }
+  }
+  return null;
+}
+
+/**
+ * Reorder `export const notes = [...]` to follow the page-array reorder.
+ *
+ * `order[i]` is the original page index that should land at new position `i`.
+ * The notes array is index-aligned with the pages array but may be shorter
+ * (trailing `undefined` slots are routinely trimmed). Missing elements are
+ * treated as `undefined`, and trailing `undefined` is trimmed again after
+ * reordering to keep the file tidy.
+ *
+ * Returns the rewritten source, the original source if no `notes` export
+ * exists or the reorder is a no-op, or `null` if the `notes` export's shape
+ * is too surprising to touch safely.
+ */
+export function reorderNotesArrayInSource(source: string, order: number[]): string | null {
+  for (const idx of order) {
+    if (!Number.isInteger(idx) || idx < 0) return null;
+  }
+  const found = findNotesArray(source);
+  if (found === 'invalid') return null;
+  if (found === null) return source;
+
+  const { arrayStart, arrayEnd, elementTexts } = found;
+  const pick = (i: number): string =>
+    i >= 0 && i < elementTexts.length ? elementTexts[i] : 'undefined';
+  const reordered = order.map(pick);
+  while (reordered.length > 0 && reordered[reordered.length - 1] === 'undefined') {
+    reordered.pop();
+  }
+
+  const replacement =
+    reordered.length === 0 ? '[]' : `[\n${reordered.map((s) => `  ${s},`).join('\n')}\n]`;
+  if (replacement === source.slice(arrayStart, arrayEnd)) return source;
+
+  return source.slice(0, arrayStart) + replacement + source.slice(arrayEnd);
+}
+
 /**
  * Remove the element at `index` from `export default [...]`.
  *
@@ -524,15 +610,21 @@ export function filesPlugin(opts: FilesPluginOptions): Plugin {
               return json(res, 404, { error: 'slide not found' });
             }
 
-            const updated = reorderDefaultExportPagesInSource(source, order);
-            if (updated === null) {
+            const reordered = reorderDefaultExportPagesInSource(source, order);
+            if (reordered === null) {
               return json(res, 422, {
                 error:
                   'could not reorder pages — order must be a permutation of the existing array',
               });
             }
-            if (updated !== source) {
-              await fs.writeFile(entry, updated, 'utf8');
+            const withNotes = reorderNotesArrayInSource(reordered, order);
+            if (withNotes === null) {
+              return json(res, 422, {
+                error: 'could not reorder pages — `notes` export has an unexpected shape',
+              });
+            }
+            if (withNotes !== source) {
+              await fs.writeFile(entry, withNotes, 'utf8');
             }
             return json(res, 200, { ok: true, slideId, order });
           }

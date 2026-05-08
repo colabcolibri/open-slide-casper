@@ -16,6 +16,23 @@ type Target = { slideId: string; index: number };
 const sessionCache = new Map<string, string>();
 const cacheKey = (slideId: string, index: number) => `${slideId}:${index}`;
 
+// Remap the per-target cache after a reorder. `order[i]` is the original
+// page index that lands at new position `i`, matching the contract used by
+// the `/__slides/:id/reorder` endpoint.
+export function remapNotesSessionCacheAfterReorder(slideId: string, order: number[]): void {
+  const prev = new Map<number, string>();
+  for (let i = 0; i < order.length; i++) {
+    const cached = sessionCache.get(cacheKey(slideId, i));
+    if (cached !== undefined) prev.set(i, cached);
+    sessionCache.delete(cacheKey(slideId, i));
+  }
+  for (let newIdx = 0; newIdx < order.length; newIdx++) {
+    const oldIdx = order[newIdx];
+    const text = prev.get(oldIdx);
+    if (text !== undefined) sessionCache.set(cacheKey(slideId, newIdx), text);
+  }
+}
+
 export function useNotes(slideId: string, index: number, initial: string | undefined) {
   const initialText = sessionCache.get(cacheKey(slideId, index)) ?? initial ?? '';
   const [value, setValueState] = useState(initialText);
