@@ -41,10 +41,16 @@ Canonical agent: **`packages/core/.agent/agents/slide-author.md`**. Skill hubs: 
 | Create or change files under `themes/` | **`theme-author`** + **`/create-theme`** |
 | Edit mirrored `.cursor/` / `.agents/` files | Change **`core/.agent/`** + run `sync:kit` |
 | Run dev server unless user asks | Workflow default |
+| **Write `slides/` on `/create-slide` before Step 2 scoping is answered** | User must confirm topic, structure, and style — see **`create-slide/references/scoping.md`** |
+| **Invent topic, page outline, or aesthetic** to finish the deck in one turn | Ask first; build only after answers |
 
 ---
 
-## When to delegate
+## /create-slide discipline
+
+- **Phase A:** theme pick (Step 1) + scoping questions (Step 2) — output questions, **no TSX**.
+- **Phase B:** Steps 3–8 after the user replies.
+
 
 | Need | Delegate to |
 | --- | --- |

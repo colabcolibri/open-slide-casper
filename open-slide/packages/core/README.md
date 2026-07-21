@@ -18,13 +18,15 @@ Most users get this installed automatically by running `npx @open-slide/cli init
 
 ## CLI
 
-Once installed, the `open-slide` bin is available in the workspace:
+Once `@open-slide/core` is installed, the **`open-slide`** bin is on PATH **inside npm/pnpm scripts** and via **`pnpm exec`** / **`npx`** from that workspace — not as a global command unless you install globally.
 
 | Command | Description |
 | --- | --- |
 | `open-slide dev` | Start the dev server. Flags: `-p, --port <port>`, `--host [host]`, `--open`. |
 | `open-slide build` | Build a static site. Flags: `--out-dir <dir>` (defaults to `dist`). |
 | `open-slide preview` | Preview the production build. Flags: `-p, --port <port>`, `--host [host]`, `--open`. |
+| `open-slide themes list` | Theme catalog (frontmatter only). Flag: `--json` for agents. |
+| `pnpm themes:list` | Convenience script (when added in `package.json`) — same as `open-slide themes list --json`. |
 
 ## Config
 

@@ -1,6 +1,6 @@
 ---
 name: create-slide
-description: Creates and drafts new slide decks under slides/<id>/ in open-slide workspaces. Use when the user asks to make slides, create a presentation, or add a deck; also when /create-slide runs. Do not use for framework source or themes-only work.
+description: Creates and drafts new slide decks under slides/<id>/ after mandatory scoping (AskUserQuestion). Use for new decks or /create-slide; never skip Step 2 and write TSX in the same turn as an unanswered scoping pass.
 ---
 
 # Create a slide in open-slide
@@ -15,7 +15,8 @@ Entry workflow: **`/create-slide`** → `.agent/workflows/create-slide.md`. This
 
 | File | When to read |
 | ---- | ------------ |
-| `references/theme-pick.md` | Step 1 — `themes/` + AskUserQuestion |
+| `references/theme-registry.md` | Step 1 — how themes register; catalog vs deep read |
+| `references/theme-pick.md` | Step 1 — picker procedure |
 | `references/scoping.md` | **Mandatory** Step 2 — before any code |
 | `slide-authoring/SKILL.md` | Steps 5–7 — design, file contract, checklist |
 | `slide-authoring/references/page-types/title-body-footer.md` | Step 6 — paste PageLayout |
@@ -25,8 +26,10 @@ Entry workflow: **`/create-slide`** → `.agent/workflows/create-slide.md`. This
 
 ## Procedure
 
-1. **Theme** — `references/theme-pick.md`.
-2. **Scope** — `references/scoping.md`.
+**Gate:** Steps **3–8** run only after Step **2** scoping is answered (or explicitly skipped with assumptions restated). **Never** write under `slides/` in the same turn as an unanswered scoping pass.
+
+1. **Theme** — **`pnpm exec open-slide themes list --json`** from the slide app root (or **`pnpm themes:list`**); see `references/theme-registry.md` + `theme-pick.md`. Full `themes/<id>.md` **after** user picks one id.
+2. **Scope** — **`references/scoping.md`**. **STOP** after this step until the user responds — no `slides/` files, no invented deck content. If `$ARGUMENTS` is vague, ask topic / audience / outline first.
 3. **Slide id** — kebab-case; check `slides/` (e.g. `q2-roadmap`).
 4. **Structure** — ordered page list; page types from **`slide-authoring`** § Page types; one idea per page; `<ImagePlaceholder>` only when user must supply assets (`slide-authoring/references/assets.md`).
 5. **Visual direction** — palette/type scale per **`slide-authoring`**; default `export const design: DesignSystem` + `var(--osd-X)`.

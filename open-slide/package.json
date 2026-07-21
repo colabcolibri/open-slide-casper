@@ -24,7 +24,8 @@
     "version-packages": "changeset version",
     "release": "turbo run build --filter=@open-slide/core --filter=@open-slide/cli && changeset publish",
     "sync:kit:demo": "bash scripts/sync-slide-kit-adapters.sh apps/demo",
-    "sync:kit:adapters": "bash scripts/sync-slide-kit-adapters.sh"
+    "sync:kit:adapters": "bash scripts/sync-slide-kit-adapters.sh",
+    "themes:list": "pnpm --filter demo themes:list"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.12",

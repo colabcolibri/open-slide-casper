@@ -192,5 +192,16 @@ export async function run(argv: string[]): Promise<void> {
       );
     });
 
+  const themes = program.command('themes').description('Theme catalog (filesystem registry)');
+
+  themes
+    .command('list')
+    .description('Print theme ids and frontmatter (name, description, mode) — for agents and pickers')
+    .option('--json', 'JSON array (recommended for agents)')
+    .action(async (flags: { json?: boolean }) => {
+      const { themesList } = await import('./themes-list.ts');
+      await themesList({ format: flags.json ? 'json' : 'table' });
+    });
+
   await program.parseAsync(argv, { from: 'user' });
 }

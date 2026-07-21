@@ -1,8 +1,20 @@
 # Create slide — pick a theme (Step 1)
 
-List files under `themes/`. If any theme markdown files exist (anything other than `README.md`), call `AskUserQuestion` with each theme id as an option plus a final **"no theme — design from scratch"** option. (`AskUserQuestion` holds at most 4 options — with 4+ themes, offer the 3 most topic-relevant plus "no theme"; the auto-added "Other" lets the user name any omitted theme.)
+Read **`theme-registry.md`** first — registration is **filesystem only**; the agent uses a **catalog pass**, not full files for every theme.
 
-- If the user picks a theme: read `themes/<id>.md` end-to-end. The theme's palette, typography, layout, and Title/Footer components are now authoritative — copy them directly into the slide. If the theme declares a webfont import, load it per `references/webfonts.md` in `slide-authoring` (module-level, slide-keyed injection) — don't let the slide silently fall back to system fonts. **Also set `theme: '<theme-id>'` on the `meta` export in `index.tsx`** (e.g. `export const meta: SlideMeta = { title: '…', createdAt: '…', theme: '<theme-id>' };` — `createdAt` per the file contract in `slide-authoring`) so the slide back-links to the theme (chip on the slide card + listing on `/themes/<id>`). In Step 2, skip the **aesthetic direction** question (the theme already commits to one direction); you still need the topic itself, so confirm it before moving on. Page count and text density are independent of theme — ask those normally. For motion, if the theme's Motion section commits to a philosophy, present it as the "(Recommended)" option and reuse the theme's paste-ready keyframes; the user can still override.
-- If the user picks "no theme", or `themes/` contains no theme markdown files: proceed to scoping unchanged.
+## Catalog (picker only)
 
-If you skip the aesthetic question because a theme was picked, restate the theme name in scoping so the user can correct course before you start writing.
+1. From the slide app root: **`pnpm themes:list`** or **`pnpm exec open-slide themes list --json`** (see **`theme-registry.md`** — not a global `open-slide` binary).
+2. If the CLI is unavailable, list `themes/*.md` (skip `README.md`) and read **YAML frontmatter only** per file.
+3. If many themes (4+), do **not** read all bodies. Offer **3** topic-relevant ids + **"no theme — design from scratch"** in `AskUserQuestion` (`AskUserQuestion` adds "Other" for any omitted id).
+
+## After the user picks
+
+- **One theme:** read **`themes/<id>.md` end-to-end** — palette, typography, fixed components, motion. Copy Title/Footer/Eyebrow verbatim into the slide; set **`meta.theme: '<id>'`**.
+- **No theme / empty `themes/`:** proceed to **`scoping.md`** with no aesthetic lock from a theme.
+
+**Step 1 does not replace Step 2.** Picking a theme skips only the **aesthetic direction** scoping question (not topic, page count, density, motion, format). See **`scoping.md`**.
+
+Webfonts: if the theme specifies imports, follow **`slide-authoring/references/webfonts.md`**.
+
+If you skipped aesthetic scoping because of a theme, restate the theme **name** and invite correction before Step 3.

@@ -96,6 +96,15 @@ Edit the kit only in **`packages/core/.agent/`** (monorepo) or bump **`@open-sli
 
 Adapters are gitignored. **`open-slide dev`** warns when the installed package is ahead of **`.agent/`**.
 
+## Themes (registration)
+
+No separate registry file. Each theme is:
+
+- `themes/<kebab-id>.md` — frontmatter **`name`**, **`description`**, optional **`mode`**; body = authoring spec.
+- `themes/<kebab-id>.demo.tsx` — optional preview for **`/themes`** in dev.
+
+The Vite **`themesPlugin`** globs `themes/*.md` at dev/build. Agents: **`pnpm exec open-slide themes list --json`** from the slide app root (script **`pnpm themes:list`** when defined) — then one full `themes/<id>.md` after pick; see **`create-slide/references/theme-registry.md`**.
+
 ## Git
 
 | Location | Commit? |

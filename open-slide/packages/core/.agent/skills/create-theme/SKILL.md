@@ -37,3 +37,5 @@ Theme markdown = authoring direction; per-slide `design` const = runtime tweak p
 4. **Write `.demo.tsx`** — contract + skeleton from `references/theme-demo-contract.md`.
 5. **Self-review** — `references/theme-self-review.md`.
 6. **Hand off** — theme id, both paths, Themes panel + `/create-slide` picker, one-line aesthetic summary. Do not run dev server or edit real slides.
+
+New themes **auto-register** when `themes/<id>.md` exists (see **`create-slide/references/theme-registry.md`**) — no manifest or CLI register step.

@@ -25,6 +25,7 @@ After **`open-slide sync:kit`** or monorepo **`pnpm sync:kit:demo`**: **`.agent/
 
 ## Hard rules
 
+- **`/create-slide` / `$workflow-create-slide`:** ask scoping first (topic, theme, pages, density, motion, format). **Do not** write `slides/` until the user answers — same turn = questions only.
 - One deck per `slides/<kebab-case-id>/` with `index.tsx`.
 - Do not edit synced **`.agent/`** or adapters as source of truth — change **`@open-slide/core`** and re-sync.
 - Do not touch `package.json` or other slides unless the user asked.

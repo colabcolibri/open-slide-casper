@@ -8,7 +8,8 @@
     "build": "open-slide build",
     "preview": "open-slide preview",
     "sync:kit": "open-slide sync:kit",
-    "sync:skills": "open-slide sync:kit"
+    "sync:skills": "open-slide sync:kit",
+    "themes:list": "open-slide themes list --json"
   },
   "dependencies": {
     "@open-slide/core": "^0.0.6",

@@ -1,10 +1,12 @@
 # Create slide — scoping (Step 2)
 
-**Before writing any code, lock in style decisions via `AskUserQuestion`.** Only skip when already answered by the user or by a theme from Step 1 (theme settles aesthetic — ask the remaining questions). If you skip, restate your assumption.
+**Hard stop:** When this step runs, **do not** create or edit anything under `slides/` in the same turn. End with questions (or a restatement + confirmation ask). Steps 3–8 happen **after** the user answers.
 
-**Topic comes first.** If the request is thin ("make me a deck"), use a separate `AskUserQuestion` for topic, audience, and outline. If topic is clear, restate it in the next call.
+**Before writing any code, lock in style decisions via `AskUserQuestion`** (or the same questions in chat if that tool is unavailable — then **wait** for a reply). Only skip a question when the user or Step 1 theme already answered it. If you skip, restate the assumption and invite correction.
 
-Then ask in one `AskUserQuestion` (multi-question form):
+**Topic comes first.** If the request is thin ("make me a deck", "/create-slide" with no args, "cria um slide"), use a separate `AskUserQuestion` (or chat block) for **topic, audience, and rough outline** before aesthetic / page count. Do not guess a product pitch or storyline.
+
+Then ask in one `AskUserQuestion` (multi-question form), or an equivalent numbered list in chat:
 
 1. **Aesthetic direction** — 3 options tailored to *this* topic (vibe + concrete visual cue). Not a fixed preset list. Examples by topic:
    - *Rust for backend engineers* → rust-orange editorial · blueprint dev-doc · brutalist terminal
@@ -21,3 +23,5 @@ Then ask in one `AskUserQuestion` (multi-question form):
 5. **Canvas format** — `slide` (1920×1080) or `4x5` (1080×1350); set `meta.format` end-to-end (`slide-authoring`).
 
 Follow-ups only if still unclear (brand colors, required assets).
+
+**Done when:** user has answered (or confirmed your restatement). Then proceed to **`create-slide`** Step 3.
