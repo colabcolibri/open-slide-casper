@@ -12,6 +12,14 @@ Raiz do **Meridian Harness** neste repositório. O kit canônico fica em [`.agen
 
 Phase docs e delivery ficam na **raiz do harness** (`docs/`, `.meridian/`), não dentro de `open-slide/`.
 
+Após clone (ou upgrade do kit em `.agent/`), regenere adapters locais — **não versionados** no Git:
+
+```bash
+./.agent/scripts/sync_cursor_kit.sh
+```
+
+Isso cria `.cursor/`, `.claude/`, `.codex/`, `.agents/skills/` e o symlink `AGENTS.md` apontando para `.agent/`. Cursor/Claude/Codex usam essas pastas; a fonte canônica continua em `.agent/`.
+
 ```bash
 python3 .agent/scripts/validate_meridian.py .
 python3 .agent/scripts/meridian_db_export.py --project open-slide --format planning

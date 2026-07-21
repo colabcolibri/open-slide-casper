@@ -8,11 +8,12 @@ __pycache__/
 # Meridian harness
 .meridian/meridian.db
 
-# Meridian IDE adapters (local symlinks — kit root)
+# Meridian IDE adapters (local symlinks — kit root; canonical source: .agent/)
 .agents/
 .cursor/
 .claude/
 .codex/
+/AGENTS.md
 
 # open-slide monorepo
 open-slide/node_modules
