@@ -1,9 +1,15 @@
 .DS_Store
 *.log
 
+# Secrets (harness root)
+.env
+.env.*
+!.env.example
+
 # Python (Meridian scripts)
 __pycache__/
 **/__pycache__/
+.venv/
 
 # Meridian harness
 .meridian/meridian.db

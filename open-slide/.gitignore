@@ -12,6 +12,7 @@ test-results
 apps/demo/slides-backup
 
 # IDE adapters (local symlinks from Meridian sync, when run from kit root)
+.agents/
 .cursor/
 .claude/
 .codex/
