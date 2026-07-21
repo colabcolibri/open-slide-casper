@@ -46,28 +46,34 @@ Adapters (`.cursor/commands`, `.cursor/agents`, `.agents/skills`, …) are local
 
 ## Workflow → agent map
 
-| Workflow | Agent | Mode |
-| --- | --- | --- |
-| `create-slide` | `slide-author` | new deck under `slides/` |
-| `apply-comments` | `slide-author` | inspector `@slide-comment` markers |
-| `create-theme` | `theme-author` | `themes/<id>.md` + demo |
+| Slash (Cursor / Claude Code) | Workflow file | Agent | Mode |
+| --- | --- | --- | --- |
+| **`/create-slide`** | `workflows/create-slide.md` | `slide-author` | new deck under `slides/` |
+| **`/apply-comments`** | `workflows/apply-comments.md` | `slide-author` | inspector `@slide-comment` markers |
+| **`/create-theme`** | `workflows/create-theme.md` | `theme-author` | `themes/<id>.md` + demo |
 
-Delegate new themes from deck work to **`theme-author`**; delegate deck edits from theme work to **`slide-author`** when the user asks for slide TSX.
+Delegate new themes from deck work to **`theme-author`** + **`/create-theme`**; delegate deck edits from theme work to **`slide-author`** + **`/create-slide`** when the user asks for slide TSX.
 
 ## How to reference (agents + humans)
 
-Two surfaces in a **consumer slide workspace** (after `open-slide sync:kit`):
+In a **consumer slide workspace** (after `open-slide sync:kit`), paths are relative to the project root unless noted as package-canonical.
 
-| What the user types | Adapter (local, gitignored) | Canonical source in `@open-slide/core` |
+| Entry | Consumer adapter | Canonical in `@open-slide/core` |
 | --- | --- | --- |
-| **`/create-slide`** | `.cursor/commands/create-slide.md` or `.claude/commands/create-slide.md` | `packages/core/.agent/workflows/create-slide.md` |
-| **`/apply-comments`** | `.cursor/commands/apply-comments.md` | `.agent/workflows/apply-comments.md` |
-| **`/create-theme`** | `.cursor/commands/create-theme.md` | `.agent/workflows/create-theme.md` |
-| Skill **`create-slide`** (no slash) | `.agents/skills/create-slide/SKILL.md` | `.agent/skills/create-slide/SKILL.md` |
+| **`/create-slide`** | `.cursor/commands/create-slide.md` | `packages/core/.agent/workflows/create-slide.md` |
+| **`/apply-comments`** | `.cursor/commands/apply-comments.md` | `packages/core/.agent/workflows/apply-comments.md` |
+| **`/create-theme`** | `.cursor/commands/create-theme.md` | `packages/core/.agent/workflows/create-theme.md` |
+| Skill **`create-slide`** | `.agents/skills/create-slide/SKILL.md` | `.agent/skills/create-slide/SKILL.md` |
+| Skill **`apply-comments`** | `.agents/skills/apply-comments/SKILL.md` | `.agent/skills/apply-comments/SKILL.md` |
+| Skill **`create-theme`** | `.agents/skills/create-theme/SKILL.md` | `.agent/skills/create-theme/SKILL.md` |
 | Skill **`slide-authoring`** | `.agents/skills/slide-authoring/SKILL.md` | `.agent/skills/slide-authoring/SKILL.md` |
+| Skill **`current-slide`** | `.agents/skills/current-slide/SKILL.md` | `.agent/skills/current-slide/SKILL.md` |
+| Skill **`slide-routing`** | `.agents/skills/slide-routing/SKILL.md` | `.agent/skills/slide-routing/SKILL.md` |
 | Agent **`slide-author`** | `.cursor/agents/slide-author.md` | `.agent/agents/slide-author.md` |
+| Agent **`theme-author`** | `.cursor/agents/theme-author.md` | `.agent/agents/theme-author.md` |
+| Codex workflow skill | `.agents/skills/workflow-<name>/SKILL.md` | same as matching workflow `.md` |
 
-**Path shorthand inside the slide kit:** in a skill hub, `references/foo.md` = that skill’s folder; `slide-authoring/SKILL.md` = sibling under `.agent/skills/`. In workflows, prefer **`.agent/skills/<name>/…`** (package tree) or **`.agents/skills/<name>/…`** (consumer workspace).
+**Path shorthand:** inside a skill hub, `references/foo.md` means that skill’s folder. Sibling skills: `slide-authoring/SKILL.md` under `.agent/skills/`. In workflows and agents, prefer full **`.agent/skills/<name>/…`** (canonical) or **`.agents/skills/<name>/…`** (consumer).
 
 ## Drift
 

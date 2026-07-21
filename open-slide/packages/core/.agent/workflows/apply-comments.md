@@ -1,22 +1,22 @@
 ---
-description: Apply @slide-comment markers from the inspector in slides/<id>/index.tsx.
+description: Apply @slide-comment markers from the inspector in slides/<id>/index.tsx. Cursor slash command /apply-comments.
 ---
 
-# apply-comments — inspector markers
+# /apply-comments — inspector markers
 
 $ARGUMENTS
 
-| Workflow | Agent | Mode |
-| --- | --- | --- |
-| `apply-comments` | `slide-author` | apply `@slide-comment` markers |
+| Slash | Workflow file | Agent | Mode |
+| --- | --- | --- | --- |
+| **`/apply-comments`** | `workflows/apply-comments.md` | `slide-author` | apply `@slide-comment` markers |
 
 ---
 
 ## Critical rules
 
 1. Use agent **`slide-author`** (`.agent/agents/slide-author.md`).
-2. **Mandatory skills:** **`apply-comments`**, **`slide-authoring`** — load **`.agent/skills/apply-comments/SKILL.md`** and **`.agent/skills/slide-authoring/SKILL.md`** for every edit.
-3. If the user says “this page” without naming a slide, read **`current-slide`** first.
+2. Load **`.agent/skills/apply-comments/SKILL.md`** and **`.agent/skills/slide-authoring/SKILL.md`** for every edit.
+3. If the user says “this page” without naming a slide, load **`current-slide`** first.
 4. **Write scope:** only files under `slides/` that contain markers (usually one `index.tsx`).
 5. Remove each marker after the edit is applied.
 

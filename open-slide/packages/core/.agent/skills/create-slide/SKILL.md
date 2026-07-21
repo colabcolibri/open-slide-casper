@@ -1,6 +1,6 @@
 ---
 name: create-slide
-description: Use this skill when the user wants to create, draft, author, or generate new slides / a presentation in this open-slide repo. Triggers on phrases like "make slides about X", "make a deck about X", "create a presentation", "draft slides for", "new slide", or when the user asks to add content under `slides/`. Do NOT use for editing the framework itself — only for authoring content inside `slides/<id>/`.
+description: Creates and drafts new slide decks under slides/<id>/ in open-slide workspaces. Use when the user asks to make slides, create a presentation, or add a deck; also when /create-slide runs. Do not use for framework source or themes-only work.
 ---
 
 # Create a slide in open-slide

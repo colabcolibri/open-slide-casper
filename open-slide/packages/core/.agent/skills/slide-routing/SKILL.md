@@ -30,8 +30,8 @@ Read **`workflows/`** when the user invokes a named flow. Load the **agent** nam
 | New or extract theme | `theme-author` | **`/create-theme`** → `.agent/workflows/create-theme.md` | **`create-theme`**, **`slide-authoring`** |
 | “This page”, “current slide”, present URL | `slide-author` | skill **`current-slide`** only | then **`slide-authoring`** |
 | Tweak layout, palette, steps, morph on known slide | `slide-author` | skill **`slide-authoring`** | `.agent/skills/slide-authoring/references/*` |
-| Edit `@open-slide/core` UI, Vite, CLI | **Stop** — not slide kit | `open-slide/AGENTS.md`, repo `docs/04`, `docs/09` | framework maintenance |
-| Repo governance, backlog, unrelated tooling | **Stop** — not slide kit | — | do not use slide workflows |
+| Edit `@open-slide/core` UI, Vite, CLI | **Stop** — not slide kit | `open-slide/AGENTS.md` | framework maintenance |
+| Unrelated repo tooling | **Stop** — not slide kit | — | do not use slide workflows |
 
 ## Write scope
 

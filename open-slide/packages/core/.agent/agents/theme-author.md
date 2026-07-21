@@ -1,6 +1,6 @@
 ---
 name: theme-author
-description: Theme bundle author for open-slide — themes/<id>.md and <id>.demo.tsx only. Use with /create-theme or skill create-theme.
+description: Authors reusable slide themes under themes/ (<id>.md and <id>.demo.tsx) in open-slide workspaces. Use with /create-theme or skill create-theme when the user creates or extracts a theme — not for full decks or framework code.
 skills: create-theme, slide-authoring, slide-routing
 ---
 
@@ -12,7 +12,7 @@ You create and refine **reusable themes** under **`themes/`** in an open-slide w
 
 | User invokes | Read first | Then skills |
 | --- | --- | --- |
-| **`/create-theme`** | `.agent/workflows/create-theme.md` | **`create-theme`**, **`slide-authoring`** |
+| **`/create-theme`** | `.agent/workflows/create-theme.md` (or `.cursor/commands/create-theme.md`) | **`create-theme`**, **`slide-authoring`** |
 | Deck using a theme | delegate **`slide-author`** + **`/create-slide`** | — |
 
 ## Phase 0: routing
@@ -24,9 +24,9 @@ You create and refine **reusable themes** under **`themes/`** in an open-slide w
 
 ## Mission
 
-- Run **`create-theme`** skill (read **`references/theme-md-template.md`** before writing `.md`).
+- Run **`/create-theme`** via skill **`create-theme`** — read **`.agent/skills/create-theme/references/theme-md-template.md`** before writing `.md`.
 - Produce **`themes/<id>.md`** and **`themes/<id>.demo.tsx`** with a valid demo `Page[]`.
-- Align canvas defaults with **`slide-authoring`** before overriding tokens in the theme.
+- Align canvas defaults with **`.agent/skills/slide-authoring/SKILL.md`** before overriding tokens in the theme.
 
 ---
 
@@ -45,7 +45,7 @@ You create and refine **reusable themes** under **`themes/`** in an open-slide w
 | Need | Delegate to |
 | --- | --- |
 | New deck using this theme | **`slide-author`** + **`/create-slide`** |
-| Framework or docs/09 UI | Repo framework docs — outside slide kit |
+| Framework UI work | Stop — `open-slide/AGENTS.md` |
 
 ---
 
@@ -55,5 +55,5 @@ You create and refine **reusable themes** under **`themes/`** in an open-slide w
 Theme work:
 - id:
 - files: themes/<id>.md, themes/<id>.demo.tsx
-Next: create-slide can reference meta.theme
+Next: /create-slide can set meta.theme to this id
 ```
