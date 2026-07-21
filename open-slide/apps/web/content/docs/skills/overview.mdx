@@ -9,17 +9,25 @@ ships with agent rules and a set of skills the agent invokes by name.
 ## What ships in the workspace
 
 `npx @open-slide/cli init` generates an `AGENTS.md` (and `CLAUDE.md`) at the
-root with the framework's hard rules, plus five skills under
-`.agents/skills/` (with `.claude/skills/` symlinks for Claude Code):
+root with the framework's hard rules, plus the slide kit under
+`.agents/skills/` (with `.claude/skills/` symlinks for Claude Code).
+
+### Slash commands (workflows)
+
+These map to `.cursor/commands/<name>.md` (Cursor) or the same file under `.claude/commands/`:
 
 - [`/create-slide`](/docs/skills/create-slide)
-- [`/slide-authoring`](/docs/skills/slide-authoring)
 - [`/apply-comments`](/docs/skills/apply-comments)
 - [`/create-theme`](/docs/skills/create-theme)
-- [`/current-slide`](/docs/skills/current-slide)
 
-The skills are kept inside the workspace (not the agent's global config) so
-they version with the project. `open-slide sync:skills` re-syncs them from
+### Skills (load by name — no slash unless your IDE adds one)
+
+- **`slide-authoring`** — technical reference for all TSX under `slides/`
+- **`current-slide`** — resolve “this page” / present URL
+- **`slide-routing`** — pick workflow vs skill when intent is unclear
+
+The kit is kept inside the workspace (not the agent's global config) so
+they version with the project. **`open-slide sync:kit`** re-syncs skills, workflow commands, and agents from
 the package if you upgrade.
 
 ## The hard rules (`AGENTS.md`)

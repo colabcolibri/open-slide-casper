@@ -134,7 +134,7 @@ flowchart TB
 | File | Topic | Status |
 | ---- | ----- | ------ |
 | [architecture/vite-dev-api.md](architecture/vite-dev-api.md) | Dev server `__*` routes | approved |
-| [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md) | Onde ler regras (docs vs core/skills) | approved |
+| [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md) | Onde ler regras (docs vs core/.agent) | approved |
 | [architecture/export-pipeline.md](architecture/export-pipeline.md) | build + HTML/PDF/PPTX export | approved |
 
 ## Cross-cutting concerns

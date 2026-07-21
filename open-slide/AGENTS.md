@@ -2,9 +2,9 @@
 
 You are working on the **open-slide framework** — the runtime, CLI, and tooling that ship to npm.
 
-This monorepo lives in `open-slide/`. **Phase docs** at repo root (`docs/`) are the source for framework UI, React, and motion rules (`04_principles.md`, `09_design_system.md`). **Slide authoring** only: `packages/core/.agent/` (npm portable kit). See `docs/architecture/instruction-surfaces.md`. Meridian delivery: repo root `/.agent/`.
+This monorepo lives in `open-slide/`. **Phase docs** at repo root (`docs/`) are the source for framework UI, React, and motion rules (`04_principles.md`, `09_design_system.md`). **Slide authoring:** `packages/core/.agent/` and **`SLIDE-KIT.md`** — see `docs/architecture/instruction-surfaces.md`.
 
-(Slide-authoring guidance lives in the `slide-authoring` / `create-slide` skills under `apps/demo/.claude/skills/`. Use those only when editing files inside `apps/demo/slides/`.)
+(Slide authoring: **`packages/core/.agent/SLIDE-KIT.md`**. In demo, run `./scripts/sync-slide-kit-adapters.sh` — skills at `.agents/skills/`, slash **`/create-slide`**, **`/apply-comments`**, **`/create-theme`**. Use only when editing `apps/demo/slides/` or `themes/`.)
 
 ## Layout
 

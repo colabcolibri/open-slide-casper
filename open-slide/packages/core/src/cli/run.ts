@@ -4,7 +4,7 @@ import * as readline from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
-import { detectSkillsDrift, detectWorkflowDrift, syncKit } from './sync.ts';
+import { detectAgentDrift, detectSkillsDrift, detectWorkflowDrift, syncKit } from './sync.ts';
 
 async function readVersion(): Promise<string> {
   const here = path.dirname(fileURLToPath(import.meta.url));
@@ -32,20 +32,27 @@ interface DevFlags extends ServerFlags {
   skillsCheck?: boolean;
 }
 
-async function runSkillsDriftCheck(skillsDir: string, workflowsDir: string): Promise<void> {
+async function runSkillsDriftCheck(
+  skillsDir: string,
+  workflowsDir: string,
+  agentsDir: string,
+): Promise<void> {
   if (process.env.OPEN_SLIDE_SKIP_SKILLS_CHECK === '1') return;
 
   let skillDrift: Awaited<ReturnType<typeof detectSkillsDrift>>;
   let workflowDrift: Awaited<ReturnType<typeof detectWorkflowDrift>>;
+  let agentDrift: Awaited<ReturnType<typeof detectAgentDrift>>;
   try {
     skillDrift = await detectSkillsDrift(skillsDir);
     workflowDrift = await detectWorkflowDrift(workflowsDir);
+    agentDrift = await detectAgentDrift(agentsDir);
   } catch {
     return;
   }
   const stale = [
     ...skillDrift.filter((d) => d.status !== 'unchanged'),
     ...workflowDrift.filter((d) => d.status !== 'unchanged'),
+    ...agentDrift.filter((d) => d.status !== 'unchanged'),
   ];
   if (stale.length === 0) return;
 
@@ -69,7 +76,7 @@ async function runSkillsDriftCheck(skillsDir: string, workflowsDir: string): Pro
       .trim()
       .toLowerCase();
     if (answer === '' || answer === 'y' || answer === 'yes') {
-      await syncKit({ skillsDir, workflowsDir });
+      await syncKit({ skillsDir, workflowsDir, agentsDir });
     } else {
       process.stdout.write(chalk.dim('Skipped. Run `open-slide sync:kit` later to update.\n'));
     }
@@ -99,6 +106,10 @@ function resolveBuiltinWorkflowsDir(): string {
   return path.join(resolveBuiltinAgentKitDir(), 'workflows');
 }
 
+function resolveBuiltinAgentsDir(): string {
+  return path.join(resolveBuiltinAgentKitDir(), 'agents');
+}
+
 export async function run(argv: string[]): Promise<void> {
   const version = await readVersion();
 
@@ -119,7 +130,11 @@ export async function run(argv: string[]): Promise<void> {
     .option('--no-skills-check', 'skip the built-in skills drift check')
     .action(async (flags: DevFlags) => {
       if (flags.skillsCheck !== false) {
-        await runSkillsDriftCheck(resolveBuiltinSkillsDir(), resolveBuiltinWorkflowsDir());
+        await runSkillsDriftCheck(
+          resolveBuiltinSkillsDir(),
+          resolveBuiltinWorkflowsDir(),
+          resolveBuiltinAgentsDir(),
+        );
       }
       const { dev } = await import('./dev.ts');
       await dev(flags);
@@ -156,12 +171,16 @@ export async function run(argv: string[]): Promise<void> {
 
   program
     .command('sync:kit')
-    .description('Sync built-in slide kit (skills + workflow commands) into this workspace')
+    .description('Sync built-in slide kit (skills, workflow commands, agents) into this workspace')
     .option('--dry-run', 'show what would change without writing')
     .action(async (flags: SyncFlags) => {
       const { syncKit } = await import('./sync.ts');
       await syncKit(
-        { skillsDir: resolveBuiltinSkillsDir(), workflowsDir: resolveBuiltinWorkflowsDir() },
+        {
+          skillsDir: resolveBuiltinSkillsDir(),
+          workflowsDir: resolveBuiltinWorkflowsDir(),
+          agentsDir: resolveBuiltinAgentsDir(),
+        },
         flags,
       );
     });

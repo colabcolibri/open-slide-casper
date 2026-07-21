@@ -10,38 +10,40 @@ depends_on: [00_scope.md, 04_principles.md, 09_design_system.md]
 
 > O framework **não** guarda regras de UI do monorepo em `open-slide/.agents/`. Duas fontes versionadas:
 
-## Kit layers (Meridian-style, slide-only)
+## Slide kit layers
 
-Lógica de camadas espelhada do harness Meridian — **sem** copiar skills de delivery (`create-us`, SQLite, etc.).
+Camadas do kit publicado em **`@open-slide/core`**. Protocolo: **`packages/core/.agent/SLIDE-KIT.md`**.
 
 | Layer | Canonical path | Mirror (demo / consumer) | Sync |
 | --- | --- | --- | --- |
-| Portable kit | `open-slide/packages/core/.agent/` | (source tree) | Publicado no npm `@open-slide/core` (`files`: `.agent/`) |
+| Portable kit | `open-slide/packages/core/.agent/` | (source tree) | Publicado no npm (`files`: `.agent/`) |
+| Protocol | `…/core/.agent/SLIDE-KIT.md` | (read in package tree) | Same as portable kit |
+| Agents | `…/core/.agent/agents/*.md` | `.cursor/agents/`, `.claude/agents/` | `sync:kit` · `sync-slide-kit-adapters.sh` |
 | Workflows | `…/core/.agent/workflows/*.md` | `.cursor/commands/`, `.claude/commands/`, `.agents/skills/workflow-*/SKILL.md` | `open-slide sync:kit` · `scripts/sync-slide-kit-adapters.sh` |
 | Skills | `…/core/.agent/skills/*/SKILL.md` | `.agents/skills/*`, `.claude/skills/*` | `sync:kit` / `sync:skills` + `sync-template-skills.mjs` |
 | References | `.agent/skills/slide-authoring/references/**` | Via skill tree above | Same as skills |
 | Routing | `.agent/skills/slide-routing/SKILL.md` | Via skill symlink | Same as skills |
 
-**Dois `.agent/` no monorepo:** raiz **`/.agent/`** = Meridian delivery (harness); **`packages/core/.agent/`** = slide portable kit (npm). Nunca misturar conteúdo.
-
-**Edit rule:** altere só **`packages/core/.agent/`** para instruções de slide.
+**Edit rule:** altere só **`packages/core/.agent/`** para instruções de slide no kit npm.
 
 ## Adapter sync (explode, like `.agent/IDE_ADAPTERS.md`)
 
 | Adapter | Path in slide workspace | Canonical source |
 | --- | --- | --- |
+| **Cursor agent** | `.cursor/agents/<name>.md` | `packages/core/.agent/agents/<name>.md` |
+| **Claude agent** | `.claude/agents/<name>.md` | same |
 | **Cursor slash** | `.cursor/commands/<workflow>.md` | `packages/core/.agent/workflows/<workflow>.md` |
 | **Claude Code slash** | `.claude/commands/<workflow>.md` | same |
 | **Codex / agents skills** | `.agents/skills/workflow-<name>/SKILL.md` | same workflow file |
 | **Skills** | `.agents/skills/<name>/` | `packages/core/.agent/skills/<name>/` |
 
 Monorepo dogfood: from `open-slide/` run `./scripts/sync-slide-kit-adapters.sh [apps/demo]`.  
-Consumer project: `pnpm exec open-slide sync:kit` (includes skills + workflow adapters).  
-Adapters under `.cursor/`, `.claude/`, `.agents/` are **gitignored** in `open-slide/.gitignore` — same policy as Meridian harness adapters.
+Consumer project: `pnpm exec open-slide sync:kit` (skills, workflow commands, agents).  
+Adapters under `.cursor/`, `.claude/`, `.agents/` are **gitignored** in `open-slide/.gitignore` — regenerate with sync commands above.
 
 ## 1. Slides (conteúdo TSX)
 
-Publicado em **`open-slide/packages/core/.agent/`** (`workflows/` + `skills/`).
+Publicado em **`open-slide/packages/core/.agent/`** (`SLIDE-KIT.md`, `agents/`, `workflows/`, `skills/`).
 
 | Artifact | Role |
 | ----- | ---- |
@@ -70,13 +72,12 @@ Regras consolidadas nos phase docs na **raiz**:
 | Motion PR checklist | `docs/10_test_strategy.md` |
 | SEO / landing strategy | `docs/12_marketing_seo.md` |
 | Monorepo workflow | `open-slide/AGENTS.md` |
-| Delivery / US | Meridian `docs/*`, `.agent/` |
 
-## 3. Meridian harness
+## 3. Maintainers (repo raiz)
 
-Raiz do repo: **`/.agent/`**, `docs/`, `.meridian/` (Meridian harness). Slide kit: **`open-slide/packages/core/.agent/`** (npm). Não misturar.
+Governança do produto open-slide e tooling interno do git repo ficam fora do slide kit npm (`docs/` na raiz, `.agent/` na raiz quando existir). **Autores de deck** usam só **`packages/core/.agent/`** + **`SLIDE-KIT.md`**.
 
-**Raiz do workspace (Cursor/Claude/Codex):** adapters locais em `.cursor/`, `.claude/`, `.codex/`, `.agents/` e `/AGENTS.md` (gitignored). Regenerar com `./.agent/scripts/sync_cursor_kit.sh` após clone ou mudança em `.agent/`. Não reinstalar skills vendored (shadcn, vercel-*, `skills-lock.json`) na raiz — regras de UI do framework vivem só em `docs/04` e `docs/09`.
+**Raiz do workspace slide (Cursor/Claude/Codex):** adapters locais em `.cursor/`, `.claude/`, `.codex/`, `.agents/` (gitignored). Regenerar com **`open-slide sync:kit`** ou **`./scripts/sync-slide-kit-adapters.sh`**. Regras de UI do framework runtime/web: **`docs/04`** e **`docs/09`** — não duplicar no kit slide.
 
 ## Gate
 

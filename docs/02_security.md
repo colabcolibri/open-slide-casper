@@ -132,7 +132,7 @@ blocks: [03_user_types.md, 04_principles.md, 05_architecture.md]
 | Rule | Detail |
 | ---- | ------ |
 | Write scope (framework) | `open-slide/packages/*`, `open-slide/apps/*` only after `/implement-us` + `ready: true` |
-| Write scope (slide demo) | `open-slide/apps/demo/slides/*` via `packages/core/skills/` |
+| Write scope (slide demo) | `open-slide/apps/demo/slides/*` via `packages/core/.agent/skills/` |
 | UI agent rules | `docs/09_design_system.md`, `docs/04_principles.md` |
 | Forbidden | Secrets in chat, `git push --force` main, disabling request-guard, hand-editing `components/ui/` |
 | Human gates | Phase doc `approved`, US `Record`, npm release |

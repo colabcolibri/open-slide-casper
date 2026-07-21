@@ -6,13 +6,17 @@ description: Apply @slide-comment markers from the inspector in slides/<id>/inde
 
 $ARGUMENTS
 
+| Workflow | Agent | Mode |
+| --- | --- | --- |
+| `apply-comments` | `slide-author` | apply `@slide-comment` markers |
+
 ---
 
 ## Critical rules
 
-1. **Mandatory skill:** `skills/apply-comments/SKILL.md`.
-2. **Mandatory reference:** `skills/slide-authoring/SKILL.md` for every edit (canvas, tokens, layout).
-3. If the user says “this page” without naming a slide, read **`skills/current-slide/SKILL.md`** first.
+1. Use agent **`slide-author`** (`.agent/agents/slide-author.md`).
+2. **Mandatory skills:** **`apply-comments`**, **`slide-authoring`** — load **`.agent/skills/apply-comments/SKILL.md`** and **`.agent/skills/slide-authoring/SKILL.md`** for every edit.
+3. If the user says “this page” without naming a slide, read **`current-slide`** first.
 4. **Write scope:** only files under `slides/` that contain markers (usually one `index.tsx`).
 5. Remove each marker after the edit is applied.
 
@@ -24,6 +28,7 @@ $ARGUMENTS
 CONTEXT:
 - User Request: $ARGUMENTS
 - Mode: APPLY SLIDE COMMENTS
+- Agent: slide-author
 
 RULES:
 1. Find @slide-comment markers (regex in apply-comments skill).

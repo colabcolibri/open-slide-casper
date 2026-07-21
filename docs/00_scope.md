@@ -13,7 +13,7 @@ blocks: [01_tech_stack.md, 04_principles.md, 05_architecture.md]
 
 **Product name:** open-slide
 
-open-slide é um **framework open source** (npm `@open-slide/core`, `@open-slide/cli`) para criar e apresentar decks como componentes React em um canvas fixo (1920×1080 por padrão). O runtime inclui dev server Vite, viewer, modo apresentação, inspector com comentários no código-fonte, organização de decks, assets, export estático/PDF/PPTX e skills para coding agents. O monorepo npm fica em `open-slide/`; governança e regras de programação do framework ficam em **`docs/`** na raiz (`04_principles`, `09_design_system`, …). Slides: skills em `open-slide/packages/core/skills/`. Ver `docs/architecture/instruction-surfaces.md`.
+open-slide é um **framework open source** (npm `@open-slide/core`, `@open-slide/cli`) para criar e apresentar decks como componentes React em um canvas fixo (1920×1080 por padrão). O runtime inclui dev server Vite, viewer, modo apresentação, inspector com comentários no código-fonte, organização de decks, assets, export estático/PDF/PPTX e skills para coding agents. O monorepo npm fica em `open-slide/`; governança e regras de programação do framework ficam em **`docs/`** na raiz (`04_principles`, `09_design_system`, …). Slides: kit em `open-slide/packages/core/.agent/` (`SLIDE-KIT.md`, skills, workflows). Ver `docs/architecture/instruction-surfaces.md`.
 
 ## Problem it solves
 

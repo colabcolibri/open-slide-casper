@@ -5,6 +5,8 @@ description: Apply pending @slide-comment markers written by the open-slide insp
 
 # Apply slide comments
 
+Entry workflow: **`/apply-comments`** → `.agent/workflows/apply-comments.md`.
+
 The open-slide editor has an inspector tool that lets the user click on a rendered page element and attach a textual comment (e.g. *"make this red"*, *"change to 'Open Slide Rocks'"*). Each comment is persisted as an in-source JSX marker inside `slides/<slideId>/index.tsx`.
 
 Your job: read those markers, perform the described edits, and delete the markers.

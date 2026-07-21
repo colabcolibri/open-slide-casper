@@ -61,7 +61,7 @@ open-slide não implementa login. “Usuários” são **papéis comportamentais
 | ----- | ----- |
 | Context | Invocado via skills na raiz do harness ou dentro de `open-slide/` |
 | Goals | Slides: TSX no canvas; framework: UI/perf alinhados a `docs/04` e `docs/09` |
-| Tools | `open-slide/packages/core/skills/*` (slides); `docs/04`, `docs/09` (framework UI); `.agent/*` (Meridian) |
+| Tools | `open-slide/packages/core/.agent/skills/*` (slides); `docs/04`, `docs/09` (framework UI); harness `.agent/*` (Meridian) |
 | Constraints | Ver `docs/architecture/instruction-surfaces.md` |
 
 ## Permission matrix (logical)
@@ -73,7 +73,7 @@ open-slide não implementa login. “Usuários” são **papéis comportamentais
 | Publish npm | no | no | maintainers | no | no |
 | Approve Meridian docs | human | — | human | — | no |
 
-\*Slides: `packages/core/skills/`. Framework UI: phase docs `04` + `09`. Meridian gates para código produto.
+\*Slides: `packages/core/.agent/skills/`. Framework UI: phase docs `04` + `09`. Meridian: harness `.agent/` na raiz do repo.
 
 ## Gate
 

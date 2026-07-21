@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Sync canonical slide kit (packages/core/.agent) → IDE adapters in a slide workspace.
-# Same idea as .agent/scripts/sync_cursor_kit.sh for the Meridian harness.
 #
 # Usage (from open-slide monorepo root):
 #   ./scripts/sync-slide-kit-adapters.sh              # defaults to apps/demo
@@ -30,8 +29,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 WORKSPACE="${WORKSPACE:-${MONOREPO}/apps/demo}"
-if [[ ! -d "${CORE_AGENT}/skills" || ! -d "${CORE_AGENT}/workflows" ]]; then
-  echo "ERROR: missing ${CORE_AGENT}/skills or ${CORE_AGENT}/workflows" >&2
+if [[ ! -d "${CORE_AGENT}/skills" || ! -d "${CORE_AGENT}/workflows" || ! -d "${CORE_AGENT}/agents" ]]; then
+  echo "ERROR: missing ${CORE_AGENT}/skills, workflows, or agents" >&2
   exit 1
 fi
 
@@ -75,8 +74,16 @@ for workflow in "${CORE_AGENT}/workflows/"*.md; do
   link_path "${workflow}" ".agents/skills/workflow-${base}/SKILL.md"
 done
 
+mkdir -p .cursor/agents .claude/agents
+for agent in "${CORE_AGENT}/agents/"*.md; do
+  [[ -f "${agent}" ]] || continue
+  name="$(basename "${agent}")"
+  link_path "${agent}" ".cursor/agents/${name}"
+  link_path "${agent}" ".claude/agents/${name}"
+done
+
 if [[ "${DRY_RUN}" -eq 1 ]]; then
   echo "Dry run complete."
 else
-  echo "Done. Cursor: .cursor/commands/*.md ; skills: .agents/skills/"
+  echo "Done. Cursor: .cursor/commands/*.md, .cursor/agents/*.md ; skills: .agents/skills/"
 fi

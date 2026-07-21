@@ -35,7 +35,7 @@ promoted_to: [docs/00_scope.md, docs/03_user_types.md, docs/05_architecture.md, 
 | Transições entre slides | `packages/core/src/app/lib/transition.ts`, `slide-transition-layer.tsx` | high | — | — |
 | Morph entre elementos | `packages/core/src/app/components/morph-element.tsx` | high | — | — |
 | i18n (en, ja, zh) | `packages/core/src/locale/*`, `locale-store.ts` | high | — | — |
-| Slide skills (npm) | `open-slide/packages/core/skills/` | high | EPIC-agent | Shipped to consumers |
+| Slide kit (npm) | `open-slide/packages/core/.agent/` | high | EPIC-agent | sync:kit |
 | Framework UI/motion rules | `docs/09_design_system.md`, `docs/04_principles.md` | high | — | Substitui `open-slide/.agents/` |
 | Site marketing + docs (Fumadocs) | `apps/web` | high | EPIC-web | SEO pass pendente Meridian |
 | Demo dogfood de decks | `apps/demo/slides/*` | high | — | Conteúdo demo, não produto |

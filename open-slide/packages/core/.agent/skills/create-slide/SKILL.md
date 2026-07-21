@@ -5,7 +5,7 @@ description: Use this skill when the user wants to create, draft, author, or gen
 
 # Create a slide in open-slide
 
-Entry workflow: **`workflows/create-slide.md`**. This skill owns **procedure**; TSX contract lives in **`slide-authoring`**. Ambiguous intent → **`slide-routing`**.
+Entry workflow: **`/create-slide`** → `.agent/workflows/create-slide.md`. This skill owns **procedure**; TSX contract lives in **`slide-authoring`**. Ambiguous intent → **`slide-routing`**.
 
 **Write scope:** only `slides/<id>/`. Never `package.json`, `open-slide.config.ts`, or other slides.
 

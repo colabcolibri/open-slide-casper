@@ -12,7 +12,7 @@ blocks: []
 # 09 — Design system
 
 > Stack id: **ts-shadcn** + Tailwind 4. Regras de UI/motion para programar o runtime (`open-slide/packages/core`) e, com escopo separado, landing (`open-slide/apps/web`).  
-> **Slides:** contrato de canvas e TSX em `open-slide/packages/core/skills/slide-authoring/` (publicado no npm) — não duplicar aqui.
+> **Slides:** contrato de canvas e TSX em `open-slide/packages/core/.agent/skills/slide-authoring/` (publicado no npm) — não duplicar aqui.
 
 ## Summary
 

@@ -5,7 +5,7 @@ description: Use this skill when the user wants to create, draft, author, or ext
 
 # Create a slide theme
 
-Entry workflow: **`workflows/create-theme.md`**. Produces a **theme bundle** under `themes/`:
+Entry workflow: **`/create-theme`** → `.agent/workflows/create-theme.md`. Produces a **theme bundle** under `themes/`:
 
 1. `themes/<id>.md` — what `create-slide` reads when an author picks the theme.
 2. `themes/<id>.demo.tsx` — preview in the dev UI **Themes** panel (not listed under slides).

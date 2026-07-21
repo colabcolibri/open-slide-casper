@@ -6,14 +6,19 @@ description: Create or extract a reusable theme under themes/ (<id>.md + <id>.de
 
 $ARGUMENTS
 
+| Workflow | Agent | Mode |
+| --- | --- | --- |
+| `create-theme` | `theme-author` | theme bundle in `themes/` |
+
 ---
 
 ## Critical rules
 
-1. **Mandatory skill:** `skills/create-theme/SKILL.md` — **Mandatory** read `references/theme-md-template.md` before `.md`.
-2. Read **`skills/slide-authoring/SKILL.md`** for canvas and type-scale defaults before overriding in the theme.
-3. **Write scope:** only `themes/<id>.md` and `themes/<id>.demo.tsx`. Never real slides under `slides/`.
-4. Theme id: kebab-case; check `themes/` for collisions.
+1. Use agent **`theme-author`** (`.agent/agents/theme-author.md`).
+2. **Mandatory skill:** **`create-theme`** — read **`.agent/skills/create-theme/references/theme-md-template.md`** before `.md`.
+3. Read **`slide-authoring`** (`.agent/skills/slide-authoring/SKILL.md`) for canvas and type-scale defaults before overriding in the theme.
+4. **Write scope:** only `themes/<id>.md` and `themes/<id>.demo.tsx`. Never real slides under `slides/`.
+5. Theme id: kebab-case; check `themes/` for collisions.
 
 ---
 
@@ -23,6 +28,7 @@ $ARGUMENTS
 CONTEXT:
 - User Request: $ARGUMENTS
 - Mode: CREATE THEME
+- Agent: theme-author
 
 RULES:
 1. Follow create-theme skill steps (input source → gather → id → markdown → demo.tsx).

@@ -29,3 +29,5 @@ open-slide/**/*.tsbuildinfo
 open-slide/.turbo
 open-slide/playwright-report
 open-slide/test-results
+.agents/skills/
+AGENTS.md

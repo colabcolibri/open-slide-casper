@@ -131,6 +131,83 @@ export async function detectWorkflowDrift(workflowsDir: string): Promise<DriftEn
   return results;
 }
 
+export async function listAgentFiles(agentsDir: string): Promise<string[]> {
+  if (!existsSync(agentsDir)) return [];
+  return (await readdir(agentsDir)).filter((name) => name.endsWith('.md')).sort();
+}
+
+export async function detectAgentDrift(agentsDir: string): Promise<DriftEntry[]> {
+  const names = await listAgentFiles(agentsDir);
+  if (names.length === 0) return [];
+
+  const cwd = process.cwd();
+  const cursorAgents = path.join(cwd, '.cursor', 'agents');
+  const results: DriftEntry[] = [];
+
+  for (const name of names) {
+    const src = path.join(agentsDir, name);
+    const dst = path.join(cursorAgents, name);
+    const srcHash = await hashFile(src);
+    let status: Status;
+    if (!existsSync(dst)) status = 'added';
+    else {
+      try {
+        const stat = await lstat(dst);
+        if (stat.isSymbolicLink()) {
+          const target = await readlink(dst);
+          const resolved = path.resolve(path.dirname(dst), target);
+          status = resolved === src ? 'unchanged' : 'updated';
+        } else {
+          const dstHash = await hashFile(dst);
+          status = dstHash === srcHash ? 'unchanged' : 'updated';
+        }
+      } catch {
+        status = 'updated';
+      }
+    }
+    results.push({ name: name.replace(/\.md$/, ''), status });
+  }
+  return results;
+}
+
+export async function syncAgentAdapters(
+  agentsDir: string,
+  opts: SyncSkillsOptions = {},
+): Promise<void> {
+  const { dryRun = false } = opts;
+  const names = await listAgentFiles(agentsDir);
+  if (names.length === 0) {
+    process.stdout.write(chalk.yellow('No agents found to sync.\n'));
+    return;
+  }
+
+  const cwd = process.cwd();
+  const cursorAgents = path.join(cwd, '.cursor', 'agents');
+  const claudeAgents = path.join(cwd, '.claude', 'agents');
+
+  for (const name of names) {
+    const src = path.join(agentsDir, name);
+    if (dryRun) continue;
+    await linkWorkflowFile(src, path.join(cursorAgents, name));
+    await linkWorkflowFile(src, path.join(claudeAgents, name));
+  }
+
+  if (dryRun) {
+    process.stdout.write(chalk.bold('Dry run — agents would sync:\n'));
+    for (const name of names) {
+      process.stdout.write(`  ${chalk.green('+')} ${name}\n`);
+    }
+    return;
+  }
+
+  process.stdout.write(chalk.bold('Synced agent adapters:\n'));
+  for (const name of names) {
+    process.stdout.write(
+      `  ${chalk.green('+')} ${name} ${chalk.dim('(cursor + claude agents)')}\n`,
+    );
+  }
+}
+
 export async function syncWorkflowAdapters(
   workflowsDir: string,
   opts: SyncSkillsOptions = {},
@@ -212,11 +289,12 @@ async function hashFile(file: string): Promise<string> {
 }
 
 export async function syncKit(
-  dirs: { skillsDir: string; workflowsDir: string },
+  dirs: { skillsDir: string; workflowsDir: string; agentsDir: string },
   opts: SyncKitOptions = {},
 ): Promise<void> {
   await syncSkills(dirs.skillsDir, opts);
   await syncWorkflowAdapters(dirs.workflowsDir, opts);
+  await syncAgentAdapters(dirs.agentsDir, opts);
 }
 
 async function ensureClaudeSymlink(claudeSkillsDir: string, name: string): Promise<void> {
