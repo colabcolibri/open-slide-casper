@@ -1,6 +1,9 @@
 .DS_Store
 *.log
 
+# Meridian harness
+.meridian/meridian.db
+
 # Meridian IDE adapters (local symlinks — kit root)
 .cursor/
 .claude/

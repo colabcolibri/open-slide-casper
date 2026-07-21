@@ -10,10 +10,14 @@ Raiz do **Meridian Harness** neste repositório. O kit canônico fica em [`.agen
 
 ## Comandos Meridian
 
+Phase docs e delivery ficam na **raiz do harness** (`docs/`, `.meridian/`), não dentro de `open-slide/`.
+
 ```bash
-python3 .agent/scripts/validate_meridian.py open-slide
+python3 .agent/scripts/validate_meridian.py .
 python3 .agent/scripts/meridian_db_export.py --project open-slide --format planning
 ```
+
+Documentação do produto: [docs/README.md](docs/README.md).
 
 Instalação e fluxo: [`.agent/references/start-here.md`](.agent/references/start-here.md).
 

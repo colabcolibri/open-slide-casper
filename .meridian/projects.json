@@ -5,7 +5,7 @@
     {
       "id": "open-slide",
       "name": "open-slide",
-      "docs": "open-slide/docs"
+      "docs": "docs"
     }
   ],
   "exclude": []

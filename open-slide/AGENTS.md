@@ -2,7 +2,7 @@
 
 You are working on the **open-slide framework** — the runtime, CLI, and tooling that ship to npm.
 
-This monorepo lives in `open-slide/` inside a Meridian harness workspace (kit root: `.agent/` one level up). Use Meridian slash commands and delivery only from the repo root; use this file for framework code under `open-slide/`.
+This monorepo lives in `open-slide/`. **Phase docs** at repo root (`docs/`) are the source for framework UI, React, and motion rules (`04_principles.md`, `09_design_system.md`). **Slide authoring** only: `packages/core/skills/`. See `docs/architecture/instruction-surfaces.md`. Meridian delivery: repo root `.meridian/`.
 
 (Slide-authoring guidance lives in the `slide-authoring` / `create-slide` skills under `apps/demo/.claude/skills/`. Use those only when editing files inside `apps/demo/slides/`.)
 

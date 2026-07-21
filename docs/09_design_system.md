@@ -1,0 +1,143 @@
+---
+title: Design system
+status: draft
+version: 1.0
+updated: 2026-07-21
+depends_on: [01_tech_stack.md, 05_architecture.md, 04_principles.md]
+blocks: []
+---
+
+# 09 — Design system
+
+> Stack id: **ts-shadcn** + Tailwind 4. Regras de UI/motion para programar o runtime (`open-slide/packages/core`) e, com escopo separado, landing (`open-slide/apps/web`).  
+> **Slides:** contrato de canvas e TSX em `open-slide/packages/core/skills/slide-authoring/` (publicado no npm) — não duplicar aqui.
+
+## Summary
+
+Runtime shell (home, inspector, present, dialogs): **Tailwind CSS v4**, primitivos **shadcn** em `open-slide/packages/core/src/app/components/ui/` (biome-ignored — **regenerar, não editar à mão**), composições em `components/inspector`, `components/present`, etc. Decks usam tokens `DesignSystem` → CSS vars via `design-plugin` (`app/lib/design.ts`).
+
+## shadcn / shell UI rules
+
+**Workflow:** usar runner do monorepo (`pnpm dlx shadcn@latest` / `npx shadcn@latest`) a partir de `open-slide/packages/core` quando `components.json` existir. Antes de UI custom: `shadcn search` / docs do componente.
+
+| Rule | Do | Don't |
+| ---- | -- | ----- |
+| Primitives | Compor a partir de `components/ui/*` | Editar arquivos gerados à mão |
+| Layout spacing | `flex` + `gap-*` | `space-x-*` / `space-y-*` |
+| Equal w/h | `size-*` | `w-10 h-10` separados |
+| Colors | Semânticos: `bg-primary`, `text-muted-foreground`, `bg-background` | `bg-blue-500`, overrides manuais `dark:` |
+| className | Layout/posicionamento; `cn()` para condicional | Override de cor/tipografia do componente |
+| Overlays | Deixar stacking ao Dialog/Sheet/Popover | `z-index` manual em overlay |
+| Forms | `FieldGroup` + `Field`; `data-invalid` + `aria-invalid` | `div` + `space-y` como form layout |
+| Input groups | `InputGroupInput` / `InputGroupTextarea` | `Input` cru dentro de `InputGroup` |
+| Dialogs | Sempre `DialogTitle` / `SheetTitle` / `DrawerTitle` (sr-only ok) | Dialog sem title |
+| Cards | `CardHeader`, `CardTitle`, `CardContent`, … | Tudo dentro de `CardContent` |
+| Feedback | `sonner` `toast()`, `Skeleton`, `Empty`, `Alert` | Divs custom com `animate-pulse` |
+| Icons in Button | prop `data-icon="inline-start|inline-end"` | `size-4` no ícone dentro de Button |
+| Tabs | `TabsTrigger` dentro de `TabsList` | Triggers soltos |
+
+**Base UI vs Radix:** checar `base` em `shadcn info --json`; triggers custom usam `render` (base) ou `asChild` (radix).
+
+## React composition (shell components)
+
+Ao criar painéis multi-parte (inspector, sidebars, toolbars):
+
+1. **Sem boolean props** (`isThread`, `isEditing`, …) — usar variantes explícitas ou subcomponentes.
+2. **Compound components** com contexto: interface `{ state, actions, meta }`; UI só consome o contrato.
+3. **State no Provider** — irmãos fora da árvore visual podem usar o mesmo contexto.
+4. **Preferir `children`** a render props para estrutura estática.
+5. **React 19** (quando adotado no repo): `use(Context)`; `ref` como prop normal — sem `forwardRef`.
+
+Detalhe de performance em `04_principles.md` § React performance.
+
+## Motion and interaction
+
+Barra de craft para **qualquer** CSS/JS motion no core ou web. Present mode e transições de slide devem respeitar a mesma base.
+
+### When to animate
+
+| Frequency | Policy |
+| --------- | ------ |
+| 100+/dia (atalhos, toggle repetido) | **Sem** animação |
+| Dezenas/dia (hover em listas) | Mínima ou nenhuma |
+| Ocasional (modal, drawer, toast) | Animação padrão |
+| Raro / onboarding | Pode ter delight |
+
+Propósito válido: consistência espacial, feedback, explicar mudança de estado — não “ficar bonito” em elemento visto o tempo todo.
+
+### Timing and easing
+
+- UI **&lt; 300ms** salvo justificativa (modal/drawer até ~500ms).
+- Entrada/saída: **`ease-out`** — evitar **`ease-in`** em UI.
+- Preferir curvas fortes, ex.: `cubic-bezier(0.23, 1, 0.32, 1)` para ease-out.
+- Botão: feedback no **`:active`**, ex. `transform: scale(0.97)`, ~100–160ms — não esperar `click` para highlight.
+
+### Physicality
+
+- Não animar de **`scale(0)`** — usar `scale(0.9–0.97)` + opacity.
+- Popovers/dropdowns: **`transform-origin` no trigger** (vars Radix/Base UI). Modais: center ok.
+- Animar só **`transform`** e **`opacity`** — não `width`/`height`/`margin`/ `top`/`left`.
+- Gestos: motion **interrompível** (transitions/springs, não keyframes que reiniciam do zero).
+- **`prefers-reduced-motion`:** reduzir movimento, manter opacity/cor quando fizer sentido.
+- Hover motion: `@media (hover: hover) and (pointer: fine)`.
+
+### Gestures (present / drag)
+
+- Pointer down → feedback imediato; arrastar **1:1** com o dedo/mouse; capturar velocidade para release.
+- Springs para gestos reversíveis; bounce sutil (0.1–0.3).
+
+Review de PRs com motion: checklist em `10_test_strategy.md` § Motion review.
+
+## Marketing / landing (`apps/web`)
+
+Fora do shell shadcn neutro. Objetivo: direção estética **intencional** (tipografia distintiva, cor dominante + acento, composição memorável) — evitar clichê “AI slop” (Inter/Roboto + gradiente roxo genérico).  
+Coordenar com `12_marketing_seo.md`. Não impor mesma estética no inspector/runtime.
+
+## UX and accessibility audit
+
+Para review “UI/UX/a11y” de arquivos concretos:
+
+1. Buscar checklist atual: [Vercel Web Interface Guidelines](https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md)
+2. Reportar achados em formato `file:line` + severidade.
+
+Baseline fixo neste doc: foco visível, contraste AA no shell, alvos de toque ≥ 44px em mobile, labels em forms, títulos em dialogs.
+
+## Brand and tone (runtime)
+
+- Chrome: neutro, apresentação, dark/light via `next-themes` + `ThemeToggle`.
+- Fonte shell: Geist variable (`@fontsource-variable/geist`).
+
+## Color and tokens
+
+| Layer | Location | Usage |
+| ----- | -------- | ----- |
+| Semantic CSS vars | `designToCssVars`, presets | Per-deck |
+| Tailwind theme | `app/styles.css` | Shell |
+| Slide palette | TSX + `DesignPalette` | Conteúdo do slide |
+
+## Components map
+
+| Area | Path |
+| ---- | ---- |
+| Primitives | `packages/core/src/app/components/ui/*` |
+| Composed | `inspector/*`, `present/*`, `overview-grid.tsx`, … |
+| Slide exports | `ImagePlaceholder`, `MorphElement`, `@open-slide/core` |
+
+## Canvas (slides)
+
+| Constant | Value |
+| -------- | ----- |
+| Default | 1920 × 1080 (`sdk.ts`) |
+| Alt | `meta.format` / `SlideCanvasFormat` |
+
+Shell: `use-is-mobile.ts`; sem overflow horizontal em sidebars.
+
+## Do's and don'ts
+
+- Do: `DesignProvider` em dev; compor fora de `ui/`.
+- Do: citar este doc em US com acceptance visual.
+- Don't: hex hardcoded no shell; quebrar safe area do slide sem atualizar skill de authoring.
+
+## Gate
+
+Human `approved` before Must US with visual acceptance ship.
