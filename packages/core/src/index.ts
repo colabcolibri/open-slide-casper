@@ -2,6 +2,9 @@ export type { ImagePlaceholderProps } from './app/components/image-placeholder.t
 export { ImagePlaceholder } from './app/components/image-placeholder.tsx';
 export type { MorphElementProps } from './app/components/morph-element.tsx';
 export { MorphElement } from './app/components/morph-element.tsx';
+export type { CanvasSize, SlideCanvasFormat } from './app/lib/canvas.ts';
+export { resolveCanvasSize } from './app/lib/canvas.ts';
+export { CanvasSizeProvider, useCanvasSize } from './app/lib/canvas-context.tsx';
 export type {
   DesignFonts,
   DesignPalette,
@@ -11,7 +14,7 @@ export type {
 export { cssVarsToString, defaultDesign, designToCssVars } from './app/lib/design.ts';
 export { useSlidePageNumber } from './app/lib/page-context.tsx';
 export type { Page, SlideMeta, SlideModule } from './app/lib/sdk.ts';
-export { CANVAS_HEIGHT, CANVAS_WIDTH } from './app/lib/sdk.ts';
+export { CANVAS_HEIGHT, CANVAS_WIDTH, canvasSizeForModule } from './app/lib/sdk.ts';
 export type { StepProps, StepsProps } from './app/lib/step-context.tsx';
 export { Step, Steps, useIsActivePage } from './app/lib/step-context.tsx';
 export type {

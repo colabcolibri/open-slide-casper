@@ -24,13 +24,20 @@ async function getManifest(): Promise<FoldersManifest> {
   };
 }
 
-async function patchSlideName(slideId: string, name: string): Promise<void> {
+async function patchSlide(
+  slideId: string,
+  patch: { name?: string; format?: 'slide' | '4x5' },
+): Promise<void> {
   const res = await fetch(`/__slides/${slideId}`, {
     method: 'PATCH',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(patch),
   });
   if (!res.ok) throw new Error(`PATCH /__slides/${slideId} ${res.status}`);
+}
+
+async function patchSlideName(slideId: string, name: string): Promise<void> {
+  await patchSlide(slideId, { name });
 }
 
 async function duplicateSlideReq(slideId: string, newId?: string): Promise<string> {
@@ -106,6 +113,7 @@ export type UseFoldersResult = {
   reorder: (ids: string[]) => Promise<void>;
   assign: (slideId: string, folderId: string | null) => Promise<void>;
   renameSlide: (slideId: string, name: string) => Promise<void>;
+  setSlideFormat: (slideId: string, format: 'slide' | '4x5') => Promise<void>;
   duplicateSlide: (slideId: string, newId?: string) => Promise<string>;
   deleteSlide: (slideId: string) => Promise<void>;
   refresh: () => Promise<void>;
@@ -206,6 +214,14 @@ export function useFolders(): UseFoldersResult {
     [refresh],
   );
 
+  const setSlideFormat = useCallback(
+    async (slideId: string, format: 'slide' | '4x5') => {
+      await patchSlide(slideId, { format });
+      await refresh();
+    },
+    [refresh],
+  );
+
   const duplicateSlide = useCallback(
     async (slideId: string, newId?: string) => {
       const duplicatedId = await duplicateSlideReq(slideId, newId);
@@ -232,6 +248,7 @@ export function useFolders(): UseFoldersResult {
     reorder,
     assign,
     renameSlide,
+    setSlideFormat,
     duplicateSlide,
     deleteSlide,
     refresh,

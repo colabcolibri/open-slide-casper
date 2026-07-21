@@ -133,6 +133,10 @@ export type Locale = {
     slidesTab: string;
     assetsTab: string;
     renameSlide: string;
+    canvasFormatAria: string;
+    canvasFormatSlide: string;
+    canvasFormat4x5: string;
+    canvasFormatChangeFailed: string;
     loadingEyebrow: string;
     loadingAssetsEyebrow: string;
     emptyEyebrow: string;

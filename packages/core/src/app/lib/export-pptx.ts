@@ -3,13 +3,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { designToCssVars } from './design';
 import { SlidePageProvider } from './page-context';
 import { isFrameAnimationSettled, waitForDataWaitfor, waitForFonts } from './print-ready';
-import type { SlideModule } from './sdk';
+import { canvasSizeCss, canvasSizeForModule, canvasSizeToPptxEmu, type SlideModule } from './sdk';
 
-const SLIDE_W = 1920;
-const SLIDE_H = 1080;
-// 16:9 widescreen in English Metric Units (914400 EMU per inch → 13.333in × 7.5in).
-const EMU_W = 12192000;
-const EMU_H = 6858000;
 const CAPTURE_PIXEL_RATIO = 2;
 
 const ANIMATION_TIMEOUT_MS = 15_000;
@@ -40,6 +35,9 @@ export async function exportSlideAsImagePptx(
   if (pages.length === 0) return;
 
   const total = pages.length;
+  const canvas = canvasSizeForModule(slide);
+  const frameSize = canvasSizeCss(canvas);
+  const emu = canvasSizeToPptxEmu(canvas);
   onProgress?.({ phase: 'processing', current: 0, total, percent: 0 });
 
   const container = document.createElement('div');
@@ -78,8 +76,8 @@ export async function exportSlideAsImagePptx(
     if (!Page) continue;
     const host = document.createElement('div');
     host.setAttribute('data-osd-canvas', '');
-    host.style.width = `${SLIDE_W}px`;
-    host.style.height = `${SLIDE_H}px`;
+    host.style.width = frameSize.width;
+    host.style.height = frameSize.height;
     host.style.overflow = 'hidden';
     host.style.background = '#fff';
     if (designVars) {
@@ -112,8 +110,8 @@ export async function exportSlideAsImagePptx(
     for (let i = 0; i < frames.length; i++) {
       freezeForCapture(frames[i]);
       const blob = await toBlob(frames[i], {
-        width: SLIDE_W,
-        height: SLIDE_H,
+        width: canvas.width,
+        height: canvas.height,
         pixelRatio: CAPTURE_PIXEL_RATIO,
         backgroundColor: '#ffffff',
         cacheBust: true,
@@ -129,7 +127,7 @@ export async function exportSlideAsImagePptx(
     }
 
     onProgress?.({ phase: 'generating', current: total, total, percent: 98 });
-    const pptx = await buildImagePptx(images);
+    const pptx = await buildImagePptx(images, emu);
     downloadBlob(
       new Blob([pptx as BlobPart], {
         type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -162,14 +160,17 @@ const XML_DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
 const REL_NS = 'http://schemas.openxmlformats.org/package/2006/relationships';
 const OD_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
 
-async function buildImagePptx(images: Uint8Array[]): Promise<Uint8Array> {
+async function buildImagePptx(
+  images: Uint8Array[],
+  emu: { emuW: number; emuH: number },
+): Promise<Uint8Array> {
   const { zipSync, strToU8 } = await import('fflate');
   const n = images.length;
   const files: Record<string, Uint8Array> = {};
 
   files['[Content_Types].xml'] = strToU8(contentTypesXml(n));
   files['_rels/.rels'] = strToU8(rootRelsXml());
-  files['ppt/presentation.xml'] = strToU8(presentationXml(n));
+  files['ppt/presentation.xml'] = strToU8(presentationXml(n, emu));
   files['ppt/_rels/presentation.xml.rels'] = strToU8(presentationRelsXml(n));
   files['ppt/presProps.xml'] = strToU8(presPropsXml());
   files['ppt/theme/theme1.xml'] = strToU8(themeXml());
@@ -180,7 +181,7 @@ async function buildImagePptx(images: Uint8Array[]): Promise<Uint8Array> {
 
   for (let i = 0; i < n; i++) {
     const idx = i + 1;
-    files[`ppt/slides/slide${idx}.xml`] = strToU8(slideXml());
+    files[`ppt/slides/slide${idx}.xml`] = strToU8(slideXml(emu));
     files[`ppt/slides/_rels/slide${idx}.xml.rels`] = strToU8(slideRelsXml(idx));
     files[`ppt/media/image${idx}.png`] = images[i];
   }
@@ -201,12 +202,12 @@ function rootRelsXml(): string {
   return `${XML_DECL}<Relationships xmlns="${REL_NS}"><Relationship Id="rId1" Type="${OD_REL}/officeDocument" Target="ppt/presentation.xml"/></Relationships>`;
 }
 
-function presentationXml(n: number): string {
+function presentationXml(n: number, emu: { emuW: number; emuH: number }): string {
   const sldIds = Array.from(
     { length: n },
     (_, i) => `<p:sldId id="${256 + i}" r:id="rId${i + 3}"/>`,
   ).join('');
-  return `${XML_DECL}<p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${OD_REL}" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>${sldIds}</p:sldIdLst><p:sldSz cx="${EMU_W}" cy="${EMU_H}"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>`;
+  return `${XML_DECL}<p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${OD_REL}" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>${sldIds}</p:sldIdLst><p:sldSz cx="${emu.emuW}" cy="${emu.emuH}"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>`;
 }
 
 function presentationRelsXml(n: number): string {
@@ -242,8 +243,8 @@ function slideLayoutRelsXml(): string {
   return `${XML_DECL}<Relationships xmlns="${REL_NS}"><Relationship Id="rId1" Type="${OD_REL}/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>`;
 }
 
-function slideXml(): string {
-  return `${XML_DECL}<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${OD_REL}" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr><p:pic><p:nvPicPr><p:cNvPr id="2" name="Slide"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="rId2"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${EMU_W}" cy="${EMU_H}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`;
+function slideXml(emu: { emuW: number; emuH: number }): string {
+  return `${XML_DECL}<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${OD_REL}" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr><p:pic><p:nvPicPr><p:cNvPr id="2" name="Slide"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="rId2"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${emu.emuW}" cy="${emu.emuH}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`;
 }
 
 function slideRelsXml(idx: number): string {

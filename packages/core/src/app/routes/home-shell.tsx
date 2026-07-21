@@ -32,6 +32,7 @@ export type HomeOutletContext = {
   titleMap: Record<string, string>;
   assign: (slideId: string, folderId: string | null) => Promise<void>;
   renameSlide: (slideId: string, name: string) => Promise<void>;
+  setSlideFormat: (slideId: string, format: 'slide' | '4x5') => Promise<void>;
   duplicateSlide: (slideId: string, newId?: string) => Promise<string>;
   deleteSlide: (slideId: string) => Promise<void>;
 };
@@ -52,6 +53,7 @@ export function HomeShell() {
     reorder,
     assign,
     renameSlide,
+    setSlideFormat,
     duplicateSlide,
     deleteSlide,
   } = useFolders();
@@ -130,6 +132,7 @@ export function HomeShell() {
     titleMap,
     assign,
     renameSlide,
+    setSlideFormat,
     duplicateSlide,
     deleteSlide,
   };

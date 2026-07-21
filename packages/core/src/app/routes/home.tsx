@@ -35,8 +35,9 @@ import { cn } from '@/lib/utils';
 import { FolderIconChip, SLIDE_DND_MIME } from '../components/sidebar/folder-item';
 import { ALL_SLIDES_ID, DRAFT_ID } from '../components/sidebar/sidebar';
 import { SlideCanvas } from '../components/slide-canvas';
+import { CanvasSizeProvider } from '../lib/canvas-context';
 import { SlidePageProvider } from '../lib/page-context';
-import type { Folder, FolderIcon, SlideModule } from '../lib/sdk';
+import { type Folder, type FolderIcon, resolveCanvasSize, type SlideModule } from '../lib/sdk';
 import { loadSlide, slideCreatedAt, slideIds } from '../lib/slides';
 import type { HomeOutletContext } from './home-shell';
 
@@ -487,6 +488,7 @@ function SlideCard({
 
   const FirstPage = slide?.default[0];
   const displayTitle = slide?.meta?.title ?? id;
+  const previewCanvas = resolveCanvasSize(slide?.meta?.format);
 
   useEffect(() => {
     if (slide && onTitleResolved) onTitleResolved(id, displayTitle);
@@ -512,14 +514,19 @@ function SlideCard({
       >
         <Link to={`/s/${id}`} className="block focus-visible:outline-none">
           {/* Slide thumb — tight border, grey baseboard, no shadcn rounded-xl */}
-          <div className="relative aspect-video overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 motion-safe:transition-[box-shadow,--tw-ring-color] motion-safe:duration-200">
+          <div
+            className="relative overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 motion-safe:transition-[box-shadow,--tw-ring-color] motion-safe:duration-200"
+            style={{ aspectRatio: `${previewCanvas.width} / ${previewCanvas.height}` }}
+          >
             {FirstPage ? (
               <div className="h-full w-full motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]">
-                <SlideCanvas flat freezeMotion design={slide?.design}>
-                  <SlidePageProvider index={0} total={slide?.default.length ?? 1}>
-                    <FirstPage />
-                  </SlidePageProvider>
-                </SlideCanvas>
+                <CanvasSizeProvider format={slide?.meta?.format}>
+                  <SlideCanvas flat freezeMotion design={slide?.design}>
+                    <SlidePageProvider index={0} total={slide?.default.length ?? 1}>
+                      <FirstPage />
+                    </SlidePageProvider>
+                  </SlideCanvas>
+                </CanvasSizeProvider>
               </div>
             ) : (
               <div className="grid h-full w-full place-items-center text-[10px] tracking-[0.08em] uppercase text-muted-foreground/60">

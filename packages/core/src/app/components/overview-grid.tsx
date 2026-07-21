@@ -3,15 +3,14 @@ import { type Ref, useEffect, useRef, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format, useLocale } from '@/lib/use-locale';
 import { cn } from '@/lib/utils';
+import { useCanvasSize } from '../lib/canvas-context';
 import type { DesignSystem } from '../lib/design';
 import { SlidePageProvider } from '../lib/page-context';
 import type { Page } from '../lib/sdk';
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../lib/sdk';
 import type { SlideTransition } from '../lib/transition';
 import { SlideCanvas } from './slide-canvas';
 
 const THUMB_W = 320;
-const THUMB_H = (THUMB_W * CANVAS_HEIGHT) / CANVAS_WIDTH;
 
 export type OverviewVariant = 'present' | 'editor';
 
@@ -197,6 +196,8 @@ function OverviewThumb({
   buttonRef?: Ref<HTMLButtonElement>;
 }) {
   const t = useLocale();
+  const { width: canvasWidth, height: canvasHeight } = useCanvasSize();
+  const thumbH = (THUMB_W * canvasHeight) / canvasWidth;
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [hasSteps, setHasSteps] = useState(false);
   const hasTransition = Boolean(PageComp.transition ?? moduleTransition);
@@ -227,15 +228,9 @@ function OverviewThumb({
           styles.thumbSurface,
           isFocused ? 'ring-2 ring-[var(--brand,#e5484d)]' : styles.thumbRing,
         )}
-        style={{ height: THUMB_H }}
+        style={{ height: thumbH }}
       >
-        <SlideCanvas
-          scale={THUMB_W / CANVAS_WIDTH}
-          center={false}
-          flat
-          freezeMotion
-          design={design}
-        >
+        <SlideCanvas scale={THUMB_W / canvasWidth} center={false} flat freezeMotion design={design}>
           <SlidePageProvider index={index} total={total}>
             <PageComp />
           </SlidePageProvider>

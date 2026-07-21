@@ -57,6 +57,7 @@ export default [Cover, Body] satisfies Page[];
 - The slide id is the kebab-case folder name. Pick something short and descriptive (`q2-roadmap`, `team-offsite-2026`).
 - `meta.theme` (optional) marks the slide as built from a theme under `themes/`. The id must match a `<id>.md` basename. Surfaces a back-link chip on the slide card and lists the slide on `/themes/<id>`. Omit if the slide isn't derived from a registered theme.
 - `meta.createdAt` is an **ISO 8601 string literal** (e.g. `'2026-05-16T12:00:00Z'`) set once when the slide is scaffolded. The home page uses it for the default "newest first" sort. Always include it on new slides — **immediately before writing the file, run `node -e "console.log(new Date().toISOString())"` via Bash and paste the exact output** as the value. Don't type a timestamp from memory — you will get the date or time wrong. Must be a plain string literal (no `new Date(...)` or imports in the slide itself) — the framework reads it via a regex at build time, not by evaluating the module.
+- `meta.format` (optional) sets canvas size for preview, present mode, and export. Default `slide` is **1920×1080**. Use `'4x5'` for **1080×1350** portrait. Layout in the file must match the chosen format.
 
 ## Editing an existing slide
 
@@ -70,7 +71,24 @@ This lists every `const Foo: Page = …` declaration with its line number. Read 
 
 ## Canvas
 
-Every page renders into a fixed **1920 × 1080** canvas. The framework scales it; you design as if the viewport is literally 1920×1080.
+Every page renders into a fixed canvas. The framework scales it; you design in absolute pixels for that canvas.
+
+| `meta.format` | Size |
+| --- | --- |
+| `slide` (default) | 1920 × 1080 |
+| `4x5` | 1080 × 1350 |
+
+Bind layout to the format at the top of `index.tsx`:
+
+```tsx
+import { resolveCanvasSize, type Page, type SlideMeta } from '@open-slide/core';
+
+const CANVAS = resolveCanvasSize('4x5');
+
+export const meta: SlideMeta = { title: '…', format: '4x5', createdAt: '…' };
+```
+
+Default widescreen decks omit `format` (or set `format: 'slide'`) and design for **1920×1080**.
 
 - Use **absolute pixel values** for `font-size`, padding, positioning. No `rem`, no `vw`/`vh`, no `%` for type.
 - The root element of each page should fill the canvas: `width: '100%'; height: '100%'`.

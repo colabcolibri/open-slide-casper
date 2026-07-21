@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useClickPageNavigation } from '@/lib/use-click-page-navigation';
 import { useWheelPageNavigation } from '@/lib/use-wheel-page-navigation';
 import { cn } from '@/lib/utils';
+import { CanvasSizeProvider } from '../lib/canvas-context';
 import type { DesignSystem } from '../lib/design';
-import type { Page } from '../lib/sdk';
+import type { Page, SlideCanvasFormat } from '../lib/sdk';
 import type { EntryDirection, StepAggregate, StepController } from '../lib/step-context';
 import type { SlideTransition } from '../lib/transition';
 import { useIsMobile } from '../lib/use-is-mobile';
@@ -34,6 +35,7 @@ type Props = {
   pages: Page[];
   design?: DesignSystem;
   transition?: SlideTransition;
+  canvasFormat?: SlideCanvasFormat;
   index: number;
   onIndexChange: (index: number) => void;
   onExit: () => void;
@@ -52,6 +54,7 @@ export function Player({
   pages,
   design,
   transition,
+  canvasFormat,
   index,
   onIndexChange,
   onExit,
@@ -392,70 +395,72 @@ export function Player({
     (laser || keyboardDriven || (idle && !overlayActive && !pointerNearBottom));
 
   return (
-    <div
-      ref={setRoot}
-      className={cn(
-        'fixed inset-0 flex items-center justify-center overflow-hidden bg-black',
-        controls && 'select-none',
-        controls && (hideCursor ? 'cursor-none' : 'cursor-default'),
-      )}
-      style={design ? { background: design.palette.bg } : undefined}
-    >
-      <SlideCanvas flat design={design}>
-        <SlideTransitionLayer
-          pages={pages}
-          index={index}
-          total={pages.length}
-          moduleTransition={transition}
-          disabled={prefersReducedMotion}
-          stepControllerRef={stepControllerRef}
-          entryDirection={entryDirection}
-          onStepAggregateChange={handleAggregateChange}
-        />
-      </SlideCanvas>
-
-      {controls && (
-        <div data-osd-chrome style={{ display: 'contents' }}>
-          <PresentProgressBar index={index} total={pages.length} visible={chromeVisible} />
-          <PresentBlackoutOverlay mode={blackout} />
-          <PresentJumpInput pageCount={pages.length} onJump={handleIndexChange} />
-          <PresentLaserPointer enabled={laser} />
-          <PresentControlBar
-            tooltipContainer={rootEl}
+    <CanvasSizeProvider format={canvasFormat}>
+      <div
+        ref={setRoot}
+        className={cn(
+          'fixed inset-0 flex items-center justify-center overflow-hidden bg-black',
+          controls && 'select-none',
+          controls && (hideCursor ? 'cursor-none' : 'cursor-default'),
+        )}
+        style={design ? { background: design.palette.bg } : undefined}
+      >
+        <SlideCanvas flat design={design}>
+          <SlideTransitionLayer
+            pages={pages}
             index={index}
             total={pages.length}
-            visible={chromeVisible}
-            startedAt={startedAt}
-            blackout={blackout}
-            laser={laser}
-            allowExit={allowExit}
-            windowed={windowed}
-            onPrev={goPrev}
-            onNext={goNext}
-            onMobileInteraction={showMobileChrome}
-            onOverview={() => setOverviewOpen(true)}
-            onBlackout={(mode) => setBlackout((c) => (c === mode ? null : mode))}
-            onLaser={() => setLaser((v) => !v)}
-            onPresenter={() => slideId && openPresenterWindow(slideId)}
-            onToggleFullscreen={toggleFullscreen}
-            onHelp={() => setHelpOpen(true)}
-            onExit={onExit}
-          />
-          <OverviewGrid
-            pages={pages}
-            design={design}
-            open={overviewOpen}
-            current={index}
-            onClose={() => setOverviewOpen(false)}
-            onSelect={handleIndexChange}
-            variant="present"
             moduleTransition={transition}
-            tooltipContainer={rootEl}
+            disabled={prefersReducedMotion}
+            stepControllerRef={stepControllerRef}
+            entryDirection={entryDirection}
+            onStepAggregateChange={handleAggregateChange}
           />
-          <PresentHelpOverlay open={helpOpen} onOpenChange={setHelpOpen} container={rootEl} />
-        </div>
-      )}
-    </div>
+        </SlideCanvas>
+
+        {controls && (
+          <div data-osd-chrome style={{ display: 'contents' }}>
+            <PresentProgressBar index={index} total={pages.length} visible={chromeVisible} />
+            <PresentBlackoutOverlay mode={blackout} />
+            <PresentJumpInput pageCount={pages.length} onJump={handleIndexChange} />
+            <PresentLaserPointer enabled={laser} />
+            <PresentControlBar
+              tooltipContainer={rootEl}
+              index={index}
+              total={pages.length}
+              visible={chromeVisible}
+              startedAt={startedAt}
+              blackout={blackout}
+              laser={laser}
+              allowExit={allowExit}
+              windowed={windowed}
+              onPrev={goPrev}
+              onNext={goNext}
+              onMobileInteraction={showMobileChrome}
+              onOverview={() => setOverviewOpen(true)}
+              onBlackout={(mode) => setBlackout((c) => (c === mode ? null : mode))}
+              onLaser={() => setLaser((v) => !v)}
+              onPresenter={() => slideId && openPresenterWindow(slideId)}
+              onToggleFullscreen={toggleFullscreen}
+              onHelp={() => setHelpOpen(true)}
+              onExit={onExit}
+            />
+            <OverviewGrid
+              pages={pages}
+              design={design}
+              open={overviewOpen}
+              current={index}
+              onClose={() => setOverviewOpen(false)}
+              onSelect={handleIndexChange}
+              variant="present"
+              moduleTransition={transition}
+              tooltipContainer={rootEl}
+            />
+            <PresentHelpOverlay open={helpOpen} onOpenChange={setHelpOpen} container={rootEl} />
+          </div>
+        )}
+      </div>
+    </CanvasSizeProvider>
   );
 }
 

@@ -40,6 +40,13 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useFolders } from '@/lib/folders';
@@ -58,11 +65,12 @@ import { SlideCanvas } from '../components/slide-canvas';
 import { isDeckWarmed, markDeckWarmed, SlidePreloadLayer } from '../components/slide-preload-layer';
 import { SlideTransitionLayer } from '../components/slide-transition-layer';
 import { type ThumbnailActions, ThumbnailRail } from '../components/thumbnail-rail';
+import { CanvasSizeProvider } from '../lib/canvas-context';
 import { exportSlideAsHtml } from '../lib/export-html';
 import { exportSlideAsPdf, isSafari } from '../lib/export-pdf';
 import { exportSlideAsImagePptx } from '../lib/export-pptx';
 import { remapNotesSessionCacheAfterReorder } from '../lib/inspector/use-notes';
-import type { SlideModule } from '../lib/sdk';
+import type { SlideCanvasFormat, SlideModule } from '../lib/sdk';
 import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion';
 import { useSlideModule } from '../lib/use-slide-module';
 
@@ -89,7 +97,7 @@ export function Slide() {
       if (linkCopiedTimerRef.current) clearTimeout(linkCopiedTimerRef.current);
     };
   }, []);
-  const { renameSlide } = useFolders();
+  const { renameSlide, setSlideFormat } = useFolders();
   const slideViewportRef = useRef<HTMLElement>(null);
   const t = useLocale();
   const isMobile = useIsMobile();
@@ -356,31 +364,35 @@ export function Slide() {
     );
   }
 
+  const canvasFormat = slide.meta?.format;
+
   // Hold the loader while a hidden layer warms the whole deck's images and
   // fonts, so the slide UI first paints with every asset already in cache.
   if (view !== 'assets' && !isDeckWarmed(slideId)) {
     return (
-      <div className="grid min-h-dvh place-items-center px-8 text-muted-foreground">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative h-px w-56 overflow-hidden bg-hairline">
-            <span
-              aria-hidden
-              className="line-loader-bar absolute inset-y-[-0.5px] left-0 w-1/4 bg-foreground"
-            />
+      <CanvasSizeProvider format={canvasFormat}>
+        <div className="grid min-h-dvh place-items-center px-8 text-muted-foreground">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative h-px w-56 overflow-hidden bg-hairline">
+              <span
+                aria-hidden
+                className="line-loader-bar absolute inset-y-[-0.5px] left-0 w-1/4 bg-foreground"
+              />
+            </div>
+            <div className="flex flex-wrap items-baseline justify-center gap-x-2 text-[11.5px]">
+              <span className="eyebrow">{t.slide.loadingAssetsEyebrow}</span>
+              <span className="font-mono">{slideId}</span>
+            </div>
           </div>
-          <div className="flex flex-wrap items-baseline justify-center gap-x-2 text-[11.5px]">
-            <span className="eyebrow">{t.slide.loadingAssetsEyebrow}</span>
-            <span className="font-mono">{slideId}</span>
-          </div>
+          <SlidePreloadLayer
+            pages={pages}
+            index={index}
+            design={slide.design}
+            includeCurrent
+            onDone={handleAssetsWarmed}
+          />
         </div>
-        <SlidePreloadLayer
-          pages={pages}
-          index={index}
-          design={slide.design}
-          includeCurrent
-          onDone={handleAssetsWarmed}
-        />
-      </div>
+      </CanvasSizeProvider>
     );
   }
 
@@ -390,6 +402,7 @@ export function Slide() {
         pages={pages}
         design={slide.design}
         transition={slide.transition}
+        canvasFormat={canvasFormat}
         index={index}
         onIndexChange={goTo}
         onExit={() => {}}
@@ -404,6 +417,7 @@ export function Slide() {
         pages={pages}
         design={slide.design}
         transition={slide.transition}
+        canvasFormat={canvasFormat}
         index={index}
         onIndexChange={goTo}
         onExit={() => setPlayMode(null)}
@@ -540,281 +554,302 @@ export function Slide() {
   );
 
   return (
-    <HistoryProvider>
-      <InspectorProvider slideId={slideId} pageIndex={index}>
-        <SelectionReporter />
-        <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
-          {/* Editorial toolbar — three zones, hairline separators, mono-folio center */}
-          <header className="relative flex h-12 shrink-0 items-center gap-2 border-b border-hairline bg-sidebar/85 px-2 backdrop-blur-md md:px-3">
-            <div className="flex flex-1 items-center gap-1.5 md:flex-none md:gap-2">
-              {showSlideBrowser && (
-                <Link
-                  to="/"
-                  aria-label={t.slide.backToHome}
-                  title={t.slide.home}
-                  className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
-                >
-                  <ChevronLeft className="size-4" />
-                </Link>
-              )}
-              <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-hairline md:block" />
-              {import.meta.env.DEV && (
-                <Tabs
-                  value={view}
-                  onValueChange={(next) => {
-                    setSearchParams(
-                      (prev) => {
-                        const params = new URLSearchParams(prev);
-                        if (next === 'assets') params.set('view', 'assets');
-                        else params.delete('view');
-                        return params;
-                      },
-                      { replace: true },
-                    );
-                  }}
-                >
-                  <TabsList>
-                    <TabsTrigger value="slides">{t.slide.slidesTab}</TabsTrigger>
-                    <TabsTrigger value="assets">{t.slide.assetsTab}</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              )}
-              {import.meta.env.DEV && <AgentConnectedBadge />}
-            </div>
+    <CanvasSizeProvider format={canvasFormat}>
+      <HistoryProvider>
+        <InspectorProvider slideId={slideId} pageIndex={index}>
+          <SelectionReporter />
+          <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
+            {/* Editorial toolbar — three zones, hairline separators, mono-folio center */}
+            <header className="relative flex h-12 shrink-0 items-center gap-2 border-b border-hairline bg-sidebar/85 px-2 backdrop-blur-md md:px-3">
+              <div className="flex flex-1 items-center gap-1.5 md:flex-none md:gap-2">
+                {showSlideBrowser && (
+                  <Link
+                    to="/"
+                    aria-label={t.slide.backToHome}
+                    title={t.slide.home}
+                    className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+                  >
+                    <ChevronLeft className="size-4" />
+                  </Link>
+                )}
+                <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-hairline md:block" />
+                {import.meta.env.DEV && (
+                  <Tabs
+                    value={view}
+                    onValueChange={(next) => {
+                      setSearchParams(
+                        (prev) => {
+                          const params = new URLSearchParams(prev);
+                          if (next === 'assets') params.set('view', 'assets');
+                          else params.delete('view');
+                          return params;
+                        },
+                        { replace: true },
+                      );
+                    }}
+                  >
+                    <TabsList>
+                      <TabsTrigger value="slides">{t.slide.slidesTab}</TabsTrigger>
+                      <TabsTrigger value="assets">{t.slide.assetsTab}</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                )}
+                {import.meta.env.DEV && <AgentConnectedBadge />}
+              </div>
 
-            {/* On md+ the title centers to the viewport via absolute positioning. On mobile the
+              {/* On md+ the title centers to the viewport via absolute positioning. On mobile the
                 two side groups each flex-1, so the in-flow title lands at the viewport center too —
                 and min-w-0 lets it truncate instead of overlapping the icons on narrow widths. */}
-            <div className="pointer-events-none relative flex min-w-0 justify-center px-2 md:absolute md:inset-x-0">
-              <div className="pointer-events-auto min-w-0 max-w-[34rem]">
-                <InlineTitleEditor title={title} onSubmit={(next) => renameSlide(slideId, next)} />
-              </div>
-            </div>
-
-            <div className="flex flex-1 items-center justify-end gap-1 md:ml-auto md:flex-none">
-              {view === 'slides' && (
-                <button
-                  type="button"
-                  aria-label={t.slide.copyLink}
-                  title={t.slide.copyLink}
-                  className={cn(
-                    buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
-                    'hidden md:inline-flex',
+              <div className="pointer-events-none relative flex min-w-0 justify-center px-2 md:absolute md:inset-x-0">
+                <div className="pointer-events-auto flex min-w-0 max-w-[34rem] flex-col items-center gap-1">
+                  <InlineTitleEditor
+                    title={title}
+                    onSubmit={(next) => renameSlide(slideId, next)}
+                  />
+                  {import.meta.env.DEV && (
+                    <CanvasFormatPicker
+                      value={slide.meta?.format ?? 'slide'}
+                      disabled={!slide}
+                      onChange={async (next) => {
+                        try {
+                          await setSlideFormat(slideId, next);
+                        } catch {
+                          toast.error(t.slide.canvasFormatChangeFailed);
+                        }
+                      }}
+                    />
                   )}
-                  onClick={copyLink}
-                >
-                  <span className="relative grid size-4 place-items-center">
-                    <Link2
-                      className={cn(
-                        'col-start-1 row-start-1 size-4 transition-opacity duration-200',
-                        linkCopied ? 'opacity-0' : 'opacity-100',
-                      )}
-                    />
-                    <Check
-                      className={cn(
-                        'col-start-1 row-start-1 size-4 transition-opacity duration-200',
-                        linkCopied ? 'opacity-100' : 'opacity-0',
-                      )}
-                    />
-                  </span>
-                </button>
-              )}
-              {view === 'slides' && allowHtmlDownload && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
+                </div>
+              </div>
+
+              <div className="flex flex-1 items-center justify-end gap-1 md:ml-auto md:flex-none">
+                {view === 'slides' && (
+                  <button
                     type="button"
-                    disabled={exporting}
-                    aria-label={t.slide.download}
-                    title={t.slide.download}
+                    aria-label={t.slide.copyLink}
+                    title={t.slide.copyLink}
                     className={cn(
                       buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
                       'hidden md:inline-flex',
                     )}
+                    onClick={copyLink}
                   >
-                    {exporting ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Download className="size-4" />
-                    )}
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-[200px]">
-                    {exportMenuItems}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-              {view === 'slides' && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    type="button"
-                    disabled={exporting}
-                    aria-label={t.slide.moreActions}
-                    title={t.slide.moreActions}
-                    className={cn(
-                      buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
-                      'inline-flex md:hidden',
-                    )}
-                  >
-                    {exporting ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <MoreHorizontal className="size-4" />
-                    )}
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-[200px]">
-                    <DropdownMenuItem onClick={copyLink}>
-                      <Link2 />
-                      {t.slide.copyLink}
-                    </DropdownMenuItem>
-                    {allowHtmlDownload && <DropdownMenuSeparator />}
-                    {allowHtmlDownload && exportMenuItems}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-              {view === 'slides' && (
-                <DesignToggleButton active={designOpen} onToggle={() => setDesignOpen((v) => !v)} />
-              )}
-              {view === 'slides' && <InspectToggleButton />}
-              <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-hairline md:block" />
-              {view === 'slides' && (
-                <div className="inline-flex items-stretch">
-                  <Button
-                    size="sm"
-                    variant="brand"
-                    onClick={() => setPlayMode(isMobile ? 'window' : 'fullscreen')}
-                    className="px-2.5 md:rounded-r-none md:px-3"
-                  >
-                    <Play className="size-3.5 fill-current" />
-                    <span className="hidden md:inline">{t.slide.present}</span>
-                    <kbd className="ml-1 hidden rounded-[3px] bg-brand-foreground/15 px-1 font-mono text-[9.5px] tracking-[0.04em] md:inline">
-                      F
-                    </kbd>
-                  </Button>
+                    <span className="relative grid size-4 place-items-center">
+                      <Link2
+                        className={cn(
+                          'col-start-1 row-start-1 size-4 transition-opacity duration-200',
+                          linkCopied ? 'opacity-0' : 'opacity-100',
+                        )}
+                      />
+                      <Check
+                        className={cn(
+                          'col-start-1 row-start-1 size-4 transition-opacity duration-200',
+                          linkCopied ? 'opacity-100' : 'opacity-0',
+                        )}
+                      />
+                    </span>
+                  </button>
+                )}
+                {view === 'slides' && allowHtmlDownload && (
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       type="button"
-                      aria-label={t.slide.presentMenuAria}
-                      title={t.slide.presentMenuAria}
+                      disabled={exporting}
+                      aria-label={t.slide.download}
+                      title={t.slide.download}
                       className={cn(
-                        buttonVariants({ variant: 'brand', size: 'sm' }),
-                        'hidden rounded-l-none px-1.5 shadow-[inset_1px_0_0_oklch(0_0_0/0.12),inset_0_1px_0_oklch(1_0_0/0.18),0_1px_0_oklch(0_0_0/0.16)] md:inline-flex',
+                        buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
+                        'hidden md:inline-flex',
                       )}
                     >
-                      <ChevronDown className="size-3.5" />
+                      {exporting ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Download className="size-4" />
+                      )}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="min-w-[200px]">
-                      <DropdownMenuItem onClick={() => setPlayMode('window')}>
-                        <Play />
-                        {t.slide.presentInWindow}
-                        <DropdownMenuShortcut>↵</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setPlayMode('fullscreen')}>
-                        <Maximize />
-                        {t.slide.presentFullscreen}
-                        <DropdownMenuShortcut>F</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          if (slideId) openPresenterWindow(slideId);
-                          setPlayMode('window');
-                        }}
-                      >
-                        <MonitorSpeaker />
-                        {t.slide.presentPresenter}
-                        <DropdownMenuShortcut>P</DropdownMenuShortcut>
-                      </DropdownMenuItem>
+                      {exportMenuItems}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </div>
-              )}
-            </div>
-          </header>
-
-          {view === 'assets' ? (
-            <div className="min-h-0 flex-1">
-              <AssetView slideId={slideId} />
-            </div>
-          ) : (
-            <DesignProvider slideId={slideId}>
-              <div className="relative flex min-h-0 flex-1 flex-col">
-                <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-                  <ResizableRail
-                    pages={pages}
-                    design={slide.design}
-                    current={index}
-                    onSelect={goTo}
-                    onReorder={import.meta.env.DEV ? reorderPage : undefined}
-                    actions={thumbnailActions}
-                    moduleTransition={slide.transition}
-                    onOverview={() => setOverviewOpen(true)}
+                )}
+                {view === 'slides' && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      type="button"
+                      disabled={exporting}
+                      aria-label={t.slide.moreActions}
+                      title={t.slide.moreActions}
+                      className={cn(
+                        buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
+                        'inline-flex md:hidden',
+                      )}
+                    >
+                      {exporting ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <MoreHorizontal className="size-4" />
+                      )}
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="min-w-[200px]">
+                      <DropdownMenuItem onClick={copyLink}>
+                        <Link2 />
+                        {t.slide.copyLink}
+                      </DropdownMenuItem>
+                      {allowHtmlDownload && <DropdownMenuSeparator />}
+                      {allowHtmlDownload && exportMenuItems}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+                {view === 'slides' && (
+                  <DesignToggleButton
+                    active={designOpen}
+                    onToggle={() => setDesignOpen((v) => !v)}
                   />
-                  <main
-                    ref={slideViewportRef}
-                    data-inspector-root
-                    data-slide-id={slideId}
-                    className="relative min-h-0 min-w-0 flex-1 bg-canvas p-2 md:p-10"
-                  >
-                    <SlideViewportNavigation
-                      targetRef={slideViewportRef}
-                      onPrev={() => goTo(index - 1)}
-                      onNext={() => goTo(index + 1)}
-                      canPrev={index > 0}
-                      canNext={index < pageCount - 1}
-                    />
-                    <SlideCanvas design={slide.design}>
-                      <SlideTransitionLayer
-                        pages={pages}
-                        index={index}
-                        total={pageCount}
-                        moduleTransition={slide.transition}
-                        disabled={prefersReducedMotion}
-                      />
-                    </SlideCanvas>
-                    <InspectOverlay />
-                    <SaveBar />
-                    {import.meta.env.DEV && <CommentWidget />}
-                  </main>
-                  {/* Mobile-only horizontal rail. Sits below the canvas and
-                    pads its bottom for the iOS home indicator / Safari URL bar. */}
-                  <div
-                    className="shrink-0 border-t border-hairline md:hidden"
-                    style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-                  >
-                    <ThumbnailRail
+                )}
+                {view === 'slides' && <InspectToggleButton />}
+                <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-hairline md:block" />
+                {view === 'slides' && (
+                  <div className="inline-flex items-stretch">
+                    <Button
+                      size="sm"
+                      variant="brand"
+                      onClick={() => setPlayMode(isMobile ? 'window' : 'fullscreen')}
+                      className="px-2.5 md:rounded-r-none md:px-3"
+                    >
+                      <Play className="size-3.5 fill-current" />
+                      <span className="hidden md:inline">{t.slide.present}</span>
+                      <kbd className="ml-1 hidden rounded-[3px] bg-brand-foreground/15 px-1 font-mono text-[9.5px] tracking-[0.04em] md:inline">
+                        F
+                      </kbd>
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        type="button"
+                        aria-label={t.slide.presentMenuAria}
+                        title={t.slide.presentMenuAria}
+                        className={cn(
+                          buttonVariants({ variant: 'brand', size: 'sm' }),
+                          'hidden rounded-l-none px-1.5 shadow-[inset_1px_0_0_oklch(0_0_0/0.12),inset_0_1px_0_oklch(1_0_0/0.18),0_1px_0_oklch(0_0_0/0.16)] md:inline-flex',
+                        )}
+                      >
+                        <ChevronDown className="size-3.5" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="min-w-[200px]">
+                        <DropdownMenuItem onClick={() => setPlayMode('window')}>
+                          <Play />
+                          {t.slide.presentInWindow}
+                          <DropdownMenuShortcut>↵</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setPlayMode('fullscreen')}>
+                          <Maximize />
+                          {t.slide.presentFullscreen}
+                          <DropdownMenuShortcut>F</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            if (slideId) openPresenterWindow(slideId);
+                            setPlayMode('window');
+                          }}
+                        >
+                          <MonitorSpeaker />
+                          {t.slide.presentPresenter}
+                          <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+              </div>
+            </header>
+
+            {view === 'assets' ? (
+              <div className="min-h-0 flex-1">
+                <AssetView slideId={slideId} />
+              </div>
+            ) : (
+              <DesignProvider slideId={slideId}>
+                <div className="relative flex min-h-0 flex-1 flex-col">
+                  <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+                    <ResizableRail
                       pages={pages}
                       design={slide.design}
                       current={index}
                       onSelect={goTo}
-                      orientation="horizontal"
+                      onReorder={import.meta.env.DEV ? reorderPage : undefined}
                       actions={thumbnailActions}
+                      moduleTransition={slide.transition}
+                      onOverview={() => setOverviewOpen(true)}
                     />
+                    <main
+                      ref={slideViewportRef}
+                      data-inspector-root
+                      data-slide-id={slideId}
+                      className="relative min-h-0 min-w-0 flex-1 bg-canvas p-2 md:p-10"
+                    >
+                      <SlideViewportNavigation
+                        targetRef={slideViewportRef}
+                        onPrev={() => goTo(index - 1)}
+                        onNext={() => goTo(index + 1)}
+                        canPrev={index > 0}
+                        canNext={index < pageCount - 1}
+                      />
+                      <SlideCanvas design={slide.design}>
+                        <SlideTransitionLayer
+                          pages={pages}
+                          index={index}
+                          total={pageCount}
+                          moduleTransition={slide.transition}
+                          disabled={prefersReducedMotion}
+                        />
+                      </SlideCanvas>
+                      <InspectOverlay />
+                      <SaveBar />
+                      {import.meta.env.DEV && <CommentWidget />}
+                    </main>
+                    {/* Mobile-only horizontal rail. Sits below the canvas and
+                    pads its bottom for the iOS home indicator / Safari URL bar. */}
+                    <div
+                      className="shrink-0 border-t border-hairline md:hidden"
+                      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+                    >
+                      <ThumbnailRail
+                        pages={pages}
+                        design={slide.design}
+                        current={index}
+                        onSelect={goTo}
+                        orientation="horizontal"
+                        actions={thumbnailActions}
+                      />
+                    </div>
+                    <InspectorPanel />
+                    <DesignPanel open={designOpen} onClose={() => setDesignOpen(false)} />
                   </div>
-                  <InspectorPanel />
-                  <DesignPanel open={designOpen} onClose={() => setDesignOpen(false)} />
-                </div>
-                {import.meta.env.DEV && (
-                  <NotesDrawer
-                    slideId={slideId}
-                    index={index}
-                    total={pageCount}
-                    initial={slide.notes?.[index]}
+                  {import.meta.env.DEV && (
+                    <NotesDrawer
+                      slideId={slideId}
+                      index={index}
+                      total={pageCount}
+                      initial={slide.notes?.[index]}
+                    />
+                  )}
+                  <OverviewGrid
+                    pages={pages}
+                    design={slide.design}
+                    open={overviewOpen}
+                    current={index}
+                    onClose={() => setOverviewOpen(false)}
+                    onSelect={goTo}
+                    variant="editor"
+                    moduleTransition={slide.transition}
                   />
-                )}
-                <OverviewGrid
-                  pages={pages}
-                  design={slide.design}
-                  open={overviewOpen}
-                  current={index}
-                  onClose={() => setOverviewOpen(false)}
-                  onSelect={goTo}
-                  variant="editor"
-                  moduleTransition={slide.transition}
-                />
-              </div>
-            </DesignProvider>
-          )}
-        </div>
-      </InspectorProvider>
-    </HistoryProvider>
+                </div>
+              </DesignProvider>
+            )}
+          </div>
+        </InspectorProvider>
+      </HistoryProvider>
+    </CanvasSizeProvider>
   );
 }
 
@@ -1037,6 +1072,39 @@ function SlideViewportNavigation({
   });
 
   return null;
+}
+
+function CanvasFormatPicker({
+  value,
+  disabled,
+  onChange,
+}: {
+  value: SlideCanvasFormat;
+  disabled?: boolean;
+  onChange: (format: SlideCanvasFormat) => void | Promise<void>;
+}) {
+  const t = useLocale();
+  return (
+    <Select
+      value={value}
+      disabled={disabled}
+      onValueChange={(next) => {
+        if (next === 'slide' || next === '4x5') void onChange(next);
+      }}
+    >
+      <SelectTrigger
+        size="sm"
+        aria-label={t.slide.canvasFormatAria}
+        className="h-7 w-[148px] text-[11px] font-medium"
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="center">
+        <SelectItem value="slide">{t.slide.canvasFormatSlide}</SelectItem>
+        <SelectItem value="4x5">{t.slide.canvasFormat4x5}</SelectItem>
+      </SelectContent>
+    </Select>
+  );
 }
 
 function InlineTitleEditor({

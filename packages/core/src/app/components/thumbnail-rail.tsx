@@ -38,10 +38,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format, useLocale } from '@/lib/use-locale';
 import { cn } from '@/lib/utils';
+import { useCanvasSize } from '../lib/canvas-context';
 import type { DesignSystem } from '../lib/design';
 import { SlidePageProvider } from '../lib/page-context';
 import type { Page } from '../lib/sdk';
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../lib/sdk';
 import type { SlideTransition } from '../lib/transition';
 import { SlideCanvas } from './slide-canvas';
 import {
@@ -104,6 +104,7 @@ export function ThumbnailRail({
   const focusCurrentAfterScrollRef = useRef(false);
   const [currentPosition, setCurrentPosition] = useState<ThumbnailOffscreenDirection>(null);
   const t = useLocale();
+  const { width: canvasWidth, height: canvasHeight } = useCanvasSize();
 
   const setVerticalScrollElements = useCallback(
     (viewport: HTMLElement | null, root: HTMLDivElement | null) => {
@@ -121,8 +122,8 @@ export function ThumbnailRail({
     width != null
       ? Math.max(MIN_VERTICAL_THUMB_WIDTH, width - VERTICAL_RAIL_CHROME)
       : DEFAULT_VERTICAL_THUMB_WIDTH;
-  const scale = thumbWidth / CANVAS_WIDTH;
-  const height = CANVAS_HEIGHT * scale;
+  const scale = thumbWidth / canvasWidth;
+  const height = canvasHeight * scale;
   const rowHeight = height + VERTICAL_THUMB_PADDING_Y + VERTICAL_THUMB_GAP;
 
   const scrollToCurrent = useCallback(
@@ -243,8 +244,8 @@ export function ThumbnailRail({
   );
 
   if (orientation === 'horizontal') {
-    const scale = HORIZONTAL_THUMB_HEIGHT / CANVAS_HEIGHT;
-    const horizontalWidth = CANVAS_WIDTH * scale;
+    const scale = HORIZONTAL_THUMB_HEIGHT / canvasHeight;
+    const horizontalWidth = canvasWidth * scale;
     return (
       <div className="bg-sidebar">
         <div className="overflow-x-auto overflow-y-hidden">

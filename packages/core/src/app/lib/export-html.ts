@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { designToCssVars } from './design';
 import { SlidePageProvider } from './page-context';
-import type { SlideModule } from './sdk';
+import { canvasSizeCss, canvasSizeForModule, type SlideModule } from './sdk';
 
 type AssetEntry = { name: string; bytes: Uint8Array };
 
@@ -13,8 +13,9 @@ export async function exportSlideAsHtml(slide: SlideModule, slideId: string): Pr
   const pages = slide.default ?? [];
   if (pages.length === 0) return;
   const title = slide.meta?.title ?? slideId;
+  const canvas = canvasSizeForModule(slide);
 
-  const pagesHtml = await renderPagesToHtml(pages);
+  const pagesHtml = await renderPagesToHtml(pages, canvas);
   const bundledCss = collectCss();
   const externalLinks = collectExternalStylesheetLinks();
 
@@ -47,6 +48,7 @@ export async function exportSlideAsHtml(slide: SlideModule, slideId: string): Pr
     bundledCss: rewrittenCss,
     externalLinks,
     design: slide.design,
+    canvas,
   });
 
   const htmlBytes = new TextEncoder().encode(html);
@@ -68,15 +70,19 @@ export async function exportSlideAsHtml(slide: SlideModule, slideId: string): Pr
   downloadBlob(new Blob([zipped as BlobPart], { type: 'application/zip' }), `${slideId}.zip`);
 }
 
-async function renderPagesToHtml(pages: NonNullable<SlideModule['default']>): Promise<string[]> {
+async function renderPagesToHtml(
+  pages: NonNullable<SlideModule['default']>,
+  canvas: ReturnType<typeof canvasSizeForModule>,
+): Promise<string[]> {
+  const frameSize = canvasSizeCss(canvas);
   const container = document.createElement('div');
   container.setAttribute('aria-hidden', 'true');
   Object.assign(container.style, {
     position: 'fixed',
     left: '-99999px',
     top: '0',
-    width: '1920px',
-    height: '1080px',
+    width: frameSize.width,
+    height: frameSize.height,
     pointerEvents: 'none',
   });
   document.body.appendChild(container);
@@ -87,8 +93,8 @@ async function renderPagesToHtml(pages: NonNullable<SlideModule['default']>): Pr
       const Page = pages[i];
       if (!Page) continue;
       const host = document.createElement('div');
-      host.style.width = '1920px';
-      host.style.height = '1080px';
+      host.style.width = frameSize.width;
+      host.style.height = frameSize.height;
       container.appendChild(host);
       const root = createRoot(host);
       root.render(
@@ -237,6 +243,7 @@ function buildHtml(opts: {
   bundledCss: string;
   externalLinks: string;
   design: SlideModule['design'];
+  canvas: ReturnType<typeof canvasSizeForModule>;
 }): string {
   const pagesMarkup = opts.pagesHtml
     .map(
@@ -250,6 +257,9 @@ function buildHtml(opts: {
         .join(' ')
     : '';
 
+  const w = opts.canvas.width;
+  const h = opts.canvas.height;
+
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -260,7 +270,7 @@ ${opts.externalLinks}
 <style>
 html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: system-ui, sans-serif; }
 .os-stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
-.os-frame { width: 1920px; height: 1080px; flex-shrink: 0; background: #fff; color: #000; transform-origin: center center; overflow: hidden; position: relative; }
+.os-frame { width: ${w}px; height: ${h}px; flex-shrink: 0; background: #fff; color: #000; transform-origin: center center; overflow: hidden; position: relative; }
 .os-page { position: absolute; inset: 0; }
 .os-page[hidden] { display: none !important; }
 .os-counter { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); color: #fff; background: rgba(0,0,0,.5); padding: 2px 10px; border-radius: 999px; font-size: 12px; z-index: 10; font-variant-numeric: tabular-nums; }
@@ -277,7 +287,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
   var frame = document.getElementById('os-frame');
   var cur = document.getElementById('os-cur');
   function fit() {
-    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    var s = Math.min(window.innerWidth / ${w}, window.innerHeight / ${h});
     frame.style.transform = 'scale(' + s + ')';
   }
   function go(i) {

@@ -11,7 +11,9 @@ import {
   resolveSlideEntry,
   rmSlideDir,
   SLIDE_ID_RE,
+  updateMetaFormatInSource,
   updateMetaTitleInSource,
+  validateMetaCanvasFormat,
   validateSlideName,
 } from '../../editing/slide-ops.ts';
 import { readManifest, writeManifest } from '../../files/folders.ts';
@@ -22,11 +24,11 @@ import { type ApiContext, json, readBody } from './context.ts';
 // DELETE /__slides/:id/pages/:i           remove page
 // POST   /__slides/:id/pages/:i/duplicate duplicate page
 // POST   /__slides/:id/duplicate          duplicate slide directory { newId? }
-// PATCH  /__slides/:id                    rename slide (writes meta.title)
+// PATCH  /__slides/:id                    update meta.title and/or meta.format
 // DELETE /__slides/:id                    delete slide directory + folder assignment
 
 type DuplicateSlideBody = { newId?: unknown };
-type SlidePatchBody = { name?: unknown };
+type SlidePatchBody = { name?: unknown; format?: unknown };
 
 export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): void {
   server.middlewares.use('/__slides', async (req, res, next) => {
@@ -169,8 +171,16 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
           return json(res, requestCheck.status, { error: requestCheck.error });
         }
         const body = (await readBody(req)) as SlidePatchBody;
-        const name = validateSlideName(body.name);
-        if (!name) return json(res, 400, { error: 'invalid name' });
+        const hasName = body.name !== undefined;
+        const hasFormat = body.format !== undefined;
+        if (!hasName && !hasFormat) {
+          return json(res, 400, { error: 'expected name and/or format' });
+        }
+
+        const name = hasName ? validateSlideName(body.name) : undefined;
+        if (hasName && !name) return json(res, 400, { error: 'invalid name' });
+        const format = hasFormat ? validateMetaCanvasFormat(body.format) : undefined;
+        if (hasFormat && !format) return json(res, 400, { error: 'invalid format' });
 
         const entry = resolveSlideEntry(ctx.slidesRoot, slideId);
         if (!entry) return json(res, 400, { error: 'invalid slideId' });
@@ -182,11 +192,24 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
           return json(res, 404, { error: 'slide not found' });
         }
 
-        const updated = updateMetaTitleInSource(source, name);
-        if (updated === null) {
-          return json(res, 422, {
-            error: 'could not locate a safe place to write meta.title in index.tsx',
-          });
+        let updated = source;
+        if (name) {
+          const next = updateMetaTitleInSource(updated, name);
+          if (next === null) {
+            return json(res, 422, {
+              error: 'could not locate a safe place to write meta.title in index.tsx',
+            });
+          }
+          updated = next;
+        }
+        if (format) {
+          const next = updateMetaFormatInSource(updated, format);
+          if (next === null) {
+            return json(res, 422, {
+              error: 'could not locate a safe place to write meta.format in index.tsx',
+            });
+          }
+          updated = next;
         }
         if (updated !== source) {
           await fs.writeFile(entry, updated, 'utf8');
@@ -195,7 +218,7 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
         // React state holding `slide.meta` in the editor won't re-fetch on
         // its own — tell every client to refresh so the new title shows up.
         server.ws.send({ type: 'full-reload' });
-        return json(res, 200, { ok: true, slideId, name });
+        return json(res, 200, { ok: true, slideId, name, format });
       }
 
       if (method === 'DELETE') {

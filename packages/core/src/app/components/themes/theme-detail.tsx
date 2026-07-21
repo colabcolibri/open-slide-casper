@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { format, useLocale } from '@/lib/use-locale';
 import { cn } from '@/lib/utils';
+import { CanvasSizeProvider } from '../../lib/canvas-context';
 import { SlidePageProvider } from '../../lib/page-context';
-import type { SlideModule } from '../../lib/sdk';
+import { resolveCanvasSize, type SlideModule } from '../../lib/sdk';
 import { loadSlide, slidesByTheme } from '../../lib/slides';
 import { loadThemeDemo, type ThemeDemoModule, themes } from '../../lib/themes';
 import { SlideCanvas } from '../slide-canvas';
@@ -223,17 +224,23 @@ function ThemeSlideCard({ id }: { id: string }) {
 
   const FirstPage = slide?.default[0];
   const displayTitle = slide?.meta?.title ?? id;
+  const previewCanvas = resolveCanvasSize(slide?.meta?.format);
 
   return (
     <Link to={`/s/${id}`} className="group block focus-visible:outline-none">
-      <div className="relative aspect-video overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 motion-safe:transition-[box-shadow,--tw-ring-color] motion-safe:duration-200">
+      <div
+        className="relative overflow-hidden rounded-[6px] border border-hairline bg-card shadow-edge ring-1 ring-foreground/[0.04] group-hover:shadow-floating group-hover:ring-foreground/20 motion-safe:transition-[box-shadow,--tw-ring-color] motion-safe:duration-200"
+        style={{ aspectRatio: `${previewCanvas.width} / ${previewCanvas.height}` }}
+      >
         {FirstPage ? (
           <div className="h-full w-full motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]">
-            <SlideCanvas flat freezeMotion design={slide?.design}>
-              <SlidePageProvider index={0} total={slide?.default.length ?? 1}>
-                <FirstPage />
-              </SlidePageProvider>
-            </SlideCanvas>
+            <CanvasSizeProvider format={slide?.meta?.format}>
+              <SlideCanvas flat freezeMotion design={slide?.design}>
+                <SlidePageProvider index={0} total={slide?.default.length ?? 1}>
+                  <FirstPage />
+                </SlidePageProvider>
+              </SlideCanvas>
+            </CanvasSizeProvider>
           </div>
         ) : (
           <div className="grid h-full w-full place-items-center text-[10px] tracking-[0.08em] uppercase text-muted-foreground/60">

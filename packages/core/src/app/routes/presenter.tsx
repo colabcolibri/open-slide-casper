@@ -18,8 +18,9 @@ import {
 } from '../components/present/use-presenter-channel';
 import { SlideCanvas } from '../components/slide-canvas';
 import { isDeckWarmed, markDeckWarmed, SlidePreloadLayer } from '../components/slide-preload-layer';
+import { CanvasSizeProvider } from '../lib/canvas-context';
 import { SlidePageProvider } from '../lib/page-context';
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../lib/sdk';
+import { resolveCanvasSize } from '../lib/sdk';
 import { type StepController, StepHost } from '../lib/step-context';
 import { useSlideModule } from '../lib/use-slide-module';
 
@@ -144,107 +145,114 @@ export function Presenter() {
   const CurrentPage = pages[index];
   const NextPage = hasNext ? pages[nextPageIndex] : null;
 
+  const canvasFormat = slide.meta?.format;
+  const previewCanvas = resolveCanvasSize(canvasFormat);
+
   // Hold the loader while a hidden layer warms the whole deck's images and
   // fonts, so the previews first paint with every asset already in cache.
   if (!isDeckWarmed(slideId)) {
     return (
-      <div className="dark grid h-dvh place-items-center bg-background text-muted-foreground">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative h-px w-56 overflow-hidden bg-border">
-            <span
-              aria-hidden
-              className="line-loader-bar absolute inset-y-[-0.5px] left-0 w-1/4 bg-foreground"
-            />
+      <CanvasSizeProvider format={canvasFormat}>
+        <div className="dark grid h-dvh place-items-center bg-background text-muted-foreground">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative h-px w-56 overflow-hidden bg-border">
+              <span
+                aria-hidden
+                className="line-loader-bar absolute inset-y-[-0.5px] left-0 w-1/4 bg-foreground"
+              />
+            </div>
+            <div className="text-[11.5px]">{t.presenter.loadingAssets}</div>
           </div>
-          <div className="text-[11.5px]">{t.presenter.loadingAssets}</div>
+          <SlidePreloadLayer
+            pages={pages}
+            index={index}
+            design={slide.design}
+            includeCurrent
+            onDone={handleAssetsWarmed}
+          />
         </div>
-        <SlidePreloadLayer
-          pages={pages}
-          index={index}
-          design={slide.design}
-          includeCurrent
-          onDone={handleAssetsWarmed}
-        />
-      </div>
+      </CanvasSizeProvider>
     );
   }
 
   return (
-    <div className="dark flex h-dvh w-screen flex-col overflow-hidden bg-background text-foreground">
-      <PresenterTopBar
-        index={index}
-        total={total}
-        startedAt={startedAt}
-        slideTitle={slide.meta?.title ?? slideId}
-        connected={hasProjection}
-      />
+    <CanvasSizeProvider format={canvasFormat}>
+      <div className="dark flex h-dvh w-screen flex-col overflow-hidden bg-background text-foreground">
+        <PresenterTopBar
+          index={index}
+          total={total}
+          startedAt={startedAt}
+          slideTitle={slide.meta?.title ?? slideId}
+          connected={hasProjection}
+        />
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 px-6 pb-4 lg:grid-cols-[2fr_1fr]">
-        {/* Now-showing */}
-        <section className="flex min-h-0 flex-col gap-3">
-          <SectionLabel>{t.presenter.nowShowing}</SectionLabel>
-          <div className="relative min-h-0 flex-1 overflow-hidden rounded-[8px] bg-black ring-1 ring-border">
-            <SlideCanvas flat design={slide.design}>
-              <SlidePageProvider index={index} total={total}>
-                <PreviewStepHost revealed={stepIndex}>
-                  <CurrentPage />
-                </PreviewStepHost>
-              </SlidePageProvider>
-            </SlideCanvas>
-            {blackout && (
-              <div
-                aria-hidden
-                className={cn(
-                  'pointer-events-none absolute inset-0 grid place-items-center text-[11px] tracking-[0.08em] uppercase',
-                  blackout === 'black' ? 'bg-black text-white/35' : 'bg-white text-black/35',
-                )}
-              >
-                {blackout === 'black' ? t.presenter.blackScreen : t.presenter.whiteScreen}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Next + notes */}
-        <aside className="flex min-h-0 flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <SectionLabel>{hasNext ? t.presenter.upNext : t.presenter.lastSlide}</SectionLabel>
-            <div
-              className="relative w-full overflow-hidden rounded-[8px] bg-black ring-1 ring-border"
-              style={{ aspectRatio: `${CANVAS_WIDTH}/${CANVAS_HEIGHT}` }}
-            >
-              {NextPage ? (
-                <SlideCanvas flat freezeMotion design={slide.design}>
-                  <SlidePageProvider index={nextPageIndex} total={total}>
-                    <PreviewStepHost revealed={nextRevealed}>
-                      <NextPage />
-                    </PreviewStepHost>
-                  </SlidePageProvider>
-                </SlideCanvas>
-              ) : (
-                <div className="grid h-full place-items-center text-[11.5px] text-muted-foreground">
-                  {t.presenter.endOfDeck}
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 px-6 pb-4 lg:grid-cols-[2fr_1fr]">
+          {/* Now-showing */}
+          <section className="flex min-h-0 flex-col gap-3">
+            <SectionLabel>{t.presenter.nowShowing}</SectionLabel>
+            <div className="relative min-h-0 flex-1 overflow-hidden rounded-[8px] bg-black ring-1 ring-border">
+              <SlideCanvas flat design={slide.design}>
+                <SlidePageProvider index={index} total={total}>
+                  <PreviewStepHost revealed={stepIndex}>
+                    <CurrentPage />
+                  </PreviewStepHost>
+                </SlidePageProvider>
+              </SlideCanvas>
+              {blackout && (
+                <div
+                  aria-hidden
+                  className={cn(
+                    'pointer-events-none absolute inset-0 grid place-items-center text-[11px] tracking-[0.08em] uppercase',
+                    blackout === 'black' ? 'bg-black text-white/35' : 'bg-white text-black/35',
+                  )}
+                >
+                  {blackout === 'black' ? t.presenter.blackScreen : t.presenter.whiteScreen}
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
-          <SpeakerNotes note={note} />
+          {/* Next + notes */}
+          <aside className="flex min-h-0 flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <SectionLabel>{hasNext ? t.presenter.upNext : t.presenter.lastSlide}</SectionLabel>
+              <div
+                className="relative w-full overflow-hidden rounded-[8px] bg-black ring-1 ring-border"
+                style={{ aspectRatio: `${previewCanvas.width}/${previewCanvas.height}` }}
+              >
+                {NextPage ? (
+                  <SlideCanvas flat freezeMotion design={slide.design}>
+                    <SlidePageProvider index={nextPageIndex} total={total}>
+                      <PreviewStepHost revealed={nextRevealed}>
+                        <NextPage />
+                      </PreviewStepHost>
+                    </SlidePageProvider>
+                  </SlideCanvas>
+                ) : (
+                  <div className="grid h-full place-items-center text-[11.5px] text-muted-foreground">
+                    {t.presenter.endOfDeck}
+                  </div>
+                )}
+              </div>
+            </div>
 
-          <PresenterJumpControl total={total} current={index} onJump={goTo} />
-        </aside>
+            <SpeakerNotes note={note} />
+
+            <PresenterJumpControl total={total} current={index} onJump={goTo} />
+          </aside>
+        </div>
+
+        <PresenterBottomBar
+          index={index}
+          total={total}
+          blackout={blackout}
+          onPrev={goPrev}
+          onNext={goNext}
+          onBlackout={toggleBlack}
+          onWhiteout={toggleWhite}
+        />
       </div>
-
-      <PresenterBottomBar
-        index={index}
-        total={total}
-        blackout={blackout}
-        onPrev={goPrev}
-        onNext={goNext}
-        onBlackout={toggleBlack}
-        onWhiteout={toggleWhite}
-      />
-    </div>
+    </CanvasSizeProvider>
   );
 }
 

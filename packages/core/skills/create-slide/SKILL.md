@@ -38,6 +38,7 @@ Then ask these four in a single `AskUserQuestion` call (multi-question form):
 2. **Page count** — rough length. Offer brackets: 3–5 (short), 6–10 (standard), 11–20 (deep dive). The auto-added "Other" covers custom counts.
 3. **Text density per page** — how much copy lives on each page? Offer: minimal (one line / big number), light (heading + 2–3 bullets), standard (heading + 4–5 bullets or short paragraph), dense (multi-column / detailed). This directly drives type scale and layout.
 4. **Motion** — does the user want CSS/React animations and transitions, or a fully static deck? Offer: static (no motion), subtle (fades / entrance only), rich (keyframes, staggered reveals, looping visuals). If animated, plan around the framework primitives first — `<Steps>`/`<Step>` for staged reveals, `SlideTransition` for page changes, morph for shared-element continuity (see `slide-authoring`) — plus CSS `@keyframes` / inline `style` + `useEffect` for in-page motion; no extra libraries.
+5. **Canvas format** — `slide` (1920×1080, default) or `4x5` (1080×1350 portrait). Set `meta.format` to match; layout must use that size end-to-end (see `slide-authoring`).
 
 After those four, ask follow-ups **only if still unclear**: brand colors, required assets. Don't pad the conversation with questions already answered.
 

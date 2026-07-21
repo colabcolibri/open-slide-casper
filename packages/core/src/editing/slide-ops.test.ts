@@ -10,6 +10,7 @@ import {
   removePageFromDefaultExportInSource,
   reorderDefaultExportPagesInSource,
   reorderNotesArrayInSource,
+  updateMetaFormatInSource,
   updateMetaTitleInSource,
   validateSlideName,
 } from './slide-ops.ts';
@@ -147,6 +148,39 @@ describe('updateMetaTitleInSource', () => {
 
   it('returns null if there is no meta and no default export', () => {
     expect(updateMetaTitleInSource('// nothing here', 'x')).toBeNull();
+  });
+});
+
+describe('updateMetaFormatInSource', () => {
+  it('injects format 4x5 into existing meta', () => {
+    const source = `export const meta = { title: 't' };\nexport default [];\n`;
+    const out = updateMetaFormatInSource(source, '4x5');
+    expect(out).toContain("format: '4x5'");
+  });
+
+  it('replaces an existing format literal', () => {
+    const source = `export const meta = { title: 't', format: '4x5' };\nexport default [];\n`;
+    const out = updateMetaFormatInSource(source, '4x5');
+    expect(out).toContain("format: '4x5'");
+  });
+
+  it('removes format when switching back to slide', () => {
+    const source = `export const meta = { title: 't', format: '4x5' };\nexport default [];\n`;
+    const out = updateMetaFormatInSource(source, 'slide');
+    expect(out).not.toMatch(/\bformat\s*:/);
+    expect(out).toContain("title: 't'");
+  });
+
+  it('no-ops slide when format is already absent', () => {
+    const source = `export const meta = { title: 't' };\nexport default [];\n`;
+    const out = updateMetaFormatInSource(source, 'slide');
+    expect(out).toBe(source);
+  });
+
+  it('injects meta with format when missing', () => {
+    const source = `export default [];\n`;
+    const out = updateMetaFormatInSource(source, '4x5');
+    expect(out).toContain("export const meta: SlideMeta = { format: '4x5' };");
   });
 });
 

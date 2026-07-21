@@ -254,6 +254,71 @@ export function updateMetaTitleInSource(source: string, title: string): string |
   return source.slice(0, exportDefaultIdx) + insertion + source.slice(exportDefaultIdx);
 }
 
+export type MetaCanvasFormat = 'slide' | '4x5';
+
+export function validateMetaCanvasFormat(value: unknown): MetaCanvasFormat | null {
+  if (value === 'slide' || value === '4x5') return value;
+  return null;
+}
+
+/**
+ * Sets or clears `format` on `export const meta`. `'slide'` removes the property
+ * so the module falls back to the default widescreen canvas.
+ */
+export function updateMetaFormatInSource(source: string, format: MetaCanvasFormat): string | null {
+  const metaStart = source.search(/export\s+const\s+meta\b/);
+  if (metaStart === -1) {
+    if (format === 'slide') return source;
+    const exportDefaultIdx = source.search(/export\s+default\b/);
+    if (exportDefaultIdx === -1) return null;
+    const insertion = `export const meta: SlideMeta = { format: '4x5' };\n\n`;
+    return source.slice(0, exportDefaultIdx) + insertion + source.slice(exportDefaultIdx);
+  }
+
+  const eqIdx = source.indexOf('=', metaStart);
+  if (eqIdx === -1) return null;
+  const openBrace = source.indexOf('{', eqIdx);
+  if (openBrace === -1) return null;
+
+  let depth = 0;
+  let closeBrace = -1;
+  for (let i = openBrace; i < source.length; i++) {
+    const ch = source[i];
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) {
+        closeBrace = i;
+        break;
+      }
+    }
+  }
+  if (closeBrace === -1) return null;
+
+  const body = source.slice(openBrace + 1, closeBrace);
+  const formatRe = /(^|[\s,{])(format\s*:\s*)(['"`])((?:\\.|(?!\3).)*)\3\s*,?/;
+
+  if (format === 'slide') {
+    if (!formatRe.test(body)) return source;
+    const newBody = body.replace(formatRe, '$1').replace(/,\s*,/g, ',');
+    return source.slice(0, openBrace + 1) + newBody + source.slice(closeBrace);
+  }
+
+  const newLiteral = `'4x5'`;
+  const match = body.match(formatRe);
+  if (match) {
+    const newBody = body.replace(formatRe, `${match[1]}${match[2]}${newLiteral}`);
+    return source.slice(0, openBrace + 1) + newBody + source.slice(closeBrace);
+  }
+
+  const firstIndentMatch = body.match(/\n([ \t]+)\S/);
+  const indent = firstIndentMatch ? firstIndentMatch[1] : '  ';
+  const trimmedBody = body.replace(/^\s*\n?/, '');
+  const needsSeparator = trimmedBody.trim().length > 0;
+  const insertion = `\n${indent}format: ${newLiteral}${needsSeparator ? ',' : ''}`;
+  return source.slice(0, openBrace + 1) + insertion + body + source.slice(closeBrace);
+}
+
 type ArrayElementRange = { start: number; end: number };
 
 function findDefaultExportArray(
