@@ -1,4 +1,5 @@
 ---
+name: workflow-create-slide
 description: Draft a new slide deck — theme, scoping questions, then slides/<id>/index.tsx. Cursor slash command /create-slide.
 ---
 

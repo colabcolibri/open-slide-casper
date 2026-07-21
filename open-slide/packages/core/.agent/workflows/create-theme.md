@@ -1,4 +1,5 @@
 ---
+name: workflow-create-theme
 description: Create or extract a reusable theme under themes/ (<id>.md + <id>.demo.tsx). Cursor slash command /create-theme.
 ---
 

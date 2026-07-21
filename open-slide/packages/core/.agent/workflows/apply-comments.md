@@ -1,4 +1,5 @@
 ---
+name: workflow-apply-comments
 description: Apply @slide-comment markers from the inspector in slides/<id>/index.tsx. Cursor slash command /apply-comments.
 ---
 

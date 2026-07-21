@@ -86,6 +86,9 @@ Two steps on every sync (consumer **`open-slide sync:kit`** or monorepo **`pnpm 
 | **`.agents/skills/workflow-*/SKILL.md`** | **Symlink** → **`.agent/workflows/*.md`** |
 | **`.claude/commands/*.md`**, **`.claude/agents/*.md`** | Same targets as **`.cursor/`** |
 | **`.claude/skills/<name>/`** | **Symlink** → **`.agent/skills/<name>/`** (monorepo script) or → **`.agents/skills/<name>/`** (CLI; that hop also points at **`.agent/`**) |
+| **`.codex/agents/*.toml`** | **Generated** from **`.agent/agents/*.md`** (Codex subagents) |
+| **`.codex/README.md`** | **Symlink** → **`.agent/SLIDE-KIT.md`** |
+| **`AGENTS.md`** (project root) | **Symlink** → **`.agent/rules/AGENTS.md`** when missing or already a kit symlink |
 
 **Not** a single symlink: **`.cursor/`**, **`.agents/`**, and **`.claude/`** are normal folders whose **entries** are symlinks into **`.agent/`**. There is no **`.cursor` → .agent`** at the root.
 
@@ -135,7 +138,7 @@ In a **consumer slide workspace** (after `open-slide sync:kit`), paths are relat
 | Skill **`slide-routing`** | `.agents/skills/slide-routing/SKILL.md` | `.agent/skills/slide-routing/SKILL.md` |
 | Agent **`slide-author`** | `.cursor/agents/slide-author.md` | `.agent/agents/slide-author.md` |
 | Agent **`theme-author`** | `.cursor/agents/theme-author.md` | `.agent/agents/theme-author.md` |
-| Codex workflow skill | `.agents/skills/workflow-<name>/SKILL.md` | same as matching workflow `.md` |
+| **Codex** | `$workflow-create-slide`, … | `.agents/skills/workflow-*/SKILL.md` → **`.agent/workflows/`**; **`.codex/agents/*.toml`** from **`.agent/agents/`**; optional **`AGENTS.md`** → **`.agent/rules/AGENTS.md`** |
 
 **Path shorthand:** inside a skill hub, `references/foo.md` means that skill’s folder. Sibling skills: `slide-authoring/SKILL.md` under `.agent/skills/`. In workflows and agents, prefer full **`.agent/skills/<name>/…`** (canonical) or **`.agents/skills/<name>/…`** (consumer).
 

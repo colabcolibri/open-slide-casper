@@ -316,7 +316,7 @@ async function linkDirectory(targetDir: string, linkPath: string): Promise<void>
   }
 }
 
-async function linkWorkflowFile(targetFile: string, linkPath: string): Promise<void> {
+export async function linkWorkflowFile(targetFile: string, linkPath: string): Promise<void> {
   await mkdir(path.dirname(linkPath), { recursive: true });
   const relativeTarget = path.relative(path.dirname(linkPath), targetFile);
   if (existsSync(linkPath)) {
@@ -358,6 +358,8 @@ export async function syncKit(
   await syncSkills(dirs.skillsDir, opts);
   await syncWorkflowAdapters(dirs.workflowsDir, opts);
   await syncAgentAdapters(dirs.agentsDir, opts);
+  const { syncCodexAdapters } = await import('./codex-adapters.ts');
+  await syncCodexAdapters(dirs.agentsDir, opts);
   if (!opts.dryRun) {
     process.stdout.write(
       chalk.dim('IDE adapters symlink into workspace .agent/ (not the npm package path).\n'),

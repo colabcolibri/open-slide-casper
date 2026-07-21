@@ -101,8 +101,75 @@ for agent in "${AGENT_ROOT}/agents/"*.md; do
   link_path "${agent}" ".claude/agents/${name}"
 done
 
+parse_frontmatter_field() {
+  local file="$1"
+  local field="$2"
+  awk -v field="$field" '
+    BEGIN { n = 0 }
+    /^---$/ { n++; next }
+    n == 1 && $0 ~ "^" field "[ \t]*:" {
+      line = $0
+      sub("^" field "[ \t]*:[ \t]*", "", line)
+      if (line ~ /^["'\''"]/) { gsub(/^["'\''"]|["'\''"]$/, "", line) }
+      print line
+      exit
+    }
+  ' "${file}"
+}
+
+toml_escape() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  printf '%s' "${s}"
+}
+
+write_codex_agent_toml() {
+  local agent_file="$1"
+  local out_file="$2"
+  local name description
+  name="$(parse_frontmatter_field "${agent_file}" "name")"
+  description="$(parse_frontmatter_field "${agent_file}" "description")"
+  [[ -n "${name}" ]] || name="$(basename "${agent_file}" .md)"
+  [[ -n "${description}" ]] || description="open-slide agent ${name}"
+
+  if [[ "${DRY_RUN}" -eq 1 ]]; then
+    echo "[dry-run] write ${out_file} (from ${agent_file})"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "${out_file}")"
+  cat > "${out_file}" <<EOF
+# open-slide-kit-generated
+name = "$(toml_escape "${name}")"
+description = "$(toml_escape "${description}")"
+developer_instructions = """
+Follow the slide kit agent at .agent/agents/${name}.md.
+Read that file fully before acting. Skills in its frontmatter apply.
+Protocol: .agent/SLIDE-KIT.md
+"""
+EOF
+}
+
+mkdir -p .codex/agents
+for agent in "${AGENT_ROOT}/agents/"*.md; do
+  [[ -f "${agent}" ]] || continue
+  base="$(basename "${agent}" .md)"
+  write_codex_agent_toml "${agent}" ".codex/agents/${base}.toml"
+done
+
+if [[ -f "${AGENT_ROOT}/SLIDE-KIT.md" ]]; then
+  link_path "${AGENT_ROOT}/SLIDE-KIT.md" ".codex/README.md"
+fi
+
+if [[ -f "${AGENT_ROOT}/rules/AGENTS.md" ]]; then
+  if [[ ! -e AGENTS.md ]] || [[ -L AGENTS.md ]]; then
+    link_path "${AGENT_ROOT}/rules/AGENTS.md" "AGENTS.md"
+  fi
+fi
+
 if [[ "${DRY_RUN}" -eq 1 ]]; then
   echo "Dry run complete."
 else
-  echo "Done. Copied .agent/; adapters symlink → .agent/ (skills, workflows, agents)."
+  echo "Done. Copied .agent/; adapters + .codex/ symlink → .agent/; Codex: \$workflow-* skills."
 fi
