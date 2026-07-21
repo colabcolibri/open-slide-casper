@@ -4,7 +4,7 @@ import * as readline from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
 import { Command, Option } from 'commander';
-import { detectSkillsDrift, syncSkills } from './sync.ts';
+import { detectSkillsDrift, detectWorkflowDrift, syncKit } from './sync.ts';
 
 async function readVersion(): Promise<string> {
   const here = path.dirname(fileURLToPath(import.meta.url));
@@ -32,16 +32,21 @@ interface DevFlags extends ServerFlags {
   skillsCheck?: boolean;
 }
 
-async function runSkillsDriftCheck(skillsDir: string): Promise<void> {
+async function runSkillsDriftCheck(skillsDir: string, workflowsDir: string): Promise<void> {
   if (process.env.OPEN_SLIDE_SKIP_SKILLS_CHECK === '1') return;
 
-  let drift: Awaited<ReturnType<typeof detectSkillsDrift>>;
+  let skillDrift: Awaited<ReturnType<typeof detectSkillsDrift>>;
+  let workflowDrift: Awaited<ReturnType<typeof detectWorkflowDrift>>;
   try {
-    drift = await detectSkillsDrift(skillsDir);
+    skillDrift = await detectSkillsDrift(skillsDir);
+    workflowDrift = await detectWorkflowDrift(workflowsDir);
   } catch {
     return;
   }
-  const stale = drift.filter((d) => d.status !== 'unchanged');
+  const stale = [
+    ...skillDrift.filter((d) => d.status !== 'unchanged'),
+    ...workflowDrift.filter((d) => d.status !== 'unchanged'),
+  ];
   if (stale.length === 0) return;
 
   const names = stale.map((d) => d.name).join(', ');
@@ -49,7 +54,7 @@ async function runSkillsDriftCheck(skillsDir: string): Promise<void> {
 
   if (!interactive) {
     process.stderr.write(
-      `${chalk.yellow('!')} Skills out of date (${names}). Run \`open-slide sync:skills\` to update.\n`,
+      `${chalk.yellow('!')} Slide kit out of date (${names}). Run \`open-slide sync:kit\` to update.\n`,
     );
     return;
   }
@@ -58,15 +63,15 @@ async function runSkillsDriftCheck(skillsDir: string): Promise<void> {
   try {
     const answer = (
       await rl.question(
-        `${chalk.yellow('!')} Skills out of date: ${chalk.bold(names)}. Sync now? ${chalk.dim('(Y/n) ')}`,
+        `${chalk.yellow('!')} Slide kit out of date: ${chalk.bold(names)}. Sync now? ${chalk.dim('(Y/n) ')}`,
       )
     )
       .trim()
       .toLowerCase();
     if (answer === '' || answer === 'y' || answer === 'yes') {
-      await syncSkills(skillsDir);
+      await syncKit({ skillsDir, workflowsDir });
     } else {
-      process.stdout.write(chalk.dim('Skipped. Run `open-slide sync:skills` later to update.\n'));
+      process.stdout.write(chalk.dim('Skipped. Run `open-slide sync:kit` later to update.\n'));
     }
   } finally {
     rl.close();
@@ -81,10 +86,17 @@ interface SyncFlags {
   dryRun?: boolean;
 }
 
-function resolveBuiltinSkillsDir(): string {
-  // dist/cli/bin.js → ../../skills (package root + /skills)
+function resolveBuiltinAgentKitDir(): string {
   const here = path.dirname(fileURLToPath(import.meta.url));
-  return path.resolve(here, '..', '..', 'skills');
+  return path.resolve(here, '..', '..', '.agent');
+}
+
+function resolveBuiltinSkillsDir(): string {
+  return path.join(resolveBuiltinAgentKitDir(), 'skills');
+}
+
+function resolveBuiltinWorkflowsDir(): string {
+  return path.join(resolveBuiltinAgentKitDir(), 'workflows');
 }
 
 export async function run(argv: string[]): Promise<void> {
@@ -107,7 +119,7 @@ export async function run(argv: string[]): Promise<void> {
     .option('--no-skills-check', 'skip the built-in skills drift check')
     .action(async (flags: DevFlags) => {
       if (flags.skillsCheck !== false) {
-        await runSkillsDriftCheck(resolveBuiltinSkillsDir());
+        await runSkillsDriftCheck(resolveBuiltinSkillsDir(), resolveBuiltinWorkflowsDir());
       }
       const { dev } = await import('./dev.ts');
       await dev(flags);
@@ -140,6 +152,18 @@ export async function run(argv: string[]): Promise<void> {
     .action(async (flags: SyncFlags) => {
       const { syncSkills } = await import('./sync.ts');
       await syncSkills(resolveBuiltinSkillsDir(), flags);
+    });
+
+  program
+    .command('sync:kit')
+    .description('Sync built-in slide kit (skills + workflow commands) into this workspace')
+    .option('--dry-run', 'show what would change without writing')
+    .action(async (flags: SyncFlags) => {
+      const { syncKit } = await import('./sync.ts');
+      await syncKit(
+        { skillsDir: resolveBuiltinSkillsDir(), workflowsDir: resolveBuiltinWorkflowsDir() },
+        flags,
+      );
     });
 
   await program.parseAsync(argv, { from: 'user' });

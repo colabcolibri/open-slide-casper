@@ -10,7 +10,7 @@ blocks: [05_architecture.md]
 # 04 — Principles
 
 > Convenções do monorepo npm + regras React/performance para **framework** (`open-slide/packages/*`, `open-slide/apps/web`).  
-> UI, shadcn e motion: **`09_design_system.md`**. Slides TSX: **`open-slide/packages/core/skills/`** (npm). Governança: **`docs/`** na raiz + Meridian `.agent/`.
+> UI, shadcn e motion: **`09_design_system.md`**. Slides TSX: **`open-slide/packages/core/.agent/skills/`** (npm). Governança: **`docs/`** na raiz + Meridian `/.agent/`.
 
 ## Product principles
 
@@ -69,8 +69,9 @@ Ver **`09_design_system.md` § React composition** — compound components, prov
 | Shell UI, forms, shadcn | `docs/09_design_system.md` |
 | Motion / gestures | `docs/09_design_system.md` § Motion |
 | React perf | This doc § React performance |
-| Slide pages / demo decks | `open-slide/packages/core/skills/slide-authoring/` |
-| New deck workflow | `open-slide/packages/core/skills/create-slide/` |
+| Slide pages / demo decks | `open-slide/packages/core/.agent/skills/slide-authoring/` |
+| New deck workflow | `open-slide/packages/core/.agent/workflows/create-slide.md` → `skills/create-slide/` |
+| Slide kit routing | `open-slide/packages/core/.agent/skills/slide-routing/` |
 | Backlog / US | Meridian `docs/`, `.agent/` |
 
 **Não** manter cópia paralela de regras em `open-slide/.agents/` — removido; fonte única = phase docs + skills npm de slide.

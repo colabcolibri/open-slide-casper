@@ -1,4 +1,4 @@
-# Page layout template (per-deck, copy into `index.tsx`)
+# Page type — title / body / footer (head · body · footer)
 
 Every slide deck owns its layout in **`slides/<id>/index.tsx`**. Do not import layout from `@open-slide/core` — copy the block below once per deck and customize chrome (footer label, gaps, typography components).
 
@@ -124,17 +124,6 @@ const Example: Page = () => (
 );
 ```
 
-**Cover / hero** — omit `head`, center the body band:
-
-```tsx
-const Cover: Page = () => (
-  <PageLayout footerLabel="my deck" bodyAlign="center">
-    <PageTitle>The big idea</PageTitle>
-    <BodyCopy>Subtitle line.</BodyCopy>
-  </PageLayout>
-);
-```
-
 **Steps** — put the headline in `head`, wrap reveals inside `children`:
 
 ```tsx
@@ -146,6 +135,7 @@ const Cover: Page = () => (
 </PageLayout>
 ```
 
-## When to break the template
+## Anti-patterns
 
-Full-bleed art, morph layouts, or one-off experiments can still use a plain root `div` at `100% × 100%`. Most editorial decks should use `PageLayout` for every page so padding and footer stay consistent.
+- Footer with `position: absolute` — steals body height and breaks vertical budget math.
+- Skipping `PageLayout` on “normal” pages while using it elsewhere — padding and footer drift.

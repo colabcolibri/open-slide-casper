@@ -29,7 +29,7 @@
     "env.d.ts",
     "src/app",
     "src/locale",
-    "skills",
+    ".agent",
     "README.md"
   ],
   "scripts": {
