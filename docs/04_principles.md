@@ -1,6 +1,6 @@
 ---
 title: Principles
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
 depends_on: [00_scope.md, 01_tech_stack.md]

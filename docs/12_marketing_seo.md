@@ -1,8 +1,9 @@
 ---
 title: Marketing and SEO
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
+pass: seo-pass-bootstrap
 depends_on: [00_scope.md, 01_tech_stack.md]
 blocks: []
 ---
@@ -36,16 +37,17 @@ open-slide is the **agent-native slide framework**: React slides, fixed canvas, 
 
 | Item | Status | Notes |
 | ---- | ------ | ----- |
-| Title/meta per page | partial | verify with `/seo-pass` |
-| Sitemap | TBD | Next.js app router |
-| Core Web Vitals | TBD | Lighthouse on landing |
-| Canonical URLs | TBD | production domain |
-| Structured data | TBD | SoftwareApplication schema? |
-| Open Graph images | partial | screenshots in `public/assets` |
+| Title/meta per page | yes | Root `app/layout.tsx` metadata + docs via Fumadocs |
+| Sitemap | yes | `apps/web/app/sitemap.ts` → `/sitemap.xml` (home + doc pages, git mtime) |
+| robots.txt | yes | `apps/web/app/robots.ts` — allow `/`, disallow `/api/`, points to sitemap |
+| Core Web Vitals | measure | Run Lighthouse on production deploy; no CI gate yet |
+| Canonical URLs | yes | `metadataBase` + `alternates.canonical` use `https://open-slide.dev` (`lib/shared.ts`) |
+| Structured data | yes | Landing JSON-LD: WebSite, Organization, SoftwareSourceCode, SoftwareApplication, HowTo, FAQPage (`app/(home)/page.tsx`) |
+| Open Graph images | yes | `/opengraph-image.png` in layout + home |
 
 ## Analytics and privacy
 
-**Gap:** confirm whether Vercel Analytics or other trackers run in production — required for `02_security` / privacy passes.
+**Evidence (2026-07-21):** no analytics package in `apps/web` dependencies or layout. Vercel hosting may still collect platform logs — outside app code. Document privacy policy before adding `@vercel/analytics` or similar.
 
 ## Content principles
 

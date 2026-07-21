@@ -1,8 +1,10 @@
 ---
 title: Security
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
+reviewed: 2026-07-21
+pass: security-pass-full
 depends_on: [00_scope.md, 01_tech_stack.md]
 blocks: [03_user_types.md, 04_principles.md, 05_architecture.md]
 ---
@@ -17,8 +19,8 @@ blocks: [03_user_types.md, 04_principles.md, 05_architecture.md]
 | --------- | ----- |
 | **Exposure** | Framework: local dev + static export. Site: public internet |
 | **Auth required** | no — no user accounts in framework runtime |
-| **Sensitive data** | none in default slide workspace; site may collect analytics (TBD) |
-| **Compliance** | none documented for framework; site LGPD/GDPR TBD |
+| **Sensitive data** | none in default slide workspace; marketing site has no analytics SDK in repo (2026-07-21 scan) |
+| **Compliance** | framework runtime: N/A (no data controller); site: privacy policy TBD before claiming LGPD/GDPR compliance |
 | **Trust boundary** | Dev server mutates local disk only; static build has no `__*` APIs |
 
 ## Data classification
@@ -30,17 +32,21 @@ blocks: [03_user_types.md, 04_principles.md, 05_architecture.md]
 | Confidential | npm tokens, GitHub secrets (maintainers) | CI secrets | per provider | provider-managed |
 | Regulated | none identified in framework | — | — | — |
 
-**PII inventory:** none in core slide workflow. **Assumption:** marketing site may use Vercel/analytics — confirm in `12_marketing_seo`.
+**PII inventory:** none in core slide workflow. **Evidence:** no `@vercel/analytics`, gtag, or Plausible imports under `open-slide/apps/web` (only marketing copy mentions Vercel hosting).
 
 **Data minimization:** Core não coleta telemetry dos decks; update-check pode consultar registry npm (see `/__update-check`).
 
 ## Privacy — LGPD (Brazil)
 
-N/A for framework runtime until manager confirms Brazilian data subjects on open-slide.dev or hosted services. Site section to be filled after `/privacy-pass`.
+**Framework runtime:** N/A — no personal data processed by `@open-slide/core` in default workflows.
+
+**open-slide.dev:** static/docs site; no first-party analytics in codebase. If production adds trackers or forms, run `/privacy-pass` and link policy URL here.
 
 ## Privacy — GDPR (EU/EEA)
 
-N/A for framework runtime under same assumption. Site TBD.
+**Framework runtime:** N/A.
+
+**Site:** same as LGPD — no EU-facing data collection in repo today; policy + consent required before adding analytics or newsletter.
 
 ## Authentication model
 
@@ -67,7 +73,7 @@ N/A for framework runtime under same assumption. Site TBD.
 
 | Surface | Threat actors | Top STRIDE threats | Mitigation | Residual risk |
 | ------- | ------------- | ------------------ | ---------- | ------------- |
-| Dev `__*` APIs | Malicious site in browser | CSRF (S), spoofing (S) | Origin/Sec-Fetch-Site checks in `validateMutationRequest` | medium if dev server bound to 0.0.0.0 |
+| Dev `__*` APIs | Malicious site in browser | CSRF (S), spoofing (S) | Origin/Sec-Fetch-Site checks in `validateMutationRequest` | low by default (Vite localhost); **medium** if author passes `--host` / `--host 0.0.0.0` |
 | File writes (edit/slides) | Local malware / agent | Tampering (T) | OS user perms; no remote exposure in static build | low local |
 | SVGL proxy | Supply chain / SSRF | SSRF (S) | Proxy only in dev; validate upstream | medium — review `svgl.ts` |
 | npm dependencies | Supply chain | Tampering (T) | lockfile, dependabot, `/dependency-audit` | medium |
@@ -118,7 +124,7 @@ N/A for framework runtime under same assumption. Site TBD.
 | ------- | ------ |
 | Lockfiles committed | yes — `open-slide/pnpm-lock.yaml` |
 | Audit command | `pnpm audit` / dependabot weekly `/open-slide` |
-| CI gate | manual review — no auto-fail documented |
+| CI gate | manual review — no auto-fail on `pnpm audit` in CI (2026-07-21: 31 advisories incl. transitive js-yaml via fumadocs) |
 | License | MIT core; review new deps (size matters for npm) |
 
 ## AI and automation safety (Meridian / agents)
@@ -148,9 +154,10 @@ N/A for framework runtime under same assumption. Site TBD.
 
 | # | Gap | Severity | Owner | Target |
 | - | --- | -------- | ----- | ------ |
-| 1 | Dev server listen address default (0.0.0.0 vs localhost) | medium | maintainer | TBD |
-| 2 | Privacy policy for open-slide.dev | medium | manager | `/privacy-pass` |
-| 3 | Formal threat review of batch edit API | low | security | TBD |
+| 1 | Warn when `--host` exposes dev APIs on LAN | low | maintainer | CLI/docs hint (default bind is localhost-only when `--host` omitted — `dev.ts` only forwards host when flag set) |
+| 2 | Privacy policy URL for open-slide.dev | medium | manager | `/privacy-pass` when trackers or PII forms added |
+| 3 | Formal threat review of batch edit API | low | security | optional before `approved` |
+| 4 | Transitive npm advisories (e.g. js-yaml) | medium | maintainer | dependabot / upgrade fumadocs chain |
 
 ## Gate
 

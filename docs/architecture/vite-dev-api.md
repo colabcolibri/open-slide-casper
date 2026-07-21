@@ -1,7 +1,12 @@
-# Vite dev API — architecture detail
-
-status: draft  
+---
+title: Vite dev API — architecture detail
+status: approved
+version: 1.0
 updated: 2026-07-21
+depends_on: [05_architecture.md, 02_security.md]
+---
+
+# Vite dev API — architecture detail
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 ---
 title: API and public contracts
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
 depends_on: [05_architecture.md, 02_security.md]

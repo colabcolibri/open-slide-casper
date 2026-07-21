@@ -1,6 +1,6 @@
 ---
 title: Scope
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
 depends_on: []
@@ -78,8 +78,8 @@ Capacidades **já existentes** que permanecem in-scope para manutenção e exten
 
 | # | Question | Owner | Target date |
 | - | -------- | ----- | ----------- |
-| 1 | Criar version `v0` Meridian listando epics já shipped? | manager | TBD |
-| 2 | Escopo de conformidade LGPD/GDPR só para site vs framework | manager | TBD |
+| 1 | Criar version `v0` Meridian listando epics já shipped? | manager | TBD — recomendado após `05` approved |
+| 2 | Escopo de conformidade LGPD/GDPR só para site vs framework | manager | Parcial: framework N/A; site sem analytics no repo — policy URL pendente |
 
 ## Current product state (Mode B)
 

@@ -1,16 +1,17 @@
 ---
 title: As-is inventory
-status: draft
+status: approved
 created: 2026-07-21
 updated: 2026-07-21
 purpose: transitional
-promoted_to: []
+promoted_to: [docs/00_scope.md, docs/03_user_types.md, docs/05_architecture.md, docs/06_database.md, docs/07_api_contracts.md]
 ---
 
 # As-is inventory
 
 > Mapa do que já existe no monorepo **open-slide** antes do backlog Meridian forward-looking.
 > Evidência vem do código em `open-slide/` (pnpm + Turbo).
+> Conteúdo principal já espelhado nos phase docs (2026-07-21); arquivar após epics no SQLite.
 
 ## Capabilities
 
@@ -51,11 +52,11 @@ promoted_to: []
 
 ## Promotion checklist
 
-- [ ] Product behavior → `docs/00_scope.md`
-- [ ] Users / roles → `docs/03_user_types.md`
-- [ ] System structure → `docs/05_architecture.md`
-- [ ] Data model → `docs/06_database.md`
-- [ ] APIs → `docs/07_api_contracts.md`
+- [x] Product behavior → `docs/00_scope.md`
+- [x] Users / roles → `docs/03_user_types.md`
+- [x] System structure → `docs/05_architecture.md`
+- [x] Data model → `docs/06_database.md`
+- [x] APIs → `docs/07_api_contracts.md`
 - [ ] Epics → SQLite após `05` approved
 
 ## Open questions

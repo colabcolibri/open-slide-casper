@@ -13,21 +13,23 @@ Estas phase docs ficam na **raiz do harness Meridian** (`docs/`). O código do p
 
 | Doc | Status | Description |
 | --- | ------ | ----------- |
-| [00_scope.md](00_scope.md) | draft | Escopo, usuários, estado atual (Mode B) |
-| [01_tech_stack.md](01_tech_stack.md) | draft | Stack pnpm/Turbo, React, Vite, CI |
-| [02_security.md](02_security.md) | draft | Dev server, supply chain, privacidade |
-| [03_user_types.md](03_user_types.md) | draft | Autores, apresentadores, visitantes |
-| [04_principles.md](04_principles.md) | draft | Camadas, DoD, convenções do repo |
-| [05_architecture.md](05_architecture.md) | draft | **Gate** para epics/US — estrutura do monorepo |
-| [06_database.md](06_database.md) | draft | Persistência em filesystem + SQLite Meridian |
-| [07_api_contracts.md](07_api_contracts.md) | draft | Endpoints `__*` do dev server e exports npm |
-| [08_environments.md](08_environments.md) | draft | Local, CI, release npm, deploy estático |
-| [09_design_system.md](09_design_system.md) | draft | Tokens, shadcn, canvas, inspector UI |
-| [10_test_strategy.md](10_test_strategy.md) | draft | Vitest + Playwright |
-| [11_decisions.md](11_decisions.md) | draft | Regras do log; entradas em SQLite |
-| [12_marketing_seo.md](12_marketing_seo.md) | draft | Site `apps/web`, open-slide.dev |
+| [00_scope.md](00_scope.md) | approved | Escopo, usuários, estado atual (Mode B) |
+| [01_tech_stack.md](01_tech_stack.md) | approved | Stack pnpm/Turbo, React, Vite, CI |
+| [02_security.md](02_security.md) | approved | Dev server, supply chain, privacidade |
+| [03_user_types.md](03_user_types.md) | approved | Autores, apresentadores, visitantes |
+| [04_principles.md](04_principles.md) | approved | Camadas, DoD, convenções do repo |
+| [05_architecture.md](05_architecture.md) | approved | **Gate** para epics/US — estrutura do monorepo |
+| [06_database.md](06_database.md) | approved | Persistência em filesystem + SQLite Meridian |
+| [07_api_contracts.md](07_api_contracts.md) | approved | Endpoints `__*` do dev server e exports npm |
+| [08_environments.md](08_environments.md) | approved | Local, CI, release npm, deploy estático |
+| [09_design_system.md](09_design_system.md) | approved | Tokens, shadcn, canvas, inspector UI |
+| [10_test_strategy.md](10_test_strategy.md) | approved | Vitest + Playwright |
+| [11_decisions.md](11_decisions.md) | approved | Regras do log; entradas em SQLite |
+| [12_marketing_seo.md](12_marketing_seo.md) | approved | Site `apps/web`, open-slide.dev |
 
 Inventário transitório Mode B: [inventory/as-is.md](inventory/as-is.md).
+
+Descoberta PO (governança docs): [discovery/product-brief.md](discovery/product-brief.md).
 
 Arquitetura de instruções: [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md).
 
@@ -42,6 +44,7 @@ Arquitetura de instruções: [architecture/instruction-surfaces.md](architecture
 
 ## How to work
 
+0. Trilha de aprovação dos docs: `/audit-docs` → passes (`/security-pass`, `/architecture`, …) → **você** marca `approved` na ordem abaixo.
 1. Aprovar phase docs na ordem: `00` → `01` → `02` → `03` → `04` → **`05`** → detalhes.
 2. UI: `/design-pass bootstrap` em `09` após `01` draft.
 3. Testes: `/test-pass bootstrap` em `10` após `01`/`08`.

@@ -1,6 +1,6 @@
 ---
 title: Decision log
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
 depends_on: [00_scope.md]
@@ -67,6 +67,9 @@ Workflow: `/update-decisions-log` + skill `update-decisions-log`.
 
 | Date | Title | Affected |
 | ---- | ----- | -------- |
+| 2026-07-21 | Phase docs 00–12 approved (manager) | `docs/*.md`, `docs/architecture/*` |
+| 2026-07-21 | Architecture and design-system doc pass | `docs/05_architecture.md`, `docs/architecture/export-pipeline.md`, `docs/09_design_system.md` |
+| 2026-07-21 | Doc governance wave — security and SEO evidence pass | `docs/02_security.md`, `docs/12_marketing_seo.md`, `docs/10_test_strategy.md` |
 | 2026-07-21 | Project started with Meridian | `docs/` |
 
 ## Gate

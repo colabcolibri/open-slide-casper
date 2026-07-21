@@ -1,6 +1,6 @@
 ---
 title: Environments
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
 depends_on: [01_tech_stack.md, 05_architecture.md]

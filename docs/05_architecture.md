@@ -1,8 +1,10 @@
 ---
 title: Architecture
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
+reviewed: 2026-07-21
+pass: architecture-2026-07-21
 depends_on: [00_scope.md, 01_tech_stack.md, 02_security.md, 03_user_types.md, 04_principles.md]
 blocks: [06_database.md, 07_api_contracts.md, 08_environments.md, 09_design_system.md]
 ---
@@ -114,14 +116,26 @@ flowchart TB
 
 1. Author navigates to present route; `presenter.tsx` loads slide module pages.
 2. Keyboard/touch navigation via hooks in `components/present/*`.
-3. `open-slide build` produces static assets; export helpers generate PDF/PPTX client-side or via build pipeline.
+3. **Static deploy:** `open-slide build` → Vite `dist/` (no dev APIs).
+4. **In-browser export:** HTML/PDF/PPTX via `app/lib/export-*.ts` (client-only). See [architecture/export-pipeline.md](architecture/export-pipeline.md).
+
+## Trust zones
+
+| Zone | Network exposure | Mutates disk | APIs |
+| ---- | ---------------- | ------------ | ---- |
+| Consumer dev server | localhost by default; LAN if `--host` | yes (via `__*`) | `__*` + HMR |
+| Static `dist/` / exported HTML | public when published | no | none |
+| npm package | download only | no | — |
+| Meridian harness | local | yes (`.meridian/`, docs) | Python CLI |
+| Marketing site | public HTTPS | no (SSG/SSR read) | `/api/search` docs only |
 
 ## Architecture detail files
 
 | File | Topic | Status |
 | ---- | ----- | ------ |
-| [architecture/vite-dev-api.md](architecture/vite-dev-api.md) | Dev server `__*` routes | draft |
-| [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md) | Onde ler regras (docs vs core/skills) | draft |
+| [architecture/vite-dev-api.md](architecture/vite-dev-api.md) | Dev server `__*` routes | approved |
+| [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md) | Onde ler regras (docs vs core/skills) | approved |
+| [architecture/export-pipeline.md](architecture/export-pipeline.md) | build + HTML/PDF/PPTX export | approved |
 
 ## Cross-cutting concerns
 
@@ -136,7 +150,7 @@ flowchart TB
 
 | Area | Current (evidence) | Target (Meridian forward) |
 | ---- | ------------------ | ------------------------- |
-| Governance | README + AGENTS only | Phase docs + SQLite backlog |
+| Governance | Phase docs approved; SQLite backlog empty | Epics + US in `.meridian/meridian.db` |
 | Repo root | Harness + product split | Done — `open-slide/` subfolder |
 | Design tokens | `design.ts` + WIP slide-tokens | Document + gate in epics |
 
@@ -144,8 +158,8 @@ flowchart TB
 
 | # | Gap | Blocks backlog |
 | - | --- | -------------- |
-| 1 | `05` not yet human-approved | yes — US blocked |
-| 2 | Architecture detail for export pipeline depth | no |
+| 1 | Backlog SQLite vazio (epics/versions/US) | yes — run `/create-version`, `/create-epic` |
+| 2 | Composed `App*` template catalog / showcase routes | no — optional `/design-showcase` |
 
 ## Gate
 

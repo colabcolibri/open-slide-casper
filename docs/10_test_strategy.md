@@ -1,6 +1,6 @@
 ---
 title: Test strategy
-status: draft
+status: approved
 version: 1.0
 updated: 2026-07-21
 depends_on: [01_tech_stack.md, 08_environments.md]
@@ -32,10 +32,12 @@ Root config: `open-slide/vitest.config.ts` includes `packages/**/*.test.ts(x)`.
 
 | Job | Command | Blocks merge |
 | --- | ------- | ------------ |
+| lint | `pnpm format:check` + `pnpm lint` | yes |
 | test | `pnpm test` | yes |
-| e2e | `pnpm test:e2e` (build core first) | yes |
+| e2e | `pnpm test:e2e` (Playwright container) | yes |
 | typecheck | `pnpm typecheck` | yes |
-| lint/format | biome | yes |
+
+Workflow: `.github/workflows/ci.yml` (jobs `lint`, `typecheck`, `test`, `e2e`; `working-directory: open-slide`).
 
 E2E runs in container `mcr.microsoft.com/playwright:v1.56.1-noble` matching `@playwright/test` version.
 
@@ -83,7 +85,7 @@ Before npm release:
 
 | # | Gap | Action |
 | - | --- | ------ |
-| 1 | WIP tests (`design.test.ts`) may fail typecheck | Fix or remove before merge |
+| 1 | CWV not gated in CI | optional Lighthouse job or manual before major marketing releases |
 | 2 | Visual regression for slides | optional future epic |
 
 ## Gate
