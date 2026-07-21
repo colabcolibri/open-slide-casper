@@ -11,8 +11,14 @@ __pycache__/
 **/__pycache__/
 .venv/
 
+# Node (harness root — monorepo deps live under open-slide/)
+node_modules/
+
 # Meridian harness
 .meridian/meridian.db
+.meridian/drafts/
+.meridian/pipe-*.md
+.meridian/tmp-*.md
 
 # Meridian IDE adapters (local symlinks — kit root; canonical source: .agent/)
 .agents/
