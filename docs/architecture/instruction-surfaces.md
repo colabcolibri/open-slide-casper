@@ -43,6 +43,8 @@ Regras consolidadas nos phase docs na **raiz**:
 
 Raiz do repo: `.agent/`, `docs/`, `.meridian/`. Não misturar com código npm em `open-slide/`.
 
+**Raiz do workspace (Cursor/Claude/Codex):** adapters locais em `.cursor/`, `.claude/`, `.codex/`, `.agents/` (gitignored). Não reinstalar skills vendored (shadcn, vercel-*, `skills-lock.json`) na raiz — regras de UI do framework vivem só em `docs/04` e `docs/09`. Após `sync_cursor_kit.sh`, `.claude/skills/` na raiz deve refletir Meridian/workflows, não cópias do monorepo.
+
 ## Gate
 
 If slide skill and phase doc disagree, **phase doc wins** for framework; **slide-authoring skill wins** for `slides/` content.

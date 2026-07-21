@@ -1,10 +1,15 @@
 .DS_Store
 *.log
 
+# Python (Meridian scripts)
+__pycache__/
+**/__pycache__/
+
 # Meridian harness
 .meridian/meridian.db
 
 # Meridian IDE adapters (local symlinks — kit root)
+.agents/
 .cursor/
 .claude/
 .codex/
