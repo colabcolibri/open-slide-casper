@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "default": "open-slide",
+  "projects": [
+    {
+      "id": "open-slide",
+      "name": "open-slide",
+      "docs": "open-slide/docs"
+    }
+  ],
+  "exclude": []
+}

@@ -1,0 +1,17 @@
+node_modules
+dist
+.DS_Store
+*.log
+.vite
+*.tsbuildinfo
+.turbo
+packages/cli/template/.agents/skills
+packages/core/e2e/.scratch
+playwright-report
+test-results
+apps/demo/slides-backup
+
+# IDE adapters (local symlinks from Meridian sync, when run from kit root)
+.cursor/
+.claude/
+.codex/
