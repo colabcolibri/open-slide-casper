@@ -6,6 +6,7 @@
     "dev": "pnpm -C open-slide dev",
     "build": "pnpm -C open-slide build",
     "check": "pnpm -C open-slide check",
-    "test": "pnpm -C open-slide test"
+    "test": "pnpm -C open-slide test",
+    "sync:kit:demo": "pnpm -C open-slide sync:kit:demo"
   }
 }

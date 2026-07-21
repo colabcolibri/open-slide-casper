@@ -25,7 +25,36 @@ packages/core/.agent/
   skills/               ← procedures + references/
 ```
 
-Edit **only** canonical files under **`core/.agent/`**. Consumer workspaces mirror via sync — do not edit symlinks in `.cursor/`, `.claude/`, or `.agents/`.
+Edit **only** canonical files under **`packages/core/.agent/`** (monorepo) or upgrade **`@open-slide/core`** (consumer). After changes, run sync — the workspace gets **copies**, not live links into the package.
+
+## Instruction layers
+
+**You invoke workflows (slash commands), not skills.** Agents and skills are loaded by the model from the workflow (or from `@agent-name` if you override routing).
+
+```txt
+YOU  →  /create-slide, /apply-comments, /create-theme     (workflow)
+         ↓
+Agent (@slide-author, @theme-author)                       (persona + scope)
+         ↓
+Skill (create-slide, slide-authoring, …)                   (procedure)
+         ↓
+skills/<name>/references/                                    (detail on demand)
+         ↓
+slides/, themes/                                             (what you ship)
+```
+
+| Layer | Where | Who | Role |
+| --- | --- | --- | --- |
+| **Workflow** | `workflows/*.md` | **You** type `/…` in Cursor or Claude Code (Codex: `$workflow-…` skill) | Entry for one job: critical rules, which agent, which skills are mandatory |
+| **Agent** | `agents/*.md` | Model (optional **`@slide-author`** / **`@theme-author`**) | Mission, write scope, forbidden paths, default skill list for that persona |
+| **Skill** | `skills/<name>/SKILL.md` | Model — rarely typed by humans | Step-by-step procedure; hub file stays short |
+| **References** | `skills/<name>/references/` | Model when the skill points there | Templates, page-types, checklists — not loaded unless needed |
+
+**Same name, different job:** **`/create-slide`** (workflow) is what you run; skill **`create-slide`** is the checklist inside that run (theme, scoping, `slides/<id>/`). Workflows stay thin; skills hold the steps.
+
+**No slash of their own (usually):** **`slide-authoring`** — TSX and layout rules shared by create-slide and apply-comments; **`slide-routing`** — pick the right workflow when intent is ambiguous; **`current-slide`** — resolve “this page” before editing.
+
+**Adapters** in the slide project (`.cursor/`, `.agents/`, `.claude/`) are **gitignored**; sync recreates **symlinks** into **`.agent/`**. Do not treat them as source of truth — edit the package kit, then re-sync.
 
 ## Write scope
 
@@ -37,12 +66,46 @@ Edit **only** canonical files under **`core/.agent/`**. Consumer workspaces mirr
 
 ## Sync
 
-| Command | What it updates |
-| --- | --- |
-| `pnpm exec open-slide sync:kit` | skills, workflow commands, agents (consumer project) |
-| `./scripts/sync-slide-kit-adapters.sh` | same mirrors for monorepo demo (`apps/demo`) |
+Two steps on every sync (consumer **`open-slide sync:kit`** or monorepo **`pnpm sync:kit:demo`**):
 
-Adapters (`.cursor/commands`, `.cursor/agents`, `.agents/skills`, …) are local and gitignored in slide workspaces.
+1. **Copy** `@open-slide/core/.agent` → **`<project>/.agent/`** (snapshot in the workspace).
+2. **Symlink** IDE adapters into that copy — not into `node_modules` or `packages/core`.
+
+| Command | When |
+| --- | --- |
+| `pnpm exec open-slide sync:kit` | Consumer project root |
+| `pnpm sync:kit:demo` | Monorepo → **`apps/demo`** |
+| `pnpm sync:kit:adapters -- [dir]` | Any slide workspace (default **`apps/demo`**) |
+
+| Path in workspace | After sync |
+| --- | --- |
+| **`.agent/`** | **Copy** of the package kit (snapshot — not a symlink) |
+| **`.cursor/commands/*.md`** | **Symlink** → **`.agent/workflows/*.md`** |
+| **`.cursor/agents/*.md`** | **Symlink** → **`.agent/agents/*.md`** |
+| **`.agents/skills/<name>/`** | **Symlink** → **`.agent/skills/<name>/`** |
+| **`.agents/skills/workflow-*/SKILL.md`** | **Symlink** → **`.agent/workflows/*.md`** |
+| **`.claude/commands/*.md`**, **`.claude/agents/*.md`** | Same targets as **`.cursor/`** |
+| **`.claude/skills/<name>/`** | **Symlink** → **`.agent/skills/<name>/`** (monorepo script) or → **`.agents/skills/<name>/`** (CLI; that hop also points at **`.agent/`**) |
+
+**Not** a single symlink: **`.cursor/`**, **`.agents/`**, and **`.claude/`** are normal folders whose **entries** are symlinks into **`.agent/`**. There is no **`.cursor` → .agent`** at the root.
+
+Edit the kit only in **`packages/core/.agent/`** (monorepo) or bump **`@open-slide/core`** (consumer), then re-sync. Do not edit **`demo/.agent/`** as canonical — it is replaced on the next copy.
+
+Adapters are gitignored. **`open-slide dev`** warns when the installed package is ahead of **`.agent/`**.
+
+## Git
+
+| Location | Commit? |
+| --- | --- |
+| **`packages/core/.agent/`** (monorepo) / published in **`@open-slide/core`** | **Yes** — canonical kit |
+| **`<workspace>/.agent/`** after sync (e.g. **`apps/demo`**, consumer project) | **No** — generated copy |
+| **`.agents/`**, **`.cursor/`**, **`.claude/`**, **`.codex/`** in a slide workspace | **No** — generated adapters |
+
+**Monorepo** (`open-slide/.gitignore`): ignore **`**/.agent/`** everywhere, then **`!packages/core/.agent/**`** so only the core package kit is tracked.
+
+**Consumer** (`open-slide init` scaffold): ignore **`.agent/`** and adapter dirs; canonical kit stays inside **`node_modules/@open-slide/core/.agent`**.
+
+If adapters were committed before gitignore, remove from the index only: `git rm -r --cached apps/demo/.agents apps/demo/.claude` (paths vary).
 
 ## Workflow → agent map
 
@@ -60,6 +123,7 @@ In a **consumer slide workspace** (after `open-slide sync:kit`), paths are relat
 
 | Entry | Consumer adapter | Canonical in `@open-slide/core` |
 | --- | --- | --- |
+| **Protocol** | `.agent/SLIDE-KIT.md` | `packages/core/.agent/SLIDE-KIT.md` |
 | **`/create-slide`** | `.cursor/commands/create-slide.md` | `packages/core/.agent/workflows/create-slide.md` |
 | **`/apply-comments`** | `.cursor/commands/apply-comments.md` | `packages/core/.agent/workflows/apply-comments.md` |
 | **`/create-theme`** | `.cursor/commands/create-theme.md` | `packages/core/.agent/workflows/create-theme.md` |

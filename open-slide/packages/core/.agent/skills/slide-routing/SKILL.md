@@ -5,7 +5,7 @@ description: Route slide-authoring requests to the right workflow or skill in an
 
 # Slide kit routing
 
-Canonical kit: **`packages/core/.agent/`** (in the framework repo) or the same tree inside installed **`@open-slide/core`**. Workspaces mirror it to `.agents/`, `.cursor/`, `.claude/` via **`sync:kit`** — edit canonical files only, then sync.
+Canonical kit: **`packages/core/.agent/`** or **`node_modules/@open-slide/core/.agent`**. Sync **copies** it to **`.agent/`**, then **symlinks** `.cursor/`, `.agents/`, etc. into **that** folder.
 
 Read **`SLIDE-KIT.md`** for protocol and write scope.
 
@@ -43,4 +43,4 @@ Read **`workflows/`** when the user invokes a named flow. Load the **agent** nam
 
 ## Demo / consumer mirror
 
-In `apps/demo/`: symlinks point at `packages/core/.agent/`. Change canonical files under **`packages/core/.agent/`**, then run **`open-slide sync:kit`** or **`./scripts/sync-slide-kit-adapters.sh`** in the monorepo.
+In `apps/demo/`: adapters symlink into **`demo/.agent/`** (copy from core on sync). Change **`packages/core/.agent/`**, then **`pnpm sync:kit:demo`**. Consumers: **`open-slide sync:kit`** (or **`pnpm sync:skills`**, same command).

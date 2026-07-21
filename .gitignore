@@ -13,6 +13,7 @@ __pycache__/
 
 # Node (harness root — monorepo deps live under open-slide/)
 node_modules/
+pnpm-lock.yaml
 
 # Meridian harness
 .meridian/meridian.db

@@ -162,11 +162,18 @@ export async function run(argv: string[]): Promise<void> {
 
   program
     .command('sync:skills')
-    .description('Sync built-in skills from @open-slide/core into this workspace')
+    .description('Sync slide kit into this workspace (alias for sync:kit)')
     .option('--dry-run', 'show what would change without writing')
     .action(async (flags: SyncFlags) => {
-      const { syncSkills } = await import('./sync.ts');
-      await syncSkills(resolveBuiltinSkillsDir(), flags);
+      const { syncKit } = await import('./sync.ts');
+      await syncKit(
+        {
+          skillsDir: resolveBuiltinSkillsDir(),
+          workflowsDir: resolveBuiltinWorkflowsDir(),
+          agentsDir: resolveBuiltinAgentsDir(),
+        },
+        flags,
+      );
     });
 
   program

@@ -11,8 +11,11 @@ playwright-report
 test-results
 apps/demo/slides-backup
 
-# IDE adapters (local symlinks from Meridian sync, when run from kit root)
-.agents/
-.cursor/
-.claude/
-.codex/
+# Slide kit — workspace copy + IDE adapters (sync:kit / sync:kit:demo). Never commit.
+**/.agent/
+!packages/core/.agent/
+!packages/core/.agent/**
+**/.agents/
+**/.cursor/
+**/.claude/
+**/.codex/

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# Sync canonical slide kit (packages/core/.agent) → IDE adapters in a slide workspace.
+# Sync slide kit into a workspace:
+#   1) copy packages/core/.agent → <workspace>/.agent
+#   2) symlink IDE adapters → <workspace>/.agent/…
 #
 # Usage (from open-slide monorepo root):
+#   pnpm sync:kit:demo
+#   pnpm sync:kit:adapters -- apps/demo
+#   pnpm sync:kit:adapters -- --dry-run apps/demo
 #   ./scripts/sync-slide-kit-adapters.sh              # defaults to apps/demo
 #   ./scripts/sync-slide-kit-adapters.sh apps/demo
 #   ./scripts/sync-slide-kit-adapters.sh --dry-run apps/demo
@@ -50,21 +55,35 @@ link_path() {
     return 0
   fi
   mkdir -p "$(dirname "${linkpath}")"
-  rm -f "${linkpath}"
+  rm -rf "${linkpath}"
   ln -sf "${rel}" "${linkpath}"
 }
 
+if [[ "${DRY_RUN}" -eq 1 ]]; then
+  echo "[dry-run] copy .agent <= ${CORE_AGENT}"
+else
+  rm -rf .agent
+  cp -R "${CORE_AGENT}" .agent
+fi
+
+AGENT_ROOT="$(pwd)/.agent"
+
 echo "Slide kit sync: ${WORKSPACE} (canonical ${CORE_AGENT})"
 
-for skill_dir in "${CORE_AGENT}/skills"/*/; do
+# Legacy layouts (pre–sync:kit); remove so only .agent/ + symlinks remain
+if [[ "${DRY_RUN}" -eq 0 ]]; then
+  rm -rf .agents/workflows .claude/workflows
+fi
+
+for skill_dir in "${AGENT_ROOT}/skills"/*/; do
   [[ -d "${skill_dir}" ]] || continue
   name="$(basename "${skill_dir}")"
-  link_path "${CORE_AGENT}/skills/${name}" ".agents/skills/${name}"
-  link_path "$(pwd)/.agents/skills/${name}" ".claude/skills/${name}"
+  link_path "${AGENT_ROOT}/skills/${name}" ".agents/skills/${name}"
+  link_path "${AGENT_ROOT}/skills/${name}" ".claude/skills/${name}"
 done
 
 mkdir -p .cursor/commands .claude/commands
-for workflow in "${CORE_AGENT}/workflows/"*.md; do
+for workflow in "${AGENT_ROOT}/workflows/"*.md; do
   [[ -f "${workflow}" ]] || continue
   name="$(basename "${workflow}")"
   base="${name%.md}"
@@ -75,7 +94,7 @@ for workflow in "${CORE_AGENT}/workflows/"*.md; do
 done
 
 mkdir -p .cursor/agents .claude/agents
-for agent in "${CORE_AGENT}/agents/"*.md; do
+for agent in "${AGENT_ROOT}/agents/"*.md; do
   [[ -f "${agent}" ]] || continue
   name="$(basename "${agent}")"
   link_path "${agent}" ".cursor/agents/${name}"
@@ -85,5 +104,5 @@ done
 if [[ "${DRY_RUN}" -eq 1 ]]; then
   echo "Dry run complete."
 else
-  echo "Done. Cursor: .cursor/commands/*.md, .cursor/agents/*.md ; skills: .agents/skills/"
+  echo "Done. Copied .agent/; adapters symlink → .agent/ (skills, workflows, agents)."
 fi

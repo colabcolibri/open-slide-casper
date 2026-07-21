@@ -24,7 +24,7 @@ export async function detectSkillsDrift(skillsDir: string): Promise<DriftEntry[]
   if (!existsSync(skillsDir)) return [];
 
   const cwd = process.cwd();
-  const agentsSkillsDir = path.join(cwd, '.agents', 'skills');
+  const localSkillsRoot = path.join(cwd, '.agent', 'skills');
 
   const skillNames = (await readdir(skillsDir, { withFileTypes: true }))
     .filter((e) => e.isDirectory())
@@ -34,14 +34,14 @@ export async function detectSkillsDrift(skillsDir: string): Promise<DriftEntry[]
   const results: DriftEntry[] = [];
   for (const name of skillNames) {
     const src = path.join(skillsDir, name);
-    const dst = path.join(agentsSkillsDir, name);
+    const localCopy = path.join(localSkillsRoot, name);
 
     const srcHash = await hashDir(src);
-    const dstHash = existsSync(dst) ? await hashDir(dst) : null;
+    const localHash = existsSync(localCopy) ? await hashDir(localCopy) : null;
 
     let status: Status;
-    if (dstHash === null) status = 'added';
-    else if (dstHash !== srcHash) status = 'updated';
+    if (localHash === null) status = 'added';
+    else if (localHash !== srcHash) status = 'updated';
     else status = 'unchanged';
 
     results.push({ name, status });
@@ -59,6 +59,13 @@ export async function syncSkills(skillsDir: string, opts: SyncSkillsOptions = {}
   }
 
   const cwd = process.cwd();
+  const localSkillsRoot = path.join(cwd, '.agent', 'skills');
+  if (!existsSync(localSkillsRoot)) {
+    throw new Error(
+      'Missing .agent/skills in this workspace. Run `open-slide sync:kit` first (copies .agent from the package).',
+    );
+  }
+
   const agentsSkillsDir = path.join(cwd, '.agents', 'skills');
   const claudeSkillsDir = path.join(cwd, '.claude', 'skills');
 
@@ -69,19 +76,13 @@ export async function syncSkills(skillsDir: string, opts: SyncSkillsOptions = {}
     return;
   }
 
-  for (const { name, status } of results) {
-    const src = path.join(skillsDir, name);
+  const skillNames = results.map((r) => r.name);
+  for (const name of skillNames) {
+    const kitSkill = path.join(localSkillsRoot, name);
     const dst = path.join(agentsSkillsDir, name);
 
     if (dryRun) continue;
-    if (status === 'unchanged') {
-      await ensureClaudeSymlink(claudeSkillsDir, name);
-      continue;
-    }
-
-    await mkdir(path.dirname(dst), { recursive: true });
-    if (existsSync(dst)) await rm(dst, { recursive: true, force: true });
-    await cp(src, dst, { recursive: true });
+    await linkDirectory(kitSkill, dst);
     await ensureClaudeSymlink(claudeSkillsDir, name);
   }
 
@@ -103,21 +104,20 @@ export async function detectWorkflowDrift(workflowsDir: string): Promise<DriftEn
 
   for (const name of names) {
     const src = path.join(workflowsDir, name);
+    const localCopy = path.join(cwd, '.agent', 'workflows', name);
     const dst = path.join(cursorCommands, name);
     const srcHash = await hashFile(src);
     let status: Status;
-    if (!existsSync(dst)) status = 'added';
+    if (!existsSync(localCopy)) status = 'added';
+    else if ((await hashFile(localCopy)) !== srcHash) status = 'updated';
+    else if (!existsSync(dst)) status = 'added';
     else {
       try {
         const stat = await lstat(dst);
         if (stat.isSymbolicLink()) {
           const target = await readlink(dst);
           const resolved = path.resolve(path.dirname(dst), target);
-          if (resolved === src) {
-            status = 'unchanged';
-          } else {
-            status = 'updated';
-          }
+          status = resolved === localCopy ? 'unchanged' : 'updated';
         } else {
           const dstHash = await hashFile(dst);
           status = dstHash === srcHash ? 'unchanged' : 'updated';
@@ -146,17 +146,20 @@ export async function detectAgentDrift(agentsDir: string): Promise<DriftEntry[]>
 
   for (const name of names) {
     const src = path.join(agentsDir, name);
+    const localCopy = path.join(cwd, '.agent', 'agents', name);
     const dst = path.join(cursorAgents, name);
     const srcHash = await hashFile(src);
     let status: Status;
-    if (!existsSync(dst)) status = 'added';
+    if (!existsSync(localCopy)) status = 'added';
+    else if ((await hashFile(localCopy)) !== srcHash) status = 'updated';
+    else if (!existsSync(dst)) status = 'added';
     else {
       try {
         const stat = await lstat(dst);
         if (stat.isSymbolicLink()) {
           const target = await readlink(dst);
           const resolved = path.resolve(path.dirname(dst), target);
-          status = resolved === src ? 'unchanged' : 'updated';
+          status = resolved === localCopy ? 'unchanged' : 'updated';
         } else {
           const dstHash = await hashFile(dst);
           status = dstHash === srcHash ? 'unchanged' : 'updated';
@@ -184,9 +187,10 @@ export async function syncAgentAdapters(
   const cwd = process.cwd();
   const cursorAgents = path.join(cwd, '.cursor', 'agents');
   const claudeAgents = path.join(cwd, '.claude', 'agents');
+  const localAgents = path.join(cwd, '.agent', 'agents');
 
   for (const name of names) {
-    const src = path.join(agentsDir, name);
+    const src = path.join(localAgents, name);
     if (dryRun) continue;
     await linkWorkflowFile(src, path.join(cursorAgents, name));
     await linkWorkflowFile(src, path.join(claudeAgents, name));
@@ -223,9 +227,10 @@ export async function syncWorkflowAdapters(
   const cursorCommands = path.join(cwd, '.cursor', 'commands');
   const claudeCommands = path.join(cwd, '.claude', 'commands');
   const agentsSkills = path.join(cwd, '.agents', 'skills');
+  const localWorkflows = path.join(cwd, '.agent', 'workflows');
 
   for (const name of names) {
-    const src = path.join(workflowsDir, name);
+    const src = path.join(localWorkflows, name);
     const base = name.replace(/\.md$/, '');
     const workflowSkill = `workflow-${base}`;
 
@@ -253,6 +258,61 @@ export async function syncWorkflowAdapters(
     process.stdout.write(
       `  ${chalk.green('+')} ${name} ${chalk.dim('(cursor + claude commands, workflow skill)')}\n`,
     );
+  }
+}
+
+async function syncAgentKitRoot(agentKitDir: string, opts: SyncSkillsOptions = {}): Promise<void> {
+  const { dryRun = false } = opts;
+  if (!existsSync(agentKitDir)) {
+    throw new Error(`Slide kit root missing at ${agentKitDir}. Reinstall @open-slide/core.`);
+  }
+  const cwd = process.cwd();
+  const dst = path.join(cwd, '.agent');
+  const srcHash = await hashDir(agentKitDir);
+  const dstHash = existsSync(dst) ? await hashDir(dst) : null;
+  const status: Status =
+    dstHash === null ? 'added' : dstHash !== srcHash ? 'updated' : 'unchanged';
+
+  if (dryRun) {
+    process.stdout.write(
+      chalk.dim(`Dry run — .agent would be ${status === 'unchanged' ? 'unchanged' : status}\n`),
+    );
+    return;
+  }
+  if (status === 'unchanged') return;
+
+  await rm(dst, { recursive: true, force: true });
+  await cp(agentKitDir, dst, { recursive: true });
+  process.stdout.write(chalk.bold('Synced kit root:\n'));
+  process.stdout.write(
+    `  ${chalk.green('+')} .agent/ ${chalk.dim('(copy from @open-slide/core/.agent)')}\n`,
+  );
+}
+
+async function linkDirectory(targetDir: string, linkPath: string): Promise<void> {
+  await mkdir(path.dirname(linkPath), { recursive: true });
+  const relativeTarget = path.relative(path.dirname(linkPath), targetDir);
+  if (existsSync(linkPath)) {
+    try {
+      const stat = await lstat(linkPath);
+      if (stat.isSymbolicLink()) {
+        const current = await readlink(linkPath);
+        if (path.resolve(path.dirname(linkPath), current) === targetDir) return;
+      }
+      await rm(linkPath, { recursive: true, force: true });
+    } catch {
+      await rm(linkPath, { recursive: true, force: true });
+    }
+  }
+  try {
+    await symlink(relativeTarget, linkPath, 'dir');
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'EPERM' || code === 'EEXIST') {
+      await cp(targetDir, linkPath, { recursive: true });
+    } else {
+      throw err;
+    }
   }
 }
 
@@ -292,9 +352,26 @@ export async function syncKit(
   dirs: { skillsDir: string; workflowsDir: string; agentsDir: string },
   opts: SyncKitOptions = {},
 ): Promise<void> {
+  const agentKitDir = path.dirname(dirs.skillsDir);
+  await syncAgentKitRoot(agentKitDir, opts);
+  await removeLegacyAdapterPaths(opts);
   await syncSkills(dirs.skillsDir, opts);
   await syncWorkflowAdapters(dirs.workflowsDir, opts);
   await syncAgentAdapters(dirs.agentsDir, opts);
+  if (!opts.dryRun) {
+    process.stdout.write(
+      chalk.dim('IDE adapters symlink into workspace .agent/ (not the npm package path).\n'),
+    );
+  }
+}
+
+async function removeLegacyAdapterPaths(opts: SyncSkillsOptions = {}): Promise<void> {
+  if (opts.dryRun) return;
+  const cwd = process.cwd();
+  for (const rel of ['.agents/workflows', '.claude/workflows']) {
+    const p = path.join(cwd, rel);
+    if (existsSync(p)) await rm(p, { recursive: true, force: true });
+  }
 }
 
 async function ensureClaudeSymlink(claudeSkillsDir: string, name: string): Promise<void> {

@@ -26,7 +26,9 @@ The skills above are managed by `@open-slide/core`. Do not edit them in place. T
 
 ```
 pnpm up @open-slide/core
-pnpm sync:skills
+pnpm sync:kit
 ```
 
-`pnpm dev` will also detect drift on startup and offer to sync. `pnpm sync:skills --dry-run` (via `pnpm exec open-slide sync:skills --dry-run`) previews changes without writing.
+(`pnpm sync:skills` runs the same sync.)
+
+`pnpm dev` will also detect drift on startup and offer to sync. `pnpm exec open-slide sync:kit --dry-run` previews changes without writing.

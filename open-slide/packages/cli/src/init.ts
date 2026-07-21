@@ -86,6 +86,18 @@ async function runInstall(pm: PackageManager, cwd: string): Promise<void> {
   });
 }
 
+const CONSUMER_GITIGNORE = `node_modules
+dist
+.DS_Store
+
+# Slide kit (open-slide sync:kit) — local copy + IDE adapters; canonical kit lives in node_modules/@open-slide/core/.agent
+.agent/
+.agents/
+.cursor/
+.claude/
+.codex/
+`;
+
 export async function init(opts: InitOptions): Promise<void> {
   const { dir, force, name, packageManager, install, git } = opts;
 
@@ -119,7 +131,7 @@ export async function init(opts: InitOptions): Promise<void> {
     await writeFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
   }
 
-  await writeFile(join(target, '.gitignore'), 'node_modules\ndist\n.DS_Store\n');
+  await writeFile(join(target, '.gitignore'), CONSUMER_GITIGNORE);
 
   const cdTarget = dir === '.' ? basename(target) : dir;
   process.stdout.write(
