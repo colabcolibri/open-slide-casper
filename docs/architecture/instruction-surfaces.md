@@ -21,7 +21,7 @@ Camadas do kit publicado em **`@open-slide/core`**. Protocolo: **`packages/core/
 | Agents | `…/core/.agent/agents/*.md` | `.cursor/agents/`, `.claude/agents/` | `sync:kit` · `sync-slide-kit-adapters.sh` |
 | Workflows | `…/core/.agent/workflows/*.md` | `.cursor/commands/`, `.claude/commands/`, `.agents/skills/workflow-*/SKILL.md` | `open-slide sync:kit` · `scripts/sync-slide-kit-adapters.sh` |
 | Skills | `…/core/.agent/skills/*/SKILL.md` | `.agents/skills/*`, `.claude/skills/*` | `sync:kit` / `sync:skills` + `sync-template-skills.mjs` |
-| References | `.agent/skills/slide-authoring/references/**` | Via skill tree above | Same as skills |
+| References | `.agent/skills/slide-authoring/references/**` | Via skill tree above | Same as skills; **pattern-library** entries use `kit-doc: pattern` (`SCHEMA.md`) |
 | Routing | `.agent/skills/slide-routing/SKILL.md` | Via skill symlink | Same as skills |
 
 **Edit rule:** altere só **`packages/core/.agent/`** para instruções de slide no kit npm.

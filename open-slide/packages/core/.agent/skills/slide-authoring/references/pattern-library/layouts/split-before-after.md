@@ -1,12 +1,20 @@
+---
+kit-doc: pattern
+id: split-before-after
+kind: layout
+summary: "Explicit before/after narrative (process change, migration). Shared title in `head`."
+formats: both-star
+content-keys:
+  - beforeAfter.title
+  - beforeAfter.beforeLabel
+  - beforeAfter.beforeItems[]
+  - beforeAfter.afterLabel
+  - beforeAfter.afterItems[]
+  - footerLabel
+page-types:
+  - ../page-types/split.md
+---
 # Pattern — split-before-after
-
-| Field | Value |
-| --- | --- |
-| **id** | `split-before-after` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/split.md` |
-| **CONTENT keys** | `beforeAfter.title`, `beforeAfter.beforeLabel`, `beforeAfter.beforeItems[]`, `beforeAfter.afterLabel`, `beforeAfter.afterItems[]`, `footerLabel` |
-| **Canvas formats** | **Both\*** — ≤3 bullets per side; stack with `flexDirection: 'column'` on `4x5` if needed |
 
 ## When to use
 

@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: cover-centered
+kind: layout
+summary: "First page or ceremonial opener: one hero line + subtitle. Avoid bullet lists on the cover — move lists to `title-body-footer-bullets`."
+formats: both
+content-keys:
+  - cover.title
+  - cover.subtitle
+  - optional cover.eyebrow
+  - footerLabel
+page-types:
+  - ../page-types/cover.md
+---
 # Pattern — cover-centered
-
-| Field | Value |
-| --- | --- |
-| **id** | `cover-centered` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/cover.md` |
-| **CONTENT keys** | `cover.title`, `cover.subtitle`, optional `cover.eyebrow`, `footerLabel` |
-| **Canvas formats** | **Both** — see `FORMAT-GUIDANCE.md` |
 
 ## When to use
 

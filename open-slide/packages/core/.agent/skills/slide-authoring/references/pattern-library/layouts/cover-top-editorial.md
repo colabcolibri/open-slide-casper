@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: cover-top-editorial
+kind: layout
+summary: "Editorial opener: content starts at the top third (magazine style). Use when a centered cover feels too “keynote default”."
+formats: both
+content-keys:
+  - coverEditorial.eyebrow
+  - coverEditorial.title
+  - coverEditorial.subtitle
+  - footerLabel
+page-types:
+  - ../page-types/cover.md
+---
 # Pattern — cover-top-editorial
-
-| Field | Value |
-| --- | --- |
-| **id** | `cover-top-editorial` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/cover.md` |
-| **CONTENT keys** | `coverEditorial.eyebrow`, `coverEditorial.title`, `coverEditorial.subtitle`, `footerLabel` |
-| **Canvas formats** | **Both** — extra vertical space on `4x5` fits subtitle without shrinking hero |
 
 ## When to use
 

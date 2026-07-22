@@ -14,7 +14,7 @@ Read **`SLIDE-KIT.md`** for protocol and write scope.
 | Layer | Path (canonical) | Role |
 | --- | --- | --- |
 | Protocol | `.agent/SLIDE-KIT.md` | Priority, scope, sync, workflow → agent map |
-| Agents | `.agent/agents/*.md` | Persona, forbidden, delegation (`slide-author`, `theme-author`) |
+| Agents | `.agent/agents/*.md` | Persona, forbidden, delegation (`slide-author`, `theme-author`, `infographic-author`) |
 | Workflows | `.agent/workflows/*.md` | Entry: critical rules + agent + skills |
 | Skills | `.agent/skills/*/SKILL.md` | Procedure for one job |
 | References | `.agent/skills/slide-authoring/references/**` | Contracts, page types, primitives |
@@ -28,6 +28,7 @@ Read **`workflows/`** when the user invokes a named flow. Load the **agent** nam
 | New deck / “make slides about …” | `slide-author` | **`/create-slide`** → `.agent/workflows/create-slide.md` | skills **`create-slide`**, **`slide-authoring`** |
 | Apply inspector comments | `slide-author` | **`/apply-comments`** → `.agent/workflows/apply-comments.md` | **`apply-comments`**, **`slide-authoring`** |
 | New or extract theme | `theme-author` | **`/create-theme`** → `.agent/workflows/create-theme.md` | **`create-theme`**, **`slide-authoring`** |
+| Plan image infographic (layout/style + prompts) | `infographic-author` | **`/generate-infographic`** → `.agent/workflows/generate-infographic.md` | **`generate-infographic`**, **`infographic-catalog`** |
 | “This page”, “current slide”, present URL | `slide-author` | skill **`current-slide`** only | then **`slide-authoring`** |
 | Tweak layout, palette, steps, morph on known slide | `slide-author` | skill **`slide-authoring`** | `.agent/skills/slide-authoring/references/*` |
 | Edit `@open-slide/core` UI, Vite, CLI | **Stop** — not slide kit | `open-slide/AGENTS.md` | framework maintenance |

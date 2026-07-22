@@ -1,12 +1,16 @@
+---
+kit-doc: pattern
+id: steps-two-column
+kind: motion
+summary: "Two parallel build sequences (e.g. left = problem, right = solution). Document order: left column finishes all steps before right (`steps.md`)."
+formats: slide-first
+content-keys:
+  - stepsTwoCol.title
+  - per-column beat strings
+page-types:
+  - ../steps.md
+---
 # Pattern — steps-two-column
-
-| Field | Value |
-| --- | --- |
-| **id** | `steps-two-column` |
-| **kind** | motion |
-| **page-types ref** | `../steps.md` |
-| **CONTENT keys** | `stepsTwoCol.title`, per-column beat strings |
-| **Canvas formats** | **slide-first** — on `4x5` use `steps-reveal` single column |
 
 ## When to use
 

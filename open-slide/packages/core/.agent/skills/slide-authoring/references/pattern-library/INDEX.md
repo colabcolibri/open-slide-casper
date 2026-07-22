@@ -1,6 +1,6 @@
 # Pattern library — index
 
-Copy-paste **skeletons** for common layouts and motion. Read **`FORMAT-GUIDANCE.md`** before picking patterns — **16∶9 (`slide`)** and **`4x5`** differ in column width and vertical budget.
+Copy-paste **skeletons** for common layouts and motion. Read **`FORMAT-GUIDANCE.md`** (16∶9 vs `4x5`) and **`SCHEMA.md`** (`kit-doc: pattern` frontmatter) before adding entries.
 
 ## How this fits the deck
 
@@ -60,4 +60,4 @@ Copy-paste **skeletons** for common layouts and motion. Read **`FORMAT-GUIDANCE.
 
 ## Adding entries
 
-Copy `_entry-template.md`, fill metadata + **Canvas formats**, link a new row here (stable **id**).
+Copy `_entry-template.md`, fill frontmatter per `SCHEMA.md`, link a new row here (stable **id**).

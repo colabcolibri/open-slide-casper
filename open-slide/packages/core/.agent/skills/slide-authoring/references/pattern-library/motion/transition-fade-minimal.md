@@ -1,12 +1,15 @@
+---
+kit-doc: pattern
+id: transition-fade-minimal
+kind: motion
+summary: "Subtle deck-wide fade when `page-transition` feels too heavy. Good for dense editorial decks."
+formats: both
+content-keys:
+  - transition.module
+page-types:
+  - ../transitions.md
+---
 # Pattern — transition-fade-minimal
-
-| Field | Value |
-| --- | --- |
-| **id** | `transition-fade-minimal` |
-| **kind** | motion |
-| **page-types ref** | `../transitions.md` |
-| **CONTENT keys** | _(none)_ |
-| **Canvas formats** | **Both** |
 
 ## When to use
 

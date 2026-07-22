@@ -102,7 +102,7 @@ Use `key={line}` on bullets only inside a **template** when the list is data-dri
 
 ## Editing and comments
 
-- **New deck:** draft page outline in scoping, then fill CONTENT keys before writing `Page` components (`create-slide` Step 4 → 6).
+- **New deck:** draft page outline in scoping, pick pattern ids from **`pattern-library/INDEX.md`**, then fill CONTENT keys before writing `Page` components (`create-slide` Step 4 → 6). See **`pattern-library/README.md`** or **`.agent/README.md`** for the full flow.
 - **Text comment on one element:** update the matching CONTENT key; if the string is shared, one key update fixes every page.
 - **Large deck:** `grep -n "const .* Page"` to jump to structure; `grep CONTENT` or read the CONTENT block first when changing copy globally.
 

@@ -1,12 +1,15 @@
+---
+kit-doc: pattern
+id: page-transition
+kind: motion
+summary: "Motion between pages adds clarity (direction, softness). Default snap is fine for dense decks — opt in deliberately."
+formats: both
+content-keys:
+  - transition.module
+page-types:
+  - ../transitions.md
+---
 # Pattern — page-transition
-
-| Field | Value |
-| --- | --- |
-| **id** | `page-transition` |
-| **kind** | motion |
-| **page-types ref** | `../transitions.md` |
-| **CONTENT keys** | _(none — transition is module or per-page export)_ |
-| **Canvas formats** | **Both** |
 
 ## When to use
 

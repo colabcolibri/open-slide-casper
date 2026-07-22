@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: title-body-footer-prose
+kind: layout
+summary: "Single idea explained in prose (no bullets). Section transitions in narrative decks."
+formats: both
+content-keys:
+  - prose.eyebrow
+  - prose.title
+  - prose.body
+  - footerLabel
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — title-body-footer-prose
-
-| Field | Value |
-| --- | --- |
-| **id** | `title-body-footer-prose` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `prose.eyebrow`, `prose.title`, `prose.body`, `footerLabel` |
-| **Canvas formats** | **Both** — cap body to ~3 lines on `slide`; on `4x5` one extra line if budget allows |
 
 ## When to use
 

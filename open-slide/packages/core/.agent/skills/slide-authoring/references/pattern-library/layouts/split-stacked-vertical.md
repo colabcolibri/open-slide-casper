@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: split-stacked-vertical
+kind: layout
+summary: "Visual on top, copy below — default split for **`4x5`** and mobile-shaped exports. Prefer over `split-50-50-text-image` on portrait."
+formats: 4x5-first
+content-keys:
+  - stacked.title
+  - stacked.lead
+  - stacked.bullets[]
+  - footerLabel
+page-types:
+  - ../page-types/split.md
+---
 # Pattern — split-stacked-vertical
-
-| Field | Value |
-| --- | --- |
-| **id** | `split-stacked-vertical` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/split.md` |
-| **CONTENT keys** | `stacked.title`, `stacked.lead`, `stacked.bullets[]`, `footerLabel` |
-| **Canvas formats** | **4x5-first** — also fine on `slide` when you want poster layout |
 
 ## When to use
 

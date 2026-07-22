@@ -1,12 +1,17 @@
+---
+kit-doc: pattern
+id: full-bleed-image-caption
+kind: layout
+summary: "Photography-forward slide with caption strip. Minimal chrome — optional empty `head`."
+formats: both
+content-keys:
+  - bleed.caption
+  - bleed.credit
+  - footerLabel
+page-types:
+  - ../assets.md
+---
 # Pattern — full-bleed-image-caption
-
-| Field | Value |
-| --- | --- |
-| **id** | `full-bleed-image-caption` |
-| **kind** | layout |
-| **page-types ref** | `../assets.md` |
-| **CONTENT keys** | `bleed.caption`, `bleed.credit`, `footerLabel` |
-| **Canvas formats** | **Both** — crop assets for taller `4x5` aspect |
 
 ## When to use
 

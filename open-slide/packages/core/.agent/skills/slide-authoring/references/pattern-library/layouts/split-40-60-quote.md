@@ -1,12 +1,19 @@
+---
+kit-doc: pattern
+id: split-40-60-quote
+kind: layout
+summary: "Lead with a pull quote (40%) and supporting paragraph or short list (60%). Good for testimonials or thesis + evidence."
+formats: both-star
+content-keys:
+  - splitQuote.title
+  - splitQuote.quote
+  - splitQuote.attribution
+  - splitQuote.body
+  - footerLabel
+page-types:
+  - ../page-types/split.md
+---
 # Pattern — split-40-60-quote
-
-| Field | Value |
-| --- | --- |
-| **id** | `split-40-60-quote` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/split.md` |
-| **CONTENT keys** | `splitQuote.title`, `splitQuote.quote`, `splitQuote.attribution`, `splitQuote.body`, `footerLabel` |
-| **Canvas formats** | **Both\*** — stack quote above body on `4x5` if columns feel tight |
 
 ## When to use
 

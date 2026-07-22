@@ -58,7 +58,13 @@ The value is passed straight to Vite's `base` and to React Router's `basename`, 
 
 ## Authoring slides
 
-Slides live under `slides/<kebab-case-id>/index.tsx` and default-export an array of `Page` components:
+Slides live under `slides/<kebab-case-id>/index.tsx` and default-export an array of `Page` components.
+
+**Agents and humans:** the slide instruction kit ships inside this package at **`.agent/`** — start with [`.agent/README.md`](./.agent/README.md) (overview) and [`.agent/SLIDE-KIT.md`](./.agent/SLIDE-KIT.md) (protocol). After `open-slide sync:kit`, the same tree is copied to your project root as `.agent/`.
+
+Workflows: **`/create-slide`** (new deck), **`/apply-comments`** (inspector markers). Layout skeletons: **`.agent/skills/slide-authoring/references/pattern-library/INDEX.md`**.
+
+Minimal shape:
 
 ```tsx
 import type { Page } from '@open-slide/core';

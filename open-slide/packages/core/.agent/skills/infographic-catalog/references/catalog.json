@@ -1,0 +1,1374 @@
+{
+  "schemaVersion": 1,
+  "counts": {
+    "layouts": 39,
+    "styles": 56
+  },
+  "layouts": [
+    {
+      "id": "analogy_bridge",
+      "kind": "layout",
+      "name": "The Analogy Bridge",
+      "description": "A familiar concept mapped point-to-point onto a new, unfamiliar one.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/analogy_bridge.md",
+      "preview": "previews/layouts/analogy_bridge.webp"
+    },
+    {
+      "id": "anatomy_view",
+      "kind": "layout",
+      "name": "The Anatomy",
+      "description": "An exploded or cutaway view revealing internal components.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/anatomy_view.md",
+      "preview": "previews/layouts/anatomy_view.webp"
+    },
+    {
+      "id": "balance_scale",
+      "kind": "layout",
+      "name": "The Balance",
+      "description": "A weighing scale showing the trade-off or equilibrium between two forces.",
+      "categories": [
+        "Comparison"
+      ],
+      "promptMarkdown": "layouts/balance_scale.md",
+      "preview": "previews/layouts/balance_scale.webp"
+    },
+    {
+      "id": "bridge_gap",
+      "kind": "layout",
+      "name": "The Bridge",
+      "description": "A structure connecting two separated cliffs (Current vs Future).",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/bridge_gap.md",
+      "preview": "previews/layouts/bridge_gap.webp"
+    },
+    {
+      "id": "central_metaphor",
+      "kind": "layout",
+      "name": "Central Metaphor",
+      "description": "A single, powerful image that represents the entire concept, with radial callouts.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/central_metaphor.md",
+      "preview": "previews/layouts/central_metaphor.webp"
+    },
+    {
+      "id": "chaos_to_order",
+      "kind": "layout",
+      "name": "The Unraveling",
+      "description": "Visualizing clarity: a transition from a tangled mess to structured lines.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/chaos_to_order.md",
+      "preview": "previews/layouts/chaos_to_order.webp"
+    },
+    {
+      "id": "claim_pillars",
+      "kind": "layout",
+      "name": "The Pillars",
+      "description": "A central claim resting on independent, parallel columns of evidence.",
+      "categories": [
+        "Comparison"
+      ],
+      "promptMarkdown": "layouts/claim_pillars.md",
+      "preview": "previews/layouts/claim_pillars.webp"
+    },
+    {
+      "id": "comparison",
+      "kind": "layout",
+      "name": "The Duality",
+      "description": "A split composition comparing two opposing or alternative concepts.",
+      "categories": [
+        "Comparison"
+      ],
+      "promptMarkdown": "layouts/comparison.md",
+      "preview": "previews/layouts/comparison.webp"
+    },
+    {
+      "id": "concentric_layers",
+      "kind": "layout",
+      "name": "The Onion",
+      "description": "Nested circular layers showing depth, containment, or environment.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/concentric_layers.md",
+      "preview": "previews/layouts/concentric_layers.webp"
+    },
+    {
+      "id": "cycle",
+      "kind": "layout",
+      "name": "The Loop",
+      "description": "Closed-circuit flow for repeating processes or feedback loops.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/cycle.md",
+      "preview": "previews/layouts/cycle.webp"
+    },
+    {
+      "id": "data_story",
+      "kind": "layout",
+      "name": "The Dashboard",
+      "description": "Quantified visualization using widgets, charts, and metrics.",
+      "categories": [
+        "Data"
+      ],
+      "promptMarkdown": "layouts/data_story.md",
+      "preview": "previews/layouts/data_story.webp"
+    },
+    {
+      "id": "decision_tree",
+      "kind": "layout",
+      "name": "The Network",
+      "description": "Branching logic showing choices, consequences, and paths.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/decision_tree.md",
+      "preview": "previews/layouts/decision_tree.webp"
+    },
+    {
+      "id": "funnel",
+      "kind": "layout",
+      "name": "The Filter",
+      "description": "Visualizing reduction, selection, or narrowing down.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/funnel.md",
+      "preview": "previews/layouts/funnel.webp"
+    },
+    {
+      "id": "galaxy",
+      "kind": "layout",
+      "name": "The Ecosystem",
+      "description": "Non-hierarchical cluster orbiting a central core.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/galaxy.md",
+      "preview": "previews/layouts/galaxy.webp"
+    },
+    {
+      "id": "geographical_map",
+      "kind": "layout",
+      "name": "The Landscape",
+      "description": "Spatial distribution of concepts across a terrain or system.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/geographical_map.md",
+      "preview": "previews/layouts/geographical_map.webp"
+    },
+    {
+      "id": "glossary_grid",
+      "kind": "layout",
+      "name": "The Glossary Grid",
+      "description": "A uniform grid of term cards built for quick reference lookup.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/glossary_grid.md",
+      "preview": "previews/layouts/glossary_grid.webp"
+    },
+    {
+      "id": "hierarchy_pyramid",
+      "kind": "layout",
+      "name": "The Hierarchy",
+      "description": "Tiered levels showing foundation, support, and pinnacle.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/hierarchy_pyramid.md",
+      "preview": "previews/layouts/hierarchy_pyramid.webp"
+    },
+    {
+      "id": "iceberg",
+      "kind": "layout",
+      "name": "The Subsurface",
+      "description": "Dual-layer view showing Visible (Surface) vs Invisible (Deep).",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/iceberg.md",
+      "preview": "previews/layouts/iceberg.webp"
+    },
+    {
+      "id": "ingredients_knolling",
+      "kind": "layout",
+      "name": "The Ingredients (Recipe)",
+      "description": "A \"flat lay\" or \"knolling\" photo arrangement of distinct components.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/ingredients_knolling.md",
+      "preview": "previews/layouts/ingredients_knolling.webp"
+    },
+    {
+      "id": "layered_stack_comparison",
+      "kind": "layout",
+      "name": "The Tiered Stack",
+      "description": "Stacked tiers where each level cumulatively includes all below.",
+      "categories": [
+        "Comparison",
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/layered_stack_comparison.md",
+      "preview": "previews/layouts/layered_stack_comparison.webp"
+    },
+    {
+      "id": "listicle",
+      "kind": "layout",
+      "name": "The Stack",
+      "description": "A highly organized, ranked vertical stack of distinct items.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/listicle.md",
+      "preview": "previews/layouts/listicle.webp"
+    },
+    {
+      "id": "markup_breakdown",
+      "kind": "layout",
+      "name": "The Markup",
+      "description": "Analytical overlay with highlights and handwritten notes on a document or UI.",
+      "categories": [
+        "Data"
+      ],
+      "promptMarkdown": "layouts/markup_breakdown.md",
+      "preview": "previews/layouts/markup_breakdown.webp"
+    },
+    {
+      "id": "matrix_quadrant",
+      "kind": "layout",
+      "name": "The Matrix",
+      "description": "A 2x2 grid classifying items based on two crossing axes/variables.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/matrix_quadrant.md",
+      "preview": "previews/layouts/matrix_quadrant.webp"
+    },
+    {
+      "id": "mind_map",
+      "kind": "layout",
+      "name": "The Mind Map",
+      "description": "A central idea radiating into organic branches of related subtopics.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/mind_map.md",
+      "preview": "previews/layouts/mind_map.webp"
+    },
+    {
+      "id": "network_graph",
+      "kind": "layout",
+      "name": "The Mesh",
+      "description": "A peer web of nodes and edges with no single boss.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/network_graph.md",
+      "preview": "previews/layouts/network_graph.webp"
+    },
+    {
+      "id": "org_chart",
+      "kind": "layout",
+      "name": "The Org Chart",
+      "description": "A top-down tree of boxes and lines showing reporting structure.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/org_chart.md",
+      "preview": "previews/layouts/org_chart.webp"
+    },
+    {
+      "id": "organic_tree",
+      "kind": "layout",
+      "name": "The Tree",
+      "description": "Biological growth showing hidden inputs (roots) and visible outputs (fruit).",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/organic_tree.md",
+      "preview": "previews/layouts/organic_tree.webp"
+    },
+    {
+      "id": "prism",
+      "kind": "layout",
+      "name": "The Refraction",
+      "description": "Transformation view: Input -> Magic Box -> Output.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/prism.md",
+      "preview": "previews/layouts/prism.webp"
+    },
+    {
+      "id": "process_flowchart",
+      "kind": "layout",
+      "name": "The Process",
+      "description": "A sequential flow showing transformation from State A to State B.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/process_flowchart.md",
+      "preview": "previews/layouts/process_flowchart.webp"
+    },
+    {
+      "id": "puzzle_integration",
+      "kind": "layout",
+      "name": "The Puzzle",
+      "description": "Interlocking distinct pieces forming a unified whole.",
+      "categories": [
+        "Structure"
+      ],
+      "promptMarkdown": "layouts/puzzle_integration.md",
+      "preview": "previews/layouts/puzzle_integration.webp"
+    },
+    {
+      "id": "ripple_effect",
+      "kind": "layout",
+      "name": "The Ripple",
+      "description": "A single event creating expanding concentric waves of consequence.",
+      "categories": [
+        "Metaphor"
+      ],
+      "promptMarkdown": "layouts/ripple_effect.md",
+      "preview": "previews/layouts/ripple_effect.webp"
+    },
+    {
+      "id": "roadmap",
+      "kind": "layout",
+      "name": "The Horizon",
+      "description": "Perspective view showing a journey towards a future goal.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/roadmap.md",
+      "preview": "previews/layouts/roadmap.webp"
+    },
+    {
+      "id": "root_cause_fishbone",
+      "kind": "layout",
+      "name": "The Fishbone",
+      "description": "Cause categories branching along a spine toward a central problem.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/root_cause_fishbone.md",
+      "preview": "previews/layouts/root_cause_fishbone.webp"
+    },
+    {
+      "id": "scoreboard",
+      "kind": "layout",
+      "name": "The Scoreboard",
+      "description": "Ranked rows with score bars and podium emphasis.",
+      "categories": [
+        "Data"
+      ],
+      "promptMarkdown": "layouts/scoreboard.md",
+      "preview": "previews/layouts/scoreboard.webp"
+    },
+    {
+      "id": "staircase",
+      "kind": "layout",
+      "name": "The Ascent",
+      "description": "Stepped elevation showing effort, difficulty, and rising status.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/staircase.md",
+      "preview": "previews/layouts/staircase.webp"
+    },
+    {
+      "id": "team_roster",
+      "kind": "layout",
+      "name": "The Roster",
+      "description": "Uniform ID cards introducing each member of a team or squad.",
+      "categories": [
+        "Identity"
+      ],
+      "promptMarkdown": "layouts/team_roster.md",
+      "preview": "previews/layouts/team_roster.webp"
+    },
+    {
+      "id": "timeline",
+      "kind": "layout",
+      "name": "The Evolution",
+      "description": "A chronological journey showing growth, history, or future projection.",
+      "categories": [
+        "Process"
+      ],
+      "promptMarkdown": "layouts/timeline.md",
+      "preview": "previews/layouts/timeline.webp"
+    },
+    {
+      "id": "venn",
+      "kind": "layout",
+      "name": "The Synthesis",
+      "description": "Overlapping zones showing intersection and commonality.",
+      "categories": [
+        "Comparison"
+      ],
+      "promptMarkdown": "layouts/venn.md",
+      "preview": "previews/layouts/venn.webp"
+    },
+    {
+      "id": "visual_resume",
+      "kind": "layout",
+      "name": "The Profile",
+      "description": "Identity-focused layout centering on an entity or persona.",
+      "categories": [
+        "Identity"
+      ],
+      "promptMarkdown": "layouts/visual_resume.md",
+      "preview": "previews/layouts/visual_resume.webp"
+    }
+  ],
+  "styles": [
+    {
+      "id": "1_bit",
+      "kind": "style",
+      "name": "1-Bit Retro",
+      "description": "Pure Black and White. Pixel art of extreme high contrast.",
+      "vibe": [
+        "Minimalist",
+        "Retro",
+        "Gritty"
+      ],
+      "format": [
+        "Pixel"
+      ],
+      "promptMarkdown": "styles/1_bit.md",
+      "preview": "previews/styles/1_bit.webp"
+    },
+    {
+      "id": "acid_graphics",
+      "kind": "style",
+      "name": "Acid Graphics (Y2K)",
+      "description": "Liquid chrome, distorted typography, and iridescence. A modern futuristic aesthetic.",
+      "vibe": [
+        "Futuristic",
+        "Creative"
+      ],
+      "format": [
+        "3D",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/acid_graphics.md",
+      "preview": "previews/styles/acid_graphics.webp"
+    },
+    {
+      "id": "architectural_blueprint",
+      "kind": "style",
+      "name": "Architectural Plans",
+      "description": "Technical architectural drawings with precise measurements, annotations, and professional drafting.",
+      "vibe": [
+        "Professional",
+        "Modern"
+      ],
+      "format": [
+        "Linear",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/architectural_blueprint.md",
+      "preview": "previews/styles/architectural_blueprint.webp"
+    },
+    {
+      "id": "art_deco",
+      "kind": "style",
+      "name": "Art Deco Luxury",
+      "description": "Geometric elegance, gold foil, and symmetry. The Great Gatsby vibe.",
+      "vibe": [
+        "Luxury",
+        "Retro",
+        "Dramatic"
+      ],
+      "format": [
+        "Flat",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/art_deco.md",
+      "preview": "previews/styles/art_deco.webp"
+    },
+    {
+      "id": "banknote_engraving",
+      "kind": "style",
+      "name": "Banknote Engraving",
+      "description": "The style of currency engraving. Conveys extreme trust, value, and tradition.",
+      "vibe": [
+        "Professional",
+        "Luxury",
+        "Retro"
+      ],
+      "format": [
+        "Linear",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/banknote_engraving.md",
+      "preview": "previews/styles/banknote_engraving.webp"
+    },
+    {
+      "id": "bauhaus",
+      "kind": "style",
+      "name": "Bauhaus",
+      "description": "Geometric and primary colors. Architectural and functionalist.",
+      "vibe": [
+        "Minimalist",
+        "Retro",
+        "Professional"
+      ],
+      "format": [
+        "Flat",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/bauhaus.md",
+      "preview": "previews/styles/bauhaus.webp"
+    },
+    {
+      "id": "blueprint",
+      "kind": "style",
+      "name": "Technical Blueprint",
+      "description": "Analytical, structural, and detailed. White lines on a deep blue grid.",
+      "vibe": [
+        "Professional",
+        "Minimalist"
+      ],
+      "format": [
+        "Linear",
+        "Data"
+      ],
+      "promptMarkdown": "styles/blueprint.md",
+      "preview": "previews/styles/blueprint.webp"
+    },
+    {
+      "id": "botanical",
+      "kind": "style",
+      "name": "Scientific Botanical",
+      "description": "Organic, detailed, and earthy. Like a 19th-century biology textbook.",
+      "vibe": [
+        "Retro",
+        "Creative"
+      ],
+      "format": [
+        "Handmade",
+        "Linear",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/botanical.md",
+      "preview": "previews/styles/botanical.webp"
+    },
+    {
+      "id": "brutalism",
+      "kind": "style",
+      "name": "Web Brutalism",
+      "description": "The \"raw\" aesthetic of the modern internet. Standard fonts, high contrast, and hard edges.",
+      "vibe": [
+        "Minimalist",
+        "Gritty"
+      ],
+      "format": [
+        "Flat"
+      ],
+      "promptMarkdown": "styles/brutalism.md",
+      "preview": "previews/styles/brutalism.webp"
+    },
+    {
+      "id": "calligraphy",
+      "kind": "style",
+      "name": "Elegant Calligraphy",
+      "description": "Sophisticated handwritten script with flowing, ornamental letterforms and elegant flourishes.",
+      "vibe": [
+        "Luxury",
+        "Creative",
+        "Professional"
+      ],
+      "format": [
+        "Handmade",
+        "Linear"
+      ],
+      "promptMarkdown": "styles/calligraphy.md",
+      "preview": "previews/styles/calligraphy.webp"
+    },
+    {
+      "id": "celestial_tarot",
+      "kind": "style",
+      "name": "Celestial Tarot",
+      "description": "Fine golden lines, sacred geometry, and dark backgrounds. Great for mystical concepts.",
+      "vibe": [
+        "Mystical",
+        "Luxury"
+      ],
+      "format": [
+        "Linear",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/celestial_tarot.md",
+      "preview": "previews/styles/celestial_tarot.webp"
+    },
+    {
+      "id": "chalkboard",
+      "kind": "style",
+      "name": "Academic Chalkboard",
+      "description": "The classic blackboard. Great for \"from scratch\" explanations and fundamental concepts.",
+      "vibe": [
+        "Retro",
+        "Professional"
+      ],
+      "format": [
+        "Handmade",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/chalkboard.md",
+      "preview": "previews/styles/chalkboard.webp"
+    },
+    {
+      "id": "child_drawing",
+      "kind": "style",
+      "name": "Crayon Masterpiece",
+      "description": "Naive, colorful, and imaginative. Wax crayons on crinkled paper.",
+      "vibe": [
+        "Playful",
+        "Creative"
+      ],
+      "format": [
+        "Handmade",
+        "Textured",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/child_drawing.md",
+      "preview": "previews/styles/child_drawing.webp"
+    },
+    {
+      "id": "claymorphism",
+      "kind": "style",
+      "name": "Claymorphism",
+      "description": "Soft, tactile, and friendly. 3D objects that look like plasticine or clay.",
+      "vibe": [
+        "Playful",
+        "Creative"
+      ],
+      "format": [
+        "3D",
+        "Handmade"
+      ],
+      "promptMarkdown": "styles/claymorphism.md",
+      "preview": "previews/styles/claymorphism.webp"
+    },
+    {
+      "id": "collage",
+      "kind": "style",
+      "name": "Grunge Collage",
+      "description": "Raw, textured, and expressive. Ripped paper, photos, and mixed media.",
+      "vibe": [
+        "Gritty",
+        "Creative",
+        "Dramatic"
+      ],
+      "format": [
+        "Collage",
+        "Textured",
+        "Photorealistic"
+      ],
+      "promptMarkdown": "styles/collage.md",
+      "preview": "previews/styles/collage.webp"
+    },
+    {
+      "id": "comic",
+      "kind": "style",
+      "name": "Vintage Comic",
+      "description": "Narrative, bold outlines, and halftone dots. Action-packed and engaging.",
+      "vibe": [
+        "Retro",
+        "Playful",
+        "Dramatic"
+      ],
+      "format": [
+        "Handmade",
+        "Linear"
+      ],
+      "promptMarkdown": "styles/comic.md",
+      "preview": "previews/styles/comic.webp"
+    },
+    {
+      "id": "corporate_vector",
+      "kind": "style",
+      "name": "Corporate Vector",
+      "description": "The friendly \"startup\" style. Flat colors, soft shapes, and inclusive characters.",
+      "vibe": [
+        "Professional",
+        "Playful"
+      ],
+      "format": [
+        "Flat"
+      ],
+      "promptMarkdown": "styles/corporate_vector.md",
+      "preview": "previews/styles/corporate_vector.webp"
+    },
+    {
+      "id": "cyberpunk",
+      "kind": "style",
+      "name": "Cyberpunk HUD",
+      "description": "High contrast, neon on black, glitchy, and data-heavy.",
+      "vibe": [
+        "Futuristic",
+        "Gritty",
+        "Dramatic"
+      ],
+      "format": [
+        "Linear",
+        "Data"
+      ],
+      "promptMarkdown": "styles/cyberpunk.md",
+      "preview": "previews/styles/cyberpunk.webp"
+    },
+    {
+      "id": "editorial",
+      "kind": "style",
+      "name": "High-End Editorial",
+      "description": "Luxurious, spacious, and typographic. Like a page from Vogue or Monocle.",
+      "vibe": [
+        "Luxury",
+        "Minimalist",
+        "Professional"
+      ],
+      "format": [
+        "Photorealistic",
+        "Flat"
+      ],
+      "promptMarkdown": "styles/editorial.md",
+      "preview": "previews/styles/editorial.webp"
+    },
+    {
+      "id": "esports_tactical",
+      "kind": "style",
+      "name": "Esports Tactical",
+      "description": "Aggressive, angular, and kinetic. The sharp aesthetic of Valorant or Overwatch.",
+      "vibe": [
+        "Futuristic",
+        "Dramatic",
+        "Professional"
+      ],
+      "format": [
+        "Flat",
+        "Linear"
+      ],
+      "promptMarkdown": "styles/esports_tactical.md",
+      "preview": "previews/styles/esports_tactical.webp"
+    },
+    {
+      "id": "fantasy_rpg",
+      "kind": "style",
+      "name": "Fantasy RPG UI",
+      "description": "Epic, ornate, and texture-heavy. Parchment, gold frames, and magical gems.",
+      "vibe": [
+        "Mystical",
+        "Dramatic",
+        "Retro"
+      ],
+      "format": [
+        "Textured",
+        "Photorealistic",
+        "Handmade"
+      ],
+      "promptMarkdown": "styles/fantasy_rpg.md",
+      "preview": "previews/styles/fantasy_rpg.webp"
+    },
+    {
+      "id": "film_noir",
+      "kind": "style",
+      "name": "Film Noir",
+      "description": "Cinematic black and white photography with harsh shadows. For dilemmas or \"investigation\".",
+      "vibe": [
+        "Dramatic",
+        "Retro",
+        "Gritty"
+      ],
+      "format": [
+        "Photorealistic"
+      ],
+      "promptMarkdown": "styles/film_noir.md",
+      "preview": "previews/styles/film_noir.webp"
+    },
+    {
+      "id": "glassmorphism",
+      "kind": "style",
+      "name": "Glassmorphism",
+      "description": "Modern, translucent, and ethereal. Frosted glass layers over vibrant gradients.",
+      "vibe": [
+        "Futuristic",
+        "Luxury"
+      ],
+      "format": [
+        "3D",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/glassmorphism.md",
+      "preview": "previews/styles/glassmorphism.webp"
+    },
+    {
+      "id": "graffiti",
+      "kind": "style",
+      "name": "Street Art Graffiti",
+      "description": "Bold, expressive street art with vibrant colors, wildstyle lettering, and urban energy.",
+      "vibe": [
+        "Playful",
+        "Gritty",
+        "Creative"
+      ],
+      "format": [
+        "Handmade",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/graffiti.md",
+      "preview": "previews/styles/graffiti.webp"
+    },
+    {
+      "id": "hand_drawn_indie",
+      "kind": "style",
+      "name": "Hand-Drawn Indie",
+      "description": "2D indie game style (\"Hollow Knight\"). Traditional animation and painted backgrounds.",
+      "vibe": [
+        "Creative",
+        "Playful",
+        "Gritty"
+      ],
+      "format": [
+        "Handmade",
+        "Linear"
+      ],
+      "promptMarkdown": "styles/hand_drawn_indie.md",
+      "preview": "previews/styles/hand_drawn_indie.webp"
+    },
+    {
+      "id": "isometric",
+      "kind": "style",
+      "name": "Isometric 3D",
+      "description": "Precise, engineered, and deep. A clean 30° perspective on complex systems.",
+      "vibe": [
+        "Professional",
+        "Playful"
+      ],
+      "format": [
+        "3D",
+        "Data",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/isometric.md",
+      "preview": "previews/styles/isometric.webp"
+    },
+    {
+      "id": "low_poly",
+      "kind": "style",
+      "name": "Low Poly 3D",
+      "description": "Geometric, faceted, and digital. Like early 3D computer graphics.",
+      "vibe": [
+        "Futuristic",
+        "Minimalist"
+      ],
+      "format": [
+        "3D",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/low_poly.md",
+      "preview": "previews/styles/low_poly.webp"
+    },
+    {
+      "id": "manual",
+      "kind": "style",
+      "name": "Instructional Manual",
+      "description": "IKEA/LEGO style. Black line on white background, isometric, no text.",
+      "vibe": [
+        "Minimalist",
+        "Professional"
+      ],
+      "format": [
+        "Linear",
+        "Data"
+      ],
+      "promptMarkdown": "styles/manual.md",
+      "preview": "previews/styles/manual.webp"
+    },
+    {
+      "id": "mid_century",
+      "kind": "style",
+      "name": "Mid-Century Modern",
+      "description": "Sophisticated, geometric, and warm. Jazz album covers meet furniture design.",
+      "vibe": [
+        "Retro",
+        "Creative"
+      ],
+      "format": [
+        "Flat",
+        "Abstract",
+        "Collage"
+      ],
+      "promptMarkdown": "styles/mid_century.md",
+      "preview": "previews/styles/mid_century.webp"
+    },
+    {
+      "id": "minimalist_line",
+      "kind": "style",
+      "name": "Minimalist Line Art",
+      "description": "Ultra-clean single-line illustrations. Maximum impact with minimal elements.",
+      "vibe": [
+        "Minimalist",
+        "Modern",
+        "Professional"
+      ],
+      "format": [
+        "Linear",
+        "Flat"
+      ],
+      "promptMarkdown": "styles/minimalist_line.md",
+      "preview": "previews/styles/minimalist_line.webp"
+    },
+    {
+      "id": "monoline",
+      "kind": "style",
+      "name": "Monoline Vector",
+      "description": "Technical minimalism. Only constant-width lines, no fills.",
+      "vibe": [
+        "Minimalist",
+        "Professional"
+      ],
+      "format": [
+        "Linear",
+        "Flat"
+      ],
+      "promptMarkdown": "styles/monoline.md",
+      "preview": "previews/styles/monoline.webp"
+    },
+    {
+      "id": "napkin_color",
+      "kind": "style",
+      "name": "The Colorful Napkin",
+      "description": "Vibrant and expressive. Colorful marker pens bleeding onto a textured paper napkin.",
+      "vibe": [
+        "Creative",
+        "Playful",
+        "Gritty"
+      ],
+      "format": [
+        "Handmade",
+        "Linear",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/napkin_color.md",
+      "preview": "previews/styles/napkin_color.webp"
+    },
+    {
+      "id": "napkin_sketch",
+      "kind": "style",
+      "name": "The Napkin Sketch",
+      "description": "Impromptu and rough. Blue ballpoint pen bleeding onto a textured paper napkin.",
+      "vibe": [
+        "Creative",
+        "Minimalist",
+        "Gritty"
+      ],
+      "format": [
+        "Handmade",
+        "Linear",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/napkin_sketch.md",
+      "preview": "previews/styles/napkin_sketch.webp"
+    },
+    {
+      "id": "neon_signs",
+      "kind": "style",
+      "name": "Neon Nights",
+      "description": "Vibrant neon signs and glowing typography against dark urban backgrounds.",
+      "vibe": [
+        "Futuristic",
+        "Dramatic",
+        "Modern"
+      ],
+      "format": [
+        "3D",
+        "Cinematic"
+      ],
+      "promptMarkdown": "styles/neon_signs.md",
+      "preview": "previews/styles/neon_signs.webp"
+    },
+    {
+      "id": "newspaper_strip",
+      "kind": "style",
+      "name": "Sunday Funny Pages",
+      "description": "Classic newspaper comic style. Hand-inked lines, halftone colors, and cheap paper.",
+      "vibe": [
+        "Retro",
+        "Playful",
+        "Creative"
+      ],
+      "format": [
+        "Handmade",
+        "Linear",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/newspaper_strip.md",
+      "preview": "previews/styles/newspaper_strip.webp"
+    },
+    {
+      "id": "oil_painting",
+      "kind": "style",
+      "name": "Oil Painting",
+      "description": "Visible brushstrokes, color mixing, and canvas texture. Classical lighting.",
+      "vibe": [
+        "Creative",
+        "Dramatic",
+        "Retro"
+      ],
+      "format": [
+        "Textured",
+        "Handmade",
+        "Photorealistic"
+      ],
+      "promptMarkdown": "styles/oil_painting.md",
+      "preview": "previews/styles/oil_painting.webp"
+    },
+    {
+      "id": "origami",
+      "kind": "style",
+      "name": "Origami Paper Art",
+      "description": "Clean geometric forms created through paper folding. Minimalist and precise.",
+      "vibe": [
+        "Minimalist",
+        "Creative",
+        "Modern"
+      ],
+      "format": [
+        "3D",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/origami.md",
+      "preview": "previews/styles/origami.webp"
+    },
+    {
+      "id": "papercut",
+      "kind": "style",
+      "name": "Paper Diorama",
+      "description": "Tactile, layered, and crafty. Depth created by shadows and stacked planes.",
+      "vibe": [
+        "Creative",
+        "Playful"
+      ],
+      "format": [
+        "3D",
+        "Handmade",
+        "Collage"
+      ],
+      "promptMarkdown": "styles/papercut.md",
+      "preview": "previews/styles/papercut.webp"
+    },
+    {
+      "id": "pixel_art",
+      "kind": "style",
+      "name": "Retro Pixel Art",
+      "description": "Nostalgic 8-bit aesthetic. Blocky, limited palette, and grid-aligned.",
+      "vibe": [
+        "Retro",
+        "Playful"
+      ],
+      "format": [
+        "Pixel"
+      ],
+      "promptMarkdown": "styles/pixel_art.md",
+      "preview": "previews/styles/pixel_art.webp"
+    },
+    {
+      "id": "psychedelic",
+      "kind": "style",
+      "name": "Psychedelic",
+      "description": "Poster art from the 60s/70s. Liquid colors and distorted typography.",
+      "vibe": [
+        "Creative",
+        "Retro",
+        "Mystical"
+      ],
+      "format": [
+        "Abstract",
+        "Handmade"
+      ],
+      "promptMarkdown": "styles/psychedelic.md",
+      "preview": "previews/styles/psychedelic.webp"
+    },
+    {
+      "id": "risograph",
+      "kind": "style",
+      "name": "Risograph Zine",
+      "description": "Grainy, indie, and imperfect. Vibrant colors with print misalignment textures.",
+      "vibe": [
+        "Retro",
+        "Creative",
+        "Gritty"
+      ],
+      "format": [
+        "Textured",
+        "Handmade"
+      ],
+      "promptMarkdown": "styles/risograph.md",
+      "preview": "previews/styles/risograph.webp"
+    },
+    {
+      "id": "scandinavian",
+      "kind": "style",
+      "name": "Scandinavian",
+      "description": "Warm minimalism. Pastel colors, organic shapes, and lots of white space.",
+      "vibe": [
+        "Minimalist",
+        "Professional"
+      ],
+      "format": [
+        "Flat",
+        "Handmade"
+      ],
+      "promptMarkdown": "styles/scandinavian.md",
+      "preview": "previews/styles/scandinavian.webp"
+    },
+    {
+      "id": "scientific_diagram",
+      "kind": "style",
+      "name": "Scientific Illustration",
+      "description": "Precise technical diagrams with labels, cross-sections, and educational clarity.",
+      "vibe": [
+        "Professional",
+        "Modern"
+      ],
+      "format": [
+        "Linear",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/scientific_diagram.md",
+      "preview": "previews/styles/scientific_diagram.webp"
+    },
+    {
+      "id": "sketch",
+      "kind": "style",
+      "name": "Da Vinci Notebook",
+      "description": "Human, organic, and explanatory. Looks like a genius scientist's field notes.",
+      "vibe": [
+        "Retro",
+        "Creative"
+      ],
+      "format": [
+        "Handmade",
+        "Linear",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/sketch.md",
+      "preview": "previews/styles/sketch.webp"
+    },
+    {
+      "id": "stained_glass",
+      "kind": "style",
+      "name": "Stained Glass",
+      "description": "Light passing through colored glass. Solemn and suitable for revered concepts.",
+      "vibe": [
+        "Mystical",
+        "Dramatic",
+        "Retro"
+      ],
+      "format": [
+        "Abstract",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/stained_glass.md",
+      "preview": "previews/styles/stained_glass.webp"
+    },
+    {
+      "id": "stencil",
+      "kind": "style",
+      "name": "Street Art Stencil",
+      "description": "Banksy style. Spray paint on high-contrast stencils.",
+      "vibe": [
+        "Gritty",
+        "Creative",
+        "Dramatic"
+      ],
+      "format": [
+        "Textured",
+        "Collage"
+      ],
+      "promptMarkdown": "styles/stencil.md",
+      "preview": "previews/styles/stencil.webp"
+    },
+    {
+      "id": "swiss",
+      "kind": "style",
+      "name": "Swiss International",
+      "description": "Objective, grid-based, high contrast, and perfectly organized.",
+      "vibe": [
+        "Professional",
+        "Minimalist"
+      ],
+      "format": [
+        "Flat",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/swiss.md",
+      "preview": "previews/styles/swiss.webp"
+    },
+    {
+      "id": "synthwave",
+      "kind": "style",
+      "name": "Synthwave",
+      "description": "The \"future of the 80s\". Purple sunsets, laser grids, and chrome.",
+      "vibe": [
+        "Futuristic",
+        "Retro",
+        "Dramatic"
+      ],
+      "format": [
+        "3D",
+        "Linear"
+      ],
+      "promptMarkdown": "styles/synthwave.md",
+      "preview": "previews/styles/synthwave.webp"
+    },
+    {
+      "id": "thermal_imaging",
+      "kind": "style",
+      "name": "Thermal Imaging",
+      "description": "Gradients of heat (infrared). Excellent for data analysis and focus.",
+      "vibe": [
+        "Futuristic",
+        "Dramatic"
+      ],
+      "format": [
+        "Data",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/thermal_imaging.md",
+      "preview": "previews/styles/thermal_imaging.webp"
+    },
+    {
+      "id": "ukiyo_e",
+      "kind": "style",
+      "name": "Ukiyo-e Woodblock",
+      "description": "Traditional Japanese printmaking. Flat perspective and wood textures.",
+      "vibe": [
+        "Creative",
+        "Retro"
+      ],
+      "format": [
+        "Textured",
+        "Handmade",
+        "Flat"
+      ],
+      "promptMarkdown": "styles/ukiyo_e.md",
+      "preview": "previews/styles/ukiyo_e.webp"
+    },
+    {
+      "id": "vintage_label",
+      "kind": "style",
+      "name": "Vintage Branding",
+      "description": "Classic product labels and packaging design from the early 20th century. Ornate borders and elegant typography.",
+      "vibe": [
+        "Retro",
+        "Luxury",
+        "Professional"
+      ],
+      "format": [
+        "Flat",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/vintage_label.md",
+      "preview": "previews/styles/vintage_label.webp"
+    },
+    {
+      "id": "vintage_map",
+      "kind": "style",
+      "name": "Vintage Cartography",
+      "description": "Classic map design with ornate borders, compass roses, and illustrated landmarks.",
+      "vibe": [
+        "Retro",
+        "Professional",
+        "Mystical"
+      ],
+      "format": [
+        "Handmade",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/vintage_map.md",
+      "preview": "previews/styles/vintage_map.webp"
+    },
+    {
+      "id": "vintage_poster",
+      "kind": "style",
+      "name": "Vintage Poster Art",
+      "description": "Classic poster design from the 1920s-1950s. Bold typography, limited color palettes, and graphic illustrations.",
+      "vibe": [
+        "Retro",
+        "Professional",
+        "Dramatic"
+      ],
+      "format": [
+        "Flat",
+        "Abstract"
+      ],
+      "promptMarkdown": "styles/vintage_poster.md",
+      "preview": "previews/styles/vintage_poster.webp"
+    },
+    {
+      "id": "voxel",
+      "kind": "style",
+      "name": "Voxel Sandbox",
+      "description": "Style \"Minecraft\". 3D cubes, perfect grids and soft lighting.",
+      "vibe": [
+        "Playful",
+        "Creative"
+      ],
+      "format": [
+        "3D",
+        "Pixel"
+      ],
+      "promptMarkdown": "styles/voxel.md",
+      "preview": "previews/styles/voxel.webp"
+    },
+    {
+      "id": "watercolor",
+      "kind": "style",
+      "name": "Soft Watercolor",
+      "description": "Fluid, artistic, and calming. Bleeding colors and textured paper.",
+      "vibe": [
+        "Creative",
+        "Mystical"
+      ],
+      "format": [
+        "Handmade",
+        "Textured"
+      ],
+      "promptMarkdown": "styles/watercolor.md",
+      "preview": "previews/styles/watercolor.webp"
+    },
+    {
+      "id": "whiteboard",
+      "kind": "style",
+      "name": "Whiteboard Strategy",
+      "description": "Colored markers on a whiteboard. Gives a feeling of \"brainstorming\" and agility.",
+      "vibe": [
+        "Professional",
+        "Creative"
+      ],
+      "format": [
+        "Handmade",
+        "Linear"
+      ],
+      "promptMarkdown": "styles/whiteboard.md",
+      "preview": "previews/styles/whiteboard.webp"
+    }
+  ]
+}

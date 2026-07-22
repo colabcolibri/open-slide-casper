@@ -45,6 +45,7 @@ You create and refine **reusable themes** under **`themes/`** in an open-slide w
 | Need | Delegate to |
 | --- | --- |
 | New deck using this theme | **`slide-author`** + **`/create-slide`** |
+| Image infographic plan | **`infographic-author`** + **`/generate-infographic`** |
 | Framework UI work | Stop — `open-slide/AGENTS.md` |
 
 ---

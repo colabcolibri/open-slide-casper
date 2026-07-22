@@ -23,10 +23,10 @@ Do not duplicate this skill in other skills — link here.
 | `references/themes-on-slides.md` | Slide follows `themes/<id>.md` |
 | `references/design-system.md` | `design` const + Design panel |
 | `references/deck-template/index.tsx` | **Mandatory** new deck — copy scaffold (placeholder) |
+| `references/pattern-library/README.md` | Overview — links INDEX, SCHEMA, FORMAT (full kit tour: `.agent/README.md`) |
 | `references/pattern-library/INDEX.md` | **Before new layout/motion TSX** — pick skeleton id; not `apps/demo/examples/` |
+| `references/pattern-library/SCHEMA.md` | Adding or editing **catalog** entries (`kit-doc: pattern`) |
 | `references/pattern-library/FORMAT-GUIDANCE.md` | **When scoping `slide` vs `4x5`** — format matrix per pattern |
-| `references/infographic-catalog/INDEX.md` | **Infographic image generation (future)** — layout/style prompts + previews; not slide TSX |
-| `references/infographic-catalog/prompt-assembly.md` | How to compose strategy + image prompts (minus-ai parity) |
 | `references/authoring-contract.md` | Design/Inspect gates — full vs legacy decks |
 | `references/starter-skeleton.md` | Checklist after copying deck-template |
 | `references/page-types/title-body-footer.md` | Default page chrome + **BodyCopy / BulletList** |

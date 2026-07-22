@@ -40,6 +40,7 @@ Canonical agent: **`packages/core/.agent/agents/slide-author.md`**. Skill hubs: 
 | --- | --- |
 | Edit `packages/core/src`, Vite plugin, CLI | Framework — `open-slide/AGENTS.md` |
 | Create or change files under `themes/` | **`theme-author`** + **`/create-theme`** |
+| Plan image infographics (catalog + prompts) | **`infographic-author`** + **`/generate-infographic`** |
 | Edit mirrored `.cursor/` / `.agents/` files | Change **`core/.agent/`** + run `sync:kit` |
 | Run dev server unless user asks | Workflow default |
 | **Write `slides/` on `/create-slide` before Step 2 scoping is answered** | User must confirm topic, structure, and style — see **`create-slide/references/scoping.md`** |

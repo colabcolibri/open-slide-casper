@@ -2,6 +2,8 @@
 
 Instruction kit shipped in **`@open-slide/core`** at **`packages/core/.agent/`**. Start here before editing decks or themes in a consumer workspace.
 
+**Tour (how it fits together):** [`README.md`](./README.md) in this folder — workflows, pattern library, sync, validation. This file is the **normative protocol** (priority, write scope, adapters).
+
 ## Priority
 
 ```txt
@@ -32,7 +34,7 @@ Edit **only** canonical files under **`packages/core/.agent/`** (monorepo) or up
 **You invoke workflows (slash commands), not skills.** Agents and skills are loaded by the model from the workflow (or from `@agent-name` if you override routing).
 
 ```txt
-YOU  →  /create-slide, /apply-comments, /create-theme     (workflow)
+YOU  →  /create-slide, /apply-comments, /create-theme, /generate-infographic     (workflow)
          ↓
 Agent (@slide-author, @theme-author)                       (persona + scope)
          ↓
@@ -49,6 +51,18 @@ slides/, themes/                                             (what you ship)
 | **Agent** | `agents/*.md` | Model (optional **`@slide-author`** / **`@theme-author`**) | Mission, write scope, forbidden paths, default skill list for that persona |
 | **Skill** | `skills/<name>/SKILL.md` | Model — rarely typed by humans | Step-by-step procedure; hub file stays short |
 | **References** | `skills/<name>/references/` | Model when the skill points there | Templates, page-types, checklists — not loaded unless needed |
+
+### Reference families (metadata)
+
+Not every file under `references/` uses YAML. Three families keep drift low without a big-bang migration:
+
+| Family | Paths | Frontmatter |
+| --- | --- | --- |
+| **IDE discovery** | `workflows/*.md`, `agents/*.md`, `skills/*/SKILL.md` | Required (`name`, `description`, …) — IDE adapters |
+| **Catalog (`kit-doc: pattern`)** | `slide-authoring/references/pattern-library/layouts/*.md`, `motion/*.md` | Required — see `pattern-library/SCHEMA.md`; validated in Vitest |
+| **Guides & checklists** | `steps.md`, `page-types/*`, `self-review-checklist.md`, … | None — prose/checklists; hub table in `slide-authoring/SKILL.md` |
+
+Optional future: `kit-doc: guide` with light `title` / `summary` / `related` — not required today.
 
 **Same name, different job:** **`/create-slide`** (workflow) is what you run; skill **`create-slide`** is the checklist inside that run (theme, scoping, `slides/<id>/`). Workflows stay thin; skills hold the steps.
 
@@ -126,8 +140,9 @@ If adapters were committed before gitignore, remove from the index only: `git rm
 | **`/create-slide`** | `workflows/create-slide.md` | `slide-author` | new deck under `slides/` |
 | **`/apply-comments`** | `workflows/apply-comments.md` | `slide-author` | inspector `@slide-comment` markers |
 | **`/create-theme`** | `workflows/create-theme.md` | `theme-author` | `themes/<id>.md` + demo |
+| **`/generate-infographic`** | `workflows/generate-infographic.md` | `infographic-author` | catalog + prompt plan (no `slides/`) |
 
-Delegate new themes from deck work to **`theme-author`** + **`/create-theme`**; delegate deck edits from theme work to **`slide-author`** + **`/create-slide`** when the user asks for slide TSX.
+Delegate new themes from deck work to **`theme-author`** + **`/create-theme`**; delegate deck edits from theme work to **`slide-author`** + **`/create-slide`** when the user asks for slide TSX. Delegate infographics to **`infographic-author`** + **`/generate-infographic`** — not **`slide-authoring`** pattern library.
 
 ## How to reference (agents + humans)
 
@@ -139,14 +154,18 @@ In a **consumer slide workspace** (after `open-slide sync:kit`), paths are relat
 | **`/create-slide`** | `.cursor/commands/create-slide.md` | `packages/core/.agent/workflows/create-slide.md` |
 | **`/apply-comments`** | `.cursor/commands/apply-comments.md` | `packages/core/.agent/workflows/apply-comments.md` |
 | **`/create-theme`** | `.cursor/commands/create-theme.md` | `packages/core/.agent/workflows/create-theme.md` |
+| **`/generate-infographic`** | `.cursor/commands/generate-infographic.md` | `packages/core/.agent/workflows/generate-infographic.md` |
 | Skill **`create-slide`** | `.agents/skills/create-slide/SKILL.md` | `.agent/skills/create-slide/SKILL.md` |
 | Skill **`apply-comments`** | `.agents/skills/apply-comments/SKILL.md` | `.agent/skills/apply-comments/SKILL.md` |
 | Skill **`create-theme`** | `.agents/skills/create-theme/SKILL.md` | `.agent/skills/create-theme/SKILL.md` |
+| Skill **`generate-infographic`** | `.agents/skills/generate-infographic/SKILL.md` | `.agent/skills/generate-infographic/SKILL.md` |
+| Skill **`infographic-catalog`** | `.agents/skills/infographic-catalog/SKILL.md` | `.agent/skills/infographic-catalog/SKILL.md` |
 | Skill **`slide-authoring`** | `.agents/skills/slide-authoring/SKILL.md` | `.agent/skills/slide-authoring/SKILL.md` |
 | Skill **`current-slide`** | `.agents/skills/current-slide/SKILL.md` | `.agent/skills/current-slide/SKILL.md` |
 | Skill **`slide-routing`** | `.agents/skills/slide-routing/SKILL.md` | `.agent/skills/slide-routing/SKILL.md` |
 | Agent **`slide-author`** | `.cursor/agents/slide-author.md` | `.agent/agents/slide-author.md` |
 | Agent **`theme-author`** | `.cursor/agents/theme-author.md` | `.agent/agents/theme-author.md` |
+| Agent **`infographic-author`** | `.cursor/agents/infographic-author.md` | `.agent/agents/infographic-author.md` |
 | **Codex** | `$workflow-create-slide`, … | `.agents/skills/workflow-*/SKILL.md` → **`.agent/workflows/`**; **`.codex/agents/*.toml`** from **`.agent/agents/`**; optional **`AGENTS.md`** → **`.agent/rules/AGENTS.md`** |
 
 **Path shorthand:** inside a skill hub, `references/foo.md` means that skill’s folder. Sibling skills: `slide-authoring/SKILL.md` under `.agent/skills/`. In workflows and agents, prefer full **`.agent/skills/<name>/…`** (canonical) or **`.agents/skills/<name>/…`** (consumer).

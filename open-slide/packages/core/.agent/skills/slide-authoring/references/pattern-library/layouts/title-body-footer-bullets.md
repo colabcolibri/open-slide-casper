@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: title-body-footer-bullets
+kind: layout
+summary: "Default editorial page: section label, title, short bullet list (3–5 items). One idea per page."
+formats: both
+content-keys:
+  - bullets.eyebrow
+  - bullets.title
+  - bullets.items[]
+  - footerLabel
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — title-body-footer-bullets
-
-| Field | Value |
-| --- | --- |
-| **id** | `title-body-footer-bullets` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `bullets.eyebrow`, `bullets.title`, `bullets.items[]`, `footerLabel` |
-| **Canvas formats** | **Both** — ≤5 bullets; on `4x5` prefer 4 short lines |
 
 ## When to use
 

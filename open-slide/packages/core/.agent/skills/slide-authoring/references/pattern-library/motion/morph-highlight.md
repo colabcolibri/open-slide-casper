@@ -1,12 +1,16 @@
+---
+kit-doc: pattern
+id: morph-highlight
+kind: motion
+summary: "The **same object** moves or resizes between two adjacent pages (highlight pill, card, logo). Requires matching `MorphElement` `id` on both pages and `morph` on the incoming transition."
+formats: both
+content-keys:
+  - morph.layout-tsx
+page-types:
+  - ../morph.md
+  - ../transitions.md
+---
 # Pattern — morph-highlight
-
-| Field | Value |
-| --- | --- |
-| **id** | `morph-highlight` |
-| **kind** | motion |
-| **page-types ref** | `../morph.md`, `../transitions.md` |
-| **CONTENT keys** | _(geometry is constant at mount — prefer pixel layout in TSX)_ |
-| **Canvas formats** | **Both** — pick layout pixels for the deck format once |
 
 ## When to use
 

@@ -1,12 +1,19 @@
+---
+kit-doc: pattern
+id: stat-metric-hero
+kind: layout
+summary: "Highlight a single number (KPI, result, scale). Avoid multiple competing stats."
+formats: both
+content-keys:
+  - metric.value
+  - metric.unit
+  - metric.label
+  - metric.context
+  - footerLabel
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — stat-metric-hero
-
-| Field | Value |
-| --- | --- |
-| **id** | `stat-metric-hero` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `metric.value`, `metric.unit`, `metric.label`, `metric.context`, `footerLabel` |
-| **Canvas formats** | **Both** — poster-friendly on `4x5`; one metric per page |
 
 ## When to use
 

@@ -1,12 +1,20 @@
+---
+kit-doc: pattern
+id: title-body-footer-two-col
+kind: layout
+summary: "Two parallel lists under one title (compare tracks, pros/cons columns). Keep ≤4 short lines per column on 1080p."
+formats: both-star
+content-keys:
+  - twoCol.eyebrow
+  - twoCol.title
+  - twoCol.leftLabel
+  - twoCol.leftItems[]
+  - twoCol.rightLabel
+  - twoCol.rightItems[]
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — title-body-footer-two-col
-
-| Field | Value |
-| --- | --- |
-| **id** | `title-body-footer-two-col` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `twoCol.eyebrow`, `twoCol.title`, `twoCol.leftLabel`, `twoCol.leftItems[]`, `twoCol.rightLabel`, `twoCol.rightItems[]` |
-| **Canvas formats** | **Both\*** — on `4x5` shorten lists or use `comparison-labeled-columns` stacked |
 
 ## When to use
 

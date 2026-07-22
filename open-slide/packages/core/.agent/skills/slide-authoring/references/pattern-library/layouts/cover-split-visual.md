@@ -1,12 +1,17 @@
+---
+kit-doc: pattern
+id: cover-split-visual
+kind: layout
+summary: "Opener with product visual beside title. Needs horizontal room — avoid on narrow portrait unless you stack."
+formats: both-star
+content-keys:
+  - coverSplit.title
+  - coverSplit.subtitle
+  - footerLabel
+page-types:
+  - ../page-types/cover.md, ../page-types/split.md
+---
 # Pattern — cover-split-visual
-
-| Field | Value |
-| --- | --- |
-| **id** | `cover-split-visual` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/cover.md`, `../page-types/split.md` |
-| **CONTENT keys** | `coverSplit.title`, `coverSplit.subtitle`, `footerLabel` |
-| **Canvas formats** | **Both\*** — **slide-first** for side-by-side; on `4x5` use `cover-centered` or `split-stacked-vertical` |
 
 ## When to use
 

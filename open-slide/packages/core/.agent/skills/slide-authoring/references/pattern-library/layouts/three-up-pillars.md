@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: three-up-pillars
+kind: layout
+summary: "Three parallel benefits/principles. Requires horizontal space — avoid cramming on portrait."
+formats: slide-first
+content-keys:
+  - pillars.title
+  - pillars.items (three { title
+  - body })
+  - footerLabel
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — three-up-pillars
-
-| Field | Value |
-| --- | --- |
-| **id** | `three-up-pillars` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `pillars.title`, `pillars.items` (three `{ title, body }`), `footerLabel` |
-| **Canvas formats** | **slide-first** — on `4x5` use **two pages** or only two pillars |
 
 ## When to use
 

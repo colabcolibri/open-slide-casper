@@ -1,12 +1,17 @@
+---
+kit-doc: pattern
+id: quote-full-page
+kind: layout
+summary: "One quote is the entire message — no section title. Social/portrait cards."
+formats: 4x5-first
+content-keys:
+  - quoteFull.text
+  - quoteFull.attribution
+  - footerLabel
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — quote-full-page
-
-| Field | Value |
-| --- | --- |
-| **id** | `quote-full-page` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `quoteFull.text`, `quoteFull.attribution`, `footerLabel` |
-| **Canvas formats** | **4x5-first** — also works on `slide` for testimonial beat |
 
 ## When to use
 

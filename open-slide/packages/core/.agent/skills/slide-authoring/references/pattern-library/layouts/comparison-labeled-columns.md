@@ -1,12 +1,20 @@
+---
+kit-doc: pattern
+id: comparison-labeled-columns
+kind: layout
+summary: "A vs B with titled columns (not only bullets). Good for “old way / new way” prose."
+formats: both-star
+content-keys:
+  - compare.title
+  - compare.leftTitle
+  - compare.leftBody
+  - compare.rightTitle
+  - compare.rightBody
+  - footerLabel
+page-types:
+  - ../page-types/split.md
+---
 # Pattern — comparison-labeled-columns
-
-| Field | Value |
-| --- | --- |
-| **id** | `comparison-labeled-columns` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/split.md` |
-| **CONTENT keys** | `compare.title`, `compare.leftTitle`, `compare.leftBody`, `compare.rightTitle`, `compare.rightBody`, `footerLabel` |
-| **Canvas formats** | **Both\*** — short paragraphs per column; stack on `4x5` when text wraps |
 
 ## When to use
 

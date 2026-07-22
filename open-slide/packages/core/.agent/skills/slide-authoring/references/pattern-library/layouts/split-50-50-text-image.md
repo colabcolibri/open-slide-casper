@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: split-50-50-text-image
+kind: layout
+summary: "Explain beside a visual: product shot, diagram, or photo. Text column stays short; visual fills the other half."
+formats: slide-first
+content-keys:
+  - splitVisual.title
+  - splitVisual.lead
+  - splitVisual.bullets[]
+  - footerLabel
+page-types:
+  - ../page-types/split.md
+---
 # Pattern — split-50-50-text-image
-
-| Field | Value |
-| --- | --- |
-| **id** | `split-50-50-text-image` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/split.md` |
-| **CONTENT keys** | `splitVisual.title`, `splitVisual.lead`, `splitVisual.bullets[]`, `footerLabel` |
-| **Canvas formats** | **slide-first** — on `4x5` use `split-stacked-vertical` |
 
 ## When to use
 

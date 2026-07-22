@@ -1,12 +1,18 @@
+---
+kit-doc: pattern
+id: agenda-numbered
+kind: layout
+summary: "Talk outline, chapter list, workshop schedule. One line per item."
+formats: both
+content-keys:
+  - agenda.title
+  - agenda.items[] (each { num
+  - label })
+  - footerLabel
+page-types:
+  - ../page-types/title-body-footer.md
+---
 # Pattern — agenda-numbered
-
-| Field | Value |
-| --- | --- |
-| **id** | `agenda-numbered` |
-| **kind** | layout |
-| **page-types ref** | `../page-types/title-body-footer.md` |
-| **CONTENT keys** | `agenda.title`, `agenda.items[]` (each `{ num, label }`), `footerLabel` |
-| **Canvas formats** | **Both** — `4x5` fits 6–7 rows more comfortably than wide dense agendas |
 
 ## When to use
 

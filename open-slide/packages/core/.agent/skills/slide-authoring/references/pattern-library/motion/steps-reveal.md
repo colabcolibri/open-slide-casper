@@ -1,12 +1,19 @@
+---
+kit-doc: pattern
+id: steps-reveal
+kind: motion
+summary: "The **order** of ideas matters: build to a payoff, peel back with `←`. Not for hero-only or single-glance pages."
+formats: both
+content-keys:
+  - stepsPage.title
+  - stepsPage.intro
+  - stepsPage.beatOne
+  - stepsPage.beatTwo
+  - stepsPage.beatThree
+page-types:
+  - ../steps.md
+---
 # Pattern — steps-reveal
-
-| Field | Value |
-| --- | --- |
-| **id** | `steps-reveal` |
-| **kind** | motion |
-| **page-types ref** | `../steps.md` |
-| **CONTENT keys** | `stepsPage.title`, `stepsPage.intro`, `stepsPage.beatOne`, `stepsPage.beatTwo`, `stepsPage.beatThree` |
-| **Canvas formats** | **Both** — fewer beats on `4x5` if head + steps overflow budget |
 
 ## When to use
 

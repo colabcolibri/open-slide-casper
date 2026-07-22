@@ -1,0 +1,420 @@
+{
+  "layouts": {
+    "central_metaphor": {
+      "name": "Central Metaphor",
+      "description": "A single, powerful image that represents the entire concept, with radial callouts."
+    },
+    "process_flowchart": {
+      "name": "The Process",
+      "description": "A sequential flow showing transformation from State A to State B."
+    },
+    "comparison": {
+      "name": "The Duality",
+      "description": "A split composition comparing two opposing or alternative concepts."
+    },
+    "anatomy_view": {
+      "name": "The Anatomy",
+      "description": "An exploded or cutaway view revealing internal components."
+    },
+    "timeline": {
+      "name": "The Evolution",
+      "description": "A chronological journey showing growth, history, or future projection."
+    },
+    "listicle": {
+      "name": "The Stack",
+      "description": "A highly organized, ranked vertical stack of distinct items."
+    },
+    "hierarchy_pyramid": {
+      "name": "The Hierarchy",
+      "description": "Tiered levels showing foundation, support, and pinnacle."
+    },
+    "geographical_map": {
+      "name": "The Landscape",
+      "description": "Spatial distribution of concepts across a terrain or system."
+    },
+    "data_story": {
+      "name": "The Dashboard",
+      "description": "Quantified visualization using widgets, charts, and metrics."
+    },
+    "roadmap": {
+      "name": "The Horizon",
+      "description": "Perspective view showing a journey towards a future goal."
+    },
+    "decision_tree": {
+      "name": "The Network",
+      "description": "Branching logic showing choices, consequences, and paths."
+    },
+    "visual_resume": {
+      "name": "The Profile",
+      "description": "Identity-focused layout centering on an entity or persona."
+    },
+    "cycle": {
+      "name": "The Loop",
+      "description": "Closed-circuit flow for repeating processes or feedback loops."
+    },
+    "iceberg": {
+      "name": "The Subsurface",
+      "description": "Dual-layer view showing Visible (Surface) vs Invisible (Deep)."
+    },
+    "venn": {
+      "name": "The Synthesis",
+      "description": "Overlapping zones showing intersection and commonality."
+    },
+    "funnel": {
+      "name": "The Filter",
+      "description": "Visualizing reduction, selection, or narrowing down."
+    },
+    "prism": {
+      "name": "The Refraction",
+      "description": "Transformation view: Input -> Magic Box -> Output."
+    },
+    "galaxy": {
+      "name": "The Ecosystem",
+      "description": "Non-hierarchical cluster orbiting a central core."
+    },
+    "matrix_quadrant": {
+      "name": "The Matrix",
+      "description": "A 2x2 grid classifying items based on two crossing axes/variables."
+    },
+    "concentric_layers": {
+      "name": "The Onion",
+      "description": "Nested circular layers showing depth, containment, or environment."
+    },
+    "staircase": {
+      "name": "The Ascent",
+      "description": "Stepped elevation showing effort, difficulty, and rising status."
+    },
+    "puzzle_integration": {
+      "name": "The Puzzle",
+      "description": "Interlocking distinct pieces forming a unified whole."
+    },
+    "ingredients_knolling": {
+      "name": "The Ingredients (Recipe)",
+      "description": "A \"flat lay\" or \"knolling\" photo arrangement of distinct components."
+    },
+    "balance_scale": {
+      "name": "The Balance",
+      "description": "A weighing scale showing the trade-off or equilibrium between two forces."
+    },
+    "bridge_gap": {
+      "name": "The Bridge",
+      "description": "A structure connecting two separated cliffs (Current vs Future)."
+    },
+    "organic_tree": {
+      "name": "The Tree",
+      "description": "Biological growth showing hidden inputs (roots) and visible outputs (fruit)."
+    },
+    "chaos_to_order": {
+      "name": "The Unraveling",
+      "description": "Visualizing clarity: a transition from a tangled mess to structured lines."
+    },
+    "ripple_effect": {
+      "name": "The Ripple",
+      "description": "A single event creating expanding concentric waves of consequence."
+    },
+    "markup_breakdown": {
+      "name": "The Markup",
+      "description": "Analytical overlay with highlights and handwritten notes on a document or UI."
+    },
+    "team_roster": {
+      "name": "The Roster",
+      "description": "Uniform ID cards introducing each member of a team or squad."
+    },
+    "scoreboard": {
+      "name": "The Scoreboard",
+      "description": "Ranked rows with score bars and podium emphasis."
+    },
+    "layered_stack_comparison": {
+      "name": "The Tiered Stack",
+      "description": "Stacked tiers where each level cumulatively includes all below."
+    },
+    "network_graph": {
+      "name": "The Mesh",
+      "description": "A peer web of nodes and edges with no single boss."
+    },
+    "claim_pillars": {
+      "name": "The Pillars",
+      "description": "A central claim resting on independent, parallel columns of evidence."
+    },
+    "glossary_grid": {
+      "name": "The Glossary Grid",
+      "description": "A uniform grid of term cards built for quick reference lookup."
+    },
+    "analogy_bridge": {
+      "name": "The Analogy Bridge",
+      "description": "A familiar concept mapped point-to-point onto a new, unfamiliar one."
+    },
+    "mind_map": {
+      "name": "The Mind Map",
+      "description": "A central idea radiating into organic branches of related subtopics."
+    },
+    "root_cause_fishbone": {
+      "name": "The Fishbone",
+      "description": "Cause categories branching along a spine toward a central problem."
+    },
+    "org_chart": {
+      "name": "The Org Chart",
+      "description": "A top-down tree of boxes and lines showing reporting structure."
+    }
+  },
+  "styles": {
+    "swiss": {
+      "name": "Swiss International",
+      "description": "Objective, grid-based, high contrast, and perfectly organized."
+    },
+    "sketch": {
+      "name": "Da Vinci Notebook",
+      "description": "Human, organic, and explanatory. Looks like a genius scientist's field notes."
+    },
+    "mid_century": {
+      "name": "Mid-Century Modern",
+      "description": "Sophisticated, geometric, and warm. Jazz album covers meet furniture design."
+    },
+    "isometric": {
+      "name": "Isometric 3D",
+      "description": "Precise, engineered, and deep. A clean 30° perspective on complex systems."
+    },
+    "glassmorphism": {
+      "name": "Glassmorphism",
+      "description": "Modern, translucent, and ethereal. Frosted glass layers over vibrant gradients."
+    },
+    "blueprint": {
+      "name": "Technical Blueprint",
+      "description": "Analytical, structural, and detailed. White lines on a deep blue grid."
+    },
+    "papercut": {
+      "name": "Paper Diorama",
+      "description": "Tactile, layered, and crafty. Depth created by shadows and stacked planes."
+    },
+    "cyberpunk": {
+      "name": "Cyberpunk HUD",
+      "description": "High contrast, neon on black, glitchy, and data-heavy."
+    },
+    "risograph": {
+      "name": "Risograph Zine",
+      "description": "Grainy, indie, and imperfect. Vibrant colors with print misalignment textures."
+    },
+    "editorial": {
+      "name": "High-End Editorial",
+      "description": "Luxurious, spacious, and typographic. Like a page from Vogue or Monocle."
+    },
+    "comic": {
+      "name": "Vintage Comic",
+      "description": "Narrative, bold outlines, and halftone dots. Action-packed and engaging."
+    },
+    "botanical": {
+      "name": "Scientific Botanical",
+      "description": "Organic, detailed, and earthy. Like a 19th-century biology textbook."
+    },
+    "collage": {
+      "name": "Grunge Collage",
+      "description": "Raw, textured, and expressive. Ripped paper, photos, and mixed media."
+    },
+    "pixel_art": {
+      "name": "Retro Pixel Art",
+      "description": "Nostalgic 8-bit aesthetic. Blocky, limited palette, and grid-aligned."
+    },
+    "watercolor": {
+      "name": "Soft Watercolor",
+      "description": "Fluid, artistic, and calming. Bleeding colors and textured paper."
+    },
+    "low_poly": {
+      "name": "Low Poly 3D",
+      "description": "Geometric, faceted, and digital. Like early 3D computer graphics."
+    },
+    "art_deco": {
+      "name": "Art Deco Luxury",
+      "description": "Geometric elegance, gold foil, and symmetry. The Great Gatsby vibe."
+    },
+    "claymorphism": {
+      "name": "Claymorphism",
+      "description": "Soft, tactile, and friendly. 3D objects that look like plasticine or clay."
+    },
+    "corporate_vector": {
+      "name": "Corporate Vector",
+      "description": "The friendly \"startup\" style. Flat colors, soft shapes, and inclusive characters."
+    },
+    "chalkboard": {
+      "name": "Academic Chalkboard",
+      "description": "The classic blackboard. Great for \"from scratch\" explanations and fundamental concepts."
+    },
+    "brutalism": {
+      "name": "Web Brutalism",
+      "description": "The \"raw\" aesthetic of the modern internet. Standard fonts, high contrast, and hard edges."
+    },
+    "acid_graphics": {
+      "name": "Acid Graphics (Y2K)",
+      "description": "Liquid chrome, distorted typography, and iridescence. A modern futuristic aesthetic."
+    },
+    "celestial_tarot": {
+      "name": "Celestial Tarot",
+      "description": "Fine golden lines, sacred geometry, and dark backgrounds. Great for mystical concepts."
+    },
+    "banknote_engraving": {
+      "name": "Banknote Engraving",
+      "description": "The style of currency engraving. Conveys extreme trust, value, and tradition."
+    },
+    "whiteboard": {
+      "name": "Whiteboard Strategy",
+      "description": "Colored markers on a whiteboard. Gives a feeling of \"brainstorming\" and agility."
+    },
+    "stained_glass": {
+      "name": "Stained Glass",
+      "description": "Light passing through colored glass. Solemn and suitable for revered concepts."
+    },
+    "thermal_imaging": {
+      "name": "Thermal Imaging",
+      "description": "Gradients of heat (infrared). Excellent for data analysis and focus."
+    },
+    "film_noir": {
+      "name": "Film Noir",
+      "description": "Cinematic black and white photography with harsh shadows. For dilemmas or \"investigation\"."
+    },
+    "monoline": {
+      "name": "Monoline Vector",
+      "description": "Technical minimalism. Only constant-width lines, no fills."
+    },
+    "scandinavian": {
+      "name": "Scandinavian",
+      "description": "Warm minimalism. Pastel colors, organic shapes, and lots of white space."
+    },
+    "voxel": {
+      "name": "Voxel Sandbox",
+      "description": "Style \"Minecraft\". 3D cubes, perfect grids and soft lighting."
+    },
+    "hand_drawn_indie": {
+      "name": "Hand-Drawn Indie",
+      "description": "2D indie game style (\"Hollow Knight\"). Traditional animation and painted backgrounds."
+    },
+    "1_bit": {
+      "name": "1-Bit Retro",
+      "description": "Pure Black and White. Pixel art of extreme high contrast."
+    },
+    "bauhaus": {
+      "name": "Bauhaus",
+      "description": "Geometric and primary colors. Architectural and functionalist."
+    },
+    "psychedelic": {
+      "name": "Psychedelic",
+      "description": "Poster art from the 60s/70s. Liquid colors and distorted typography."
+    },
+    "ukiyo_e": {
+      "name": "Ukiyo-e Woodblock",
+      "description": "Traditional Japanese printmaking. Flat perspective and wood textures."
+    },
+    "stencil": {
+      "name": "Street Art Stencil",
+      "description": "Banksy style. Spray paint on high-contrast stencils."
+    },
+    "manual": {
+      "name": "Instructional Manual",
+      "description": "IKEA/LEGO style. Black line on white background, isometric, no text."
+    },
+    "oil_painting": {
+      "name": "Oil Painting",
+      "description": "Visible brushstrokes, color mixing, and canvas texture. Classical lighting."
+    },
+    "synthwave": {
+      "name": "Synthwave",
+      "description": "The \"future of the 80s\". Purple sunsets, laser grids, and chrome."
+    },
+    "fantasy_rpg": {
+      "name": "Fantasy RPG UI",
+      "description": "Epic, ornate, and texture-heavy. Parchment, gold frames, and magical gems."
+    },
+    "esports_tactical": {
+      "name": "Esports Tactical",
+      "description": "Aggressive, angular, and kinetic. The sharp aesthetic of Valorant or Overwatch."
+    },
+    "napkin_sketch": {
+      "name": "The Napkin Sketch",
+      "description": "Impromptu and rough. Blue ballpoint pen bleeding onto a textured paper napkin."
+    },
+    "napkin_color": {
+      "name": "The Colorful Napkin",
+      "description": "Vibrant and expressive. Colorful marker pens bleeding onto a textured paper napkin."
+    },
+    "child_drawing": {
+      "name": "Crayon Masterpiece",
+      "description": "Naive, colorful, and imaginative. Wax crayons on crinkled paper."
+    },
+    "newspaper_strip": {
+      "name": "Sunday Funny Pages",
+      "description": "Classic newspaper comic style. Hand-inked lines, halftone colors, and cheap paper."
+    },
+    "calligraphy": {
+      "name": "Elegant Calligraphy",
+      "description": "Sophisticated handwritten script with flowing, ornamental letterforms and elegant flourishes."
+    },
+    "neon_signs": {
+      "name": "Neon Nights",
+      "description": "Vibrant neon signs and glowing typography against dark urban backgrounds."
+    },
+    "vintage_poster": {
+      "name": "Vintage Poster Art",
+      "description": "Classic poster design from the 1920s-1950s. Bold typography, limited color palettes, and graphic illustrations."
+    },
+    "origami": {
+      "name": "Origami Paper Art",
+      "description": "Clean geometric forms created through paper folding. Minimalist and precise."
+    },
+    "graffiti": {
+      "name": "Street Art Graffiti",
+      "description": "Bold, expressive street art with vibrant colors, wildstyle lettering, and urban energy."
+    },
+    "minimalist_line": {
+      "name": "Minimalist Line Art",
+      "description": "Ultra-clean single-line illustrations. Maximum impact with minimal elements."
+    },
+    "vintage_map": {
+      "name": "Vintage Cartography",
+      "description": "Classic map design with ornate borders, compass roses, and illustrated landmarks."
+    },
+    "scientific_diagram": {
+      "name": "Scientific Illustration",
+      "description": "Precise technical diagrams with labels, cross-sections, and educational clarity."
+    },
+    "architectural_blueprint": {
+      "name": "Architectural Plans",
+      "description": "Technical architectural drawings with precise measurements, annotations, and professional drafting."
+    },
+    "vintage_label": {
+      "name": "Vintage Branding",
+      "description": "Classic product labels and packaging design from the early 20th century. Ornate borders and elegant typography."
+    }
+  },
+  "vibes": {
+    "professional": "Professional",
+    "creative": "Creative",
+    "retro": "Retro",
+    "futuristic": "Futuristic",
+    "minimalist": "Minimalist",
+    "dramatic": "Dramatic",
+    "playful": "Playful",
+    "mystical": "Mystical",
+    "gritty": "Gritty",
+    "luxury": "Luxury",
+    "modern": "Modern"
+  },
+  "formats": {
+    "flat": "Flat",
+    "3d": "3D",
+    "linear": "Linear",
+    "textured": "Textured",
+    "photorealistic": "Photorealistic",
+    "abstract": "Abstract",
+    "pixel": "Pixel",
+    "handmade": "Handmade",
+    "data": "Data",
+    "collage": "Collage",
+    "cinematic": "Cinematic"
+  },
+  "categories": {
+    "process": "Process",
+    "structure": "Structure",
+    "comparison": "Comparison",
+    "metaphor": "Metaphor",
+    "data": "Data",
+    "identity": "Identity"
+  }
+}
