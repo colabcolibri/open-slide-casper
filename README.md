@@ -2,12 +2,13 @@
 
 **Casper** is our workflow for turning ideas into social carousels and exports (PDF, HTML, PPTX). **open-slide** is the open-source engine: React slides on a fixed canvas, dev preview, present mode, and agent skills.
 
-This repository is **both**:
+This repository is **three things at once**:
 
 1. A **git fork** of [open-slide](https://github.com/1weiho/open-slide) — the full upstream monorepo lives in [`open-slide/`](open-slide/README.md).
-2. The **home for Casper** — product docs, production direction, and fork-only changes we need for Instagram/LinkedIn-style output.
+2. The **home for Casper** — product docs, production direction, and fork-only changes for Instagram/LinkedIn-style output.
+3. A **[Meridian](https://github.com/colabcolibri/meridian) harness** — how we govern docs, backlog, and agent workflows while evolving the fork (see below).
 
-We do **not** replace open-slide. We **vendor the upstream tree** and build Casper around it. Framework releases still conceptually belong to [1weiho/open-slide](https://github.com/1weiho/open-slide) and [open-slide.dev](https://open-slide.dev); changes under `open-slide/packages/core` and `open-slide/packages/cli` should stay small and mergeable upstream when possible.
+We do **not** replace open-slide. We **vendor the upstream tree** and build Casper around it. Framework releases still belong to [1weiho/open-slide](https://github.com/1weiho/open-slide) and [open-slide.dev](https://open-slide.dev); changes under `open-slide/packages/core` and `open-slide/packages/cli` should stay small and mergeable upstream when possible.
 
 ---
 
@@ -19,21 +20,46 @@ We do **not** replace open-slide. We **vendor the upstream tree** and build Casp
               │
               │  fork — full monorepo copied into this repo
               ▼
-  open-slide-casper/
-  ├── open-slide/          ← runtime, CLI, Vite plugin, apps/web (same layout as upstream)
-  ├── docs/                ← Casper scope, architecture, decisions
-  └── README.md            ← start here
+  open-slide-casper/                    ← Meridian workspace (repo root)
+  ├── open-slide/          ← runtime, CLI, Vite plugin, slide kit in packages/core/.agent/
+  ├── docs/                ← phase docs (scope, architecture, …) — product source of truth
+  ├── .agent/              ← Meridian kit (agents, skills, templates) — canonical
+  ├── .meridian/           ← delivery DB + config (local; backlog not in git)
+  └── README.md
 ```
 
-**Clone this repo** if you work on the fork or on Casper.  
+**Clone this repo** if you work on the fork, Casper, or Meridian-backed delivery.  
 **Run `npx @open-slide/cli init`** if you only want a fresh slide project with no fork.
+
+---
+
+## Meridian (why the repo root is not “just” open-slide)
+
+[Meridian](https://github.com/colabcolibri/meridian) is the protocol we use to run this repo as a **documented product** with coding agents (Cursor, Claude Code, Codex, etc.):
+
+| Layer | Location | Role |
+| ----- | -------- | ---- |
+| **Phase docs** | [`docs/`](docs/README.md) | Approved scope, architecture, security, design system — agents read these before inventing features |
+| **Meridian kit** | [`.agent/`](.agent/MERIDIAN.md) | Agents, slash-command workflows, story templates, validation scripts |
+| **Delivery** | `.meridian/` (local) | Epics, sprints, user stories in SQLite — planning export, not committed |
+| **Slide authoring kit** | `open-slide/packages/core/.agent/` | `/create-slide`, canvas rules, export skills — ships with the framework fork |
+
+**Two kits, two jobs:** Meridian at the **repo root** governs *building the product*; the slide kit inside **core** governs *writing decks in TSX*. See [instruction-surfaces.md](docs/architecture/instruction-surfaces.md).
+
+After clone, regenerate IDE adapters (gitignored symlinks):
+
+```bash
+./.agent/scripts/sync_cursor_kit.sh
+```
+
+Human-oriented entry: [AGENTS.md](AGENTS.md) · Protocol: [.agent/MERIDIAN.md](.agent/MERIDIAN.md)
 
 ---
 
 ## What Casper adds (on top of the fork)
 
 - A **production-minded** path: structured copy → slides → export, with a human approving each step (not “one prompt, ship to Instagram”).
-- **Product documentation** in [`docs/`](docs/README.md) (scope, architecture, design system).
+- **Product documentation** in `docs/` (scope, architecture, design system).
 - Room for **fork-only** features (extra canvas formats, export tweaks, pipeline tooling) without pretending they are the upstream default yet.
 
 Your slide source of truth stays **TSX/React** — same as open-slide. No WYSIWYG editor, no hosted SaaS in this repo.
@@ -44,10 +70,11 @@ Your slide source of truth stays **TSX/React** — same as open-slide. No WYSIWY
 
 | Path | What it is |
 | ---- | ---------- |
-| [`open-slide/`](open-slide/README.md) | The forked monorepo (`@open-slide/core`, `@open-slide/cli`, marketing site, etc.) |
-| [`docs/`](docs/README.md) | Casper / fork product docs |
-| `open-slide/apps/demo/` | Local dogfood app — **`slides/` and `assets/` are not committed** (production decks stay on your machine) |
-| `.agent/` (repo root) | Internal Meridian tooling for maintainers — ignore unless you govern docs/backlog |
+| [`open-slide/`](open-slide/README.md) | Forked monorepo (`@open-slide/core`, `@open-slide/cli`, `apps/web`, …) |
+| [`docs/`](docs/README.md) | Meridian phase docs for the open-slide / Casper product |
+| [`.agent/`](.agent/MERIDIAN.md) | Meridian kit (canonical); sync to `.cursor/`, `.claude/`, etc. |
+| `.meridian/` | Local delivery connector + `meridian.db` (gitignored) |
+| `open-slide/apps/demo/` | Local dogfood — **`slides/` and `assets/` are not committed** |
 
 ---
 
@@ -57,16 +84,19 @@ Your slide source of truth stays **TSX/React** — same as open-slide. No WYSIWY
 
 ```bash
 git clone https://github.com/colabcolibri/open-slide-casper.git
-cd open-slide-casper/open-slide
+cd open-slide-casper
+./.agent/scripts/sync_cursor_kit.sh   # optional: Cursor / Claude / Codex adapters
+
+cd open-slide
 pnpm install
 pnpm dev:demo
 ```
 
-Open the URL the dev server prints. Put your own decks under `apps/demo/slides/` locally — they will not be pushed to this GitHub repo.
+Open the URL the dev server prints. Put decks under `apps/demo/slides/` locally — they are not pushed to GitHub.
 
-Optional from the repo root: `pnpm dev` runs the same commands inside `open-slide/`.
+From the repo root, `pnpm dev` delegates to `open-slide/`.
 
-**Agent skills** (for `/create-slide`, `/create-theme`, …):
+**Slide agent skills** (`/create-slide`, `/create-theme`, …):
 
 ```bash
 cd open-slide
@@ -81,15 +111,15 @@ Edit skills only in `packages/core/.agent/`. `apps/demo/.agent/` is generated on
 
 | Doc | Purpose |
 | --- | ------- |
-| [open-slide/README.md](open-slide/README.md) | Upstream framework overview |
-| [docs/00_scope.md](docs/00_scope.md) | Scope and boundaries |
+| [docs/README.md](docs/README.md) | Phase doc index + Meridian workflow on this repo |
+| [open-slide/README.md](open-slide/README.md) | Framework overview (upstream-shaped) |
 | [docs/05_architecture.md](docs/05_architecture.md) | System map |
-| [docs/architecture/instruction-surfaces.md](docs/architecture/instruction-surfaces.md) | Where humans vs agents read rules |
+| [docs/architecture/instruction-surfaces.md](docs/architecture/instruction-surfaces.md) | Meridian docs vs slide kit vs IDE adapters |
 
-Framework contributions: `pnpm check` and `pnpm test` from `open-slide/`; changesets for publishable package changes — [CONTRIBUTING.md](open-slide/CONTRIBUTING.md).
+Framework changes: `pnpm check` and `pnpm test` from `open-slide/`; changesets for publishable packages — [CONTRIBUTING.md](open-slide/CONTRIBUTING.md).
 
 ---
 
 ## License
 
-MIT. See `open-slide/packages/` for package licenses. Code derived from upstream open-slide remains MIT-compatible.
+MIT. See `open-slide/packages/` for package licenses. Derived work from upstream open-slide remains MIT-compatible.
