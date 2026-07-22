@@ -10,6 +10,7 @@ import { designPlugin } from './design-plugin.ts';
 import { locTagsPlugin } from './loc-tags-plugin.ts';
 import { notesPlugin } from './notes-plugin.ts';
 import { loadUserConfig, type OpenSlideConfig, openSlidePlugin } from './open-slide-plugin.ts';
+import { resolveExamplesDir } from '../files/slide-locations.ts';
 import { themesPlugin } from './themes-plugin.ts';
 
 function findPackageRoot(fromFile: string): string {
@@ -45,9 +46,11 @@ export async function createViteConfig(opts: CreateViteConfigOptions): Promise<I
   const userCwd = path.resolve(opts.userCwd);
   const config = opts.config ?? (await loadUserConfig(userCwd));
   const slidesDir = config.slidesDir ?? 'slides';
+  const examplesDir = resolveExamplesDir(config.examplesDir);
   const themesDir = config.themesDir ?? 'themes';
   const assetsDir = config.assetsDir ?? 'assets';
   const slidesAbs = path.resolve(userCwd, slidesDir);
+  const examplesAbs = examplesDir ? path.resolve(userCwd, examplesDir) : null;
   const themesAbs = path.resolve(userCwd, themesDir);
   const assetsAbs = path.resolve(userCwd, assetsDir);
 
@@ -57,15 +60,21 @@ export async function createViteConfig(opts: CreateViteConfigOptions): Promise<I
     configFile: false,
     envDir: userCwd,
     plugins: [
-      locTagsPlugin({ userCwd, slidesDir }),
+      locTagsPlugin({ userCwd, slidesDir, examplesDir: config.examplesDir }),
       react(),
       tailwindcss(),
       openSlidePlugin({ userCwd, config, coreVersion: CORE_VERSION }),
       themesPlugin({ userCwd, config }),
-      designPlugin({ userCwd }),
-      apiPlugin({ userCwd, slidesDir, assetsDir, coreVersion: CORE_VERSION }),
-      notesPlugin({ userCwd, slidesDir }),
-      currentPlugin({ userCwd, slidesDir }),
+      designPlugin({ userCwd, slidesDir, examplesDir: config.examplesDir }),
+      apiPlugin({
+        userCwd,
+        slidesDir,
+        examplesDir: config.examplesDir,
+        assetsDir,
+        coreVersion: CORE_VERSION,
+      }),
+      notesPlugin({ userCwd, slidesDir, examplesDir: config.examplesDir }),
+      currentPlugin({ userCwd, slidesDir, examplesDir: config.examplesDir }),
     ],
     resolve: {
       alias: {
@@ -113,7 +122,7 @@ export async function createViteConfig(opts: CreateViteConfigOptions): Promise<I
     },
     server: {
       port: config.port ?? 5173,
-      fs: { allow: [APP_ROOT, userCwd, slidesAbs, themesAbs, assetsAbs] },
+      fs: { allow: [APP_ROOT, userCwd, slidesAbs, themesAbs, assetsAbs, ...(examplesAbs ? [examplesAbs] : [])] },
     },
     build: {
       outDir: path.resolve(userCwd, 'dist'),

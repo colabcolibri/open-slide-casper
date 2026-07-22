@@ -37,6 +37,7 @@ import type { OpenSlideConfig } from '@open-slide/core';
 
 const openSlideConfig: OpenSlideConfig = {
   slidesDir: 'slides',
+  examplesDir: 'examples', // design reference decks (sidebar → Examples); set false to disable
   port: 5173,
 };
 

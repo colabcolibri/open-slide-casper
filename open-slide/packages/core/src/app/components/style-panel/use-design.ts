@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { AuthoringContractLevel } from '../../lib/authoring-contract';
 import type { DesignSystem } from '../../lib/design';
 
 type FetchedState = {
   design: DesignSystem | null;
   exists: boolean;
   warning: string | null;
+  authoringContract: AuthoringContractLevel;
+  authoringReasons: string[];
   loaded: boolean;
 };
 
@@ -19,6 +22,8 @@ export function useDesign(slideId: string): UseDesignReturn {
     design: null,
     exists: false,
     warning: null,
+    authoringContract: 'legacy',
+    authoringReasons: [],
     loaded: false,
   });
   const slideIdRef = useRef(slideId);
@@ -34,11 +39,15 @@ export function useDesign(slideId: string): UseDesignReturn {
         design: DesignSystem;
         exists: boolean;
         warning: string | null;
+        authoringContract?: AuthoringContractLevel;
+        authoringReasons?: string[];
       };
       setState({
         design: body.design,
         exists: body.exists,
         warning: body.warning,
+        authoringContract: body.authoringContract ?? 'legacy',
+        authoringReasons: body.authoringReasons ?? [],
         loaded: true,
       });
     } catch (err) {
@@ -47,7 +56,14 @@ export function useDesign(slideId: string): UseDesignReturn {
   }, []);
 
   useEffect(() => {
-    setState({ design: null, exists: false, warning: null, loaded: false });
+    setState({
+      design: null,
+      exists: false,
+      warning: null,
+      authoringContract: 'legacy',
+      authoringReasons: [],
+      loaded: false,
+    });
     void refresh();
   }, [refresh]);
 

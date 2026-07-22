@@ -15,6 +15,15 @@ describe('applyEdit / set-style', () => {
     );
   });
 
+  it('adds marginTop alongside existing keys', () => {
+    const src = ['export default [() => (', "<p style={{ color: 'red' }}>Hi</p>", ')];', ''].join(
+      '\n',
+    );
+    const r = applyEdit(src, 2, 0, [{ kind: 'set-style', key: 'marginTop', value: '24px' }]);
+    if (!r.ok) throw new Error(`expected ok, got ${r.error}`);
+    expect(r.source).toContain("marginTop: '24px'");
+  });
+
   it('updates an existing style key in place', () => {
     const src = ['export default [() => (', "<h1 style={{ color: 'red' }}>Hi</h1>", ')];', ''].join(
       '\n',

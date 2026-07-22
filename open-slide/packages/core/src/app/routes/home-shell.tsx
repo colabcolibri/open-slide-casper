@@ -15,7 +15,7 @@ import { useFolders } from '@/lib/folders';
 import { format, useLocale } from '@/lib/use-locale';
 import { cn } from '@/lib/utils';
 import { FolderIconChip } from '../components/sidebar/folder-item';
-import { ALL_SLIDES_ID, ASSETS_ID, Sidebar, THEMES_ID } from '../components/sidebar/sidebar';
+import { ALL_SLIDES_ID, ASSETS_ID, EXAMPLES_ID, Sidebar, THEMES_ID } from '../components/sidebar/sidebar';
 import type { FoldersManifest } from '../lib/sdk';
 import { useSlideRegistry } from '../lib/use-slide-registry';
 import { useThemeRegistry } from '../lib/use-theme-registry';
@@ -25,7 +25,7 @@ export type HomeOutletContext = {
   loading: boolean;
   draftSlides: string[];
   slidesByFolder: Record<string, string[]>;
-  /** Selected view id: ALL_SLIDES_ID, DRAFT_ID, a folder id, THEMES_ID, or ASSETS_ID. */
+  /** Selected view id: ALL_SLIDES_ID, DRAFT_ID, EXAMPLES_ID, a folder id, THEMES_ID, or ASSETS_ID. */
   selectedId: string;
   selectFolder: (id: string) => void;
   reportTitle: (slideId: string, title: string) => void;
@@ -36,12 +36,14 @@ export type HomeOutletContext = {
   duplicateSlide: (slideId: string, newId?: string) => Promise<string>;
   deleteSlide: (slideId: string) => Promise<void>;
   allSlideIds: string[];
+  exampleSlideIds: string[];
   slideCreatedAt: Record<string, number>;
 };
 
 function pathToSelectedId(pathname: string, search: URLSearchParams): string {
   if (pathname === '/themes' || pathname.startsWith('/themes/')) return THEMES_ID;
   if (pathname === '/assets') return ASSETS_ID;
+  if (search.get('f') === EXAMPLES_ID) return EXAMPLES_ID;
   return search.get('f') ?? ALL_SLIDES_ID;
 }
 
@@ -64,7 +66,7 @@ export function HomeShell() {
   const [searchParams] = useSearchParams();
   const t = useLocale();
 
-  const { slideIds: allSlideIds, slideCreatedAt } = useSlideRegistry();
+  const { slideIds: allSlideIds, exampleSlideIds, slideCreatedAt } = useSlideRegistry();
   const themeRegistry = useThemeRegistry();
 
   const selectedId = pathToSelectedId(location.pathname, searchParams);
@@ -97,6 +99,7 @@ export function HomeShell() {
       if (id === THEMES_ID) navigate('/themes', { replace: true });
       else if (id === ASSETS_ID) navigate('/assets', { replace: true });
       else if (id === ALL_SLIDES_ID) navigate('/', { replace: true });
+      else if (id === EXAMPLES_ID) navigate(`/?f=${encodeURIComponent(EXAMPLES_ID)}`, { replace: true });
       else navigate(`/?f=${encodeURIComponent(id)}`, { replace: true });
     },
     [navigate],
@@ -165,6 +168,7 @@ export function HomeShell() {
     duplicateSlide,
     deleteSlide,
     allSlideIds,
+    exampleSlideIds,
     slideCreatedAt,
   };
 
@@ -177,6 +181,7 @@ export function HomeShell() {
           allCount={allSlideIds.length}
           themesCount={themeRegistry.length}
           assetsCount={globalAssets.length}
+          examplesCount={exampleSlideIds.length}
           selectedId={selectedId}
           onSelect={selectFolder}
           onCreate={(name, icon) => create(name, icon)}
@@ -228,6 +233,7 @@ export function HomeShell() {
                   className={cn(
                     selectedId !== THEMES_ID &&
                       selectedId !== ASSETS_ID &&
+                      selectedId !== EXAMPLES_ID &&
                       'bg-muted text-foreground',
                   )}
                 >

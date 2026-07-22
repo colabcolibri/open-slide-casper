@@ -1,6 +1,7 @@
 import type { ViteDevServer } from 'vite';
 
 export const SLIDES_VMOD = 'virtual:open-slide/slides';
+export const SLIDES_REGISTRY_SCHEMA_VERSION = 2;
 export const THEMES_VMOD = 'virtual:open-slide/themes';
 export const FOLDERS_VMOD = 'virtual:open-slide/folders';
 

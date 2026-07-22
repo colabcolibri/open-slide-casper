@@ -40,6 +40,7 @@ export type Locale = {
     draft: string;
     duplicate: string;
     themes: string;
+    examples: string;
     assets: string;
     folders: string;
     slides: string;
@@ -238,6 +239,10 @@ export type Locale = {
     boldAria: string;
     italicAria: string;
     lineHeightLabel: string;
+    marginTopLabel: string;
+    marginBottomLabel: string;
+    authoringLegacyBanner: string;
+    authoringNoLocBanner: string;
     trackingLabel: string;
     alignLabel: string;
     clearAria: string;
@@ -294,6 +299,7 @@ export type Locale = {
     fontPresetCustom: string;
     shuffleAria: string;
     shuffleTitle: string;
+    authoringLegacyBanner: string;
   };
 
   asset: {

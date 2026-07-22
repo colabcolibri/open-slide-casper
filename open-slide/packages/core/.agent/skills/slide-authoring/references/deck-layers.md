@@ -20,12 +20,14 @@ Every `slides/<id>/index.tsx` should read top-to-bottom in **three layers**. Thi
 imports
 export const design …
 CONTENT
-PageLayout + other templates (paste from page-types/title-body-footer.md first)
+PageLayout + typography templates (start from deck-template/index.tsx)
 const Cover: Page = …
 const Body: Page = …
 export const meta …
 export default [Cover, Body] satisfies Page[];
 ```
+
+**New decks:** copy **`deck-template/index.tsx`** — not production demos or CLI `getting-started`.
 
 ---
 

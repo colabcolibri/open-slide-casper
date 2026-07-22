@@ -29,7 +29,10 @@ describe('generateSlidesModule', () => {
     await withSlidesRoot(async (root) => {
       const files = [await writeSlide(root, 'cover'), await writeSlide(root, 'intro_2')].sort();
 
-      const { code, ignored } = await generateSlidesModule(files, root, false);
+      const { code, ignored } = await generateSlidesModule(
+        [{ files, root, collection: 'slides' }],
+        false,
+      );
 
       expect(ignored).toEqual([]);
       expect(code).toContain('export const slideIds = ["cover","intro_2"];');
@@ -40,11 +43,38 @@ describe('generateSlidesModule', () => {
     await withSlidesRoot(async (root) => {
       const files = [await writeSlide(root, 'cover'), await writeSlide(root, '推薦系統')].sort();
 
-      const { code, ignored } = await generateSlidesModule(files, root, false);
+      const { code, ignored } = await generateSlidesModule(
+        [{ files, root, collection: 'slides' }],
+        false,
+      );
 
       expect(ignored).toEqual(['推薦系統']);
       expect(code).toContain('export const slideIds = ["cover"];');
       expect(code).not.toContain('推薦系統');
+    });
+  });
+
+  it('lists examples separately from user slides', async () => {
+    await withSlidesRoot(async (root) => {
+      const slidesRoot = path.join(root, 'slides');
+      const examplesRoot = path.join(root, 'examples');
+      await fs.mkdir(slidesRoot, { recursive: true });
+      await fs.mkdir(examplesRoot, { recursive: true });
+      const userFile = await writeSlide(slidesRoot, 'mine');
+      const exFile = await writeSlide(examplesRoot, 'sample');
+
+      const { code } = await generateSlidesModule(
+        [
+          { files: [userFile], root: slidesRoot, collection: 'slides' },
+          { files: [exFile], root: examplesRoot, collection: 'examples' },
+        ],
+        false,
+      );
+
+      expect(code).toContain('export const slideIds = ["mine"];');
+      expect(code).toContain('export const exampleSlideIds = ["sample"];');
+      expect(code).toContain('"mine":"slides"');
+      expect(code).toContain('"sample":"examples"');
     });
   });
 });

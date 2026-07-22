@@ -57,15 +57,6 @@ export function injectLocTags(code: string): string | null {
   return next;
 }
 
-export type LocTagsPluginOptions = {
-  userCwd: string;
-  slidesDir?: string;
-};
-
-// Vite normally hands `id` to plugins with forward slashes, but other
-// plugins or virtual modules can pass through Windows-style paths.
-// Compare both sides in POSIX shape so the match doesn't depend on
-// which separator the caller happened to use.
 function isSlideSourceFile(id: string, slidesRootPosix: string): boolean {
   const filePath = id.split(/[?#]/)[0].replace(/\\/g, '/');
   if (!filePath.startsWith(`${slidesRootPosix}/`)) return false;
@@ -75,8 +66,20 @@ function isSlideSourceFile(id: string, slidesRootPosix: string): boolean {
   return rel.includes('/');
 }
 
+export type LocTagsPluginOptions = {
+  userCwd: string;
+  slidesDir?: string;
+  examplesDir?: string | false;
+};
+
 export function locTagsPlugin(opts: LocTagsPluginOptions): Plugin {
-  const slidesRoot = path.resolve(opts.userCwd, opts.slidesDir ?? 'slides').replace(/\\/g, '/');
+  const slideRoots = [
+    path.resolve(opts.userCwd, opts.slidesDir ?? 'slides').replace(/\\/g, '/'),
+  ];
+  if (opts.examplesDir !== false) {
+    const ex = (opts.examplesDir ?? 'examples').trim();
+    if (ex) slideRoots.push(path.resolve(opts.userCwd, ex).replace(/\\/g, '/'));
+  }
   return {
     name: 'open-slide:loc-tags',
     apply: 'serve',
@@ -84,7 +87,7 @@ export function locTagsPlugin(opts: LocTagsPluginOptions): Plugin {
     // sees our injected attributes.
     enforce: 'pre',
     transform(code, id) {
-      if (!isSlideSourceFile(id, slidesRoot)) return null;
+      if (!slideRoots.some((root) => isSlideSourceFile(id, root))) return null;
       const next = injectLocTags(code);
       if (next === null) return null;
       return { code: next, map: null };

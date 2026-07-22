@@ -58,15 +58,19 @@ export function findSlideSource(
 
   // Fallback for JSX rendered from imported component files (which the
   // loc-tags plugin doesn't transform).
-  const needle = `/slides/${slideId}/index.tsx`;
+  const needleSlides = `/slides/${slideId}/index.tsx`;
+  const needleExamples = `/examples/${slideId}/index.tsx`;
   let fiber = getFiber(el);
   let anchor: HTMLElement = el;
   while (fiber) {
     const src = getSource(fiber);
     const isHost = fiber.stateNode instanceof HTMLElement;
+    const file = src?.fileName ? normalizeDebugFileName(src.fileName) : '';
+    const pathMatch =
+      file.endsWith(needleSlides) || file.endsWith(needleExamples) || file.includes(`/${slideId}/index.tsx`);
     if (
       src?.fileName &&
-      normalizeDebugFileName(src.fileName).endsWith(needle) &&
+      pathMatch &&
       src.lineNumber &&
       (!opts?.hostOnly || isHost)
     ) {

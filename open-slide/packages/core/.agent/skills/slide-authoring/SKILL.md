@@ -22,7 +22,9 @@ Do not duplicate this skill in other skills — link here.
 | `references/visual-direction.md` | Palette, aesthetic commitment |
 | `references/themes-on-slides.md` | Slide follows `themes/<id>.md` |
 | `references/design-system.md` | `design` const + Design panel |
-| `references/starter-skeleton.md` | Example deck after PageLayout paste |
+| `references/deck-template/index.tsx` | **Mandatory** new deck — copy scaffold (placeholder) |
+| `references/authoring-contract.md` | Design/Inspect gates — full vs legacy decks |
+| `references/starter-skeleton.md` | Checklist after copying deck-template |
 | `references/page-types/title-body-footer.md` | Default page chrome + **BodyCopy / BulletList** |
 | `references/page-types/cover.md` | Opener |
 | `references/page-types/split.md` | Two columns |

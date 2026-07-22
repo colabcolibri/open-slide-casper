@@ -28,13 +28,31 @@ type DesignPanelProps = {
 };
 
 export function DesignPanel({ open, onClose }: DesignPanelProps) {
-  const { draft, exists, warning, loaded, dirty, update, shuffle } = useDesignPanelState();
+  const {
+    draft,
+    exists,
+    warning,
+    loaded,
+    dirty,
+    update,
+    shuffle,
+    authoringContract,
+    authoringReasons,
+  } = useDesignPanelState();
   const { mounted, animVisible } = usePanelMount(open);
   const t = useLocale();
 
   if (!loaded) return null;
   if (!mounted) return null;
   if (!draft) return null;
+
+  const designLocked = authoringContract !== 'full';
+  const contractBanner =
+    designLocked && authoringReasons.length > 0
+      ? `${t.stylePanel.authoringLegacyBanner} ${authoringReasons.join('; ')}`
+      : designLocked
+        ? t.stylePanel.authoringLegacyBanner
+        : null;
 
   return (
     <PanelShell
@@ -66,6 +84,7 @@ export function DesignPanel({ open, onClose }: DesignPanelProps) {
               size="icon-sm"
               className="text-muted-foreground hover:text-foreground"
               onClick={shuffle}
+              disabled={designLocked}
               aria-label={t.stylePanel.shuffleAria}
               title={t.stylePanel.shuffleTitle}
             >
@@ -84,110 +103,117 @@ export function DesignPanel({ open, onClose }: DesignPanelProps) {
         </>
       }
       banner={
-        warning && (
-          <div className="flex gap-2 border-b border-hairline bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-800 dark:bg-amber-400/10 dark:text-amber-200">
-            <span aria-hidden className="mt-0.5 size-1.5 shrink-0 rounded-full bg-amber-500" />
-            <span>{warning}</span>
+        (warning || contractBanner) && (
+          <div className="flex flex-col gap-2 border-b border-hairline bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-800 dark:bg-amber-400/10 dark:text-amber-200">
+            {warning ? (
+              <>
+                <span aria-hidden className="mt-0.5 size-1.5 shrink-0 rounded-full bg-amber-500" />
+                <span>{warning}</span>
+              </>
+            ) : null}
+            {contractBanner ? <span>{contractBanner}</span> : null}
           </div>
         )
       }
     >
-      <Section title={t.stylePanel.colorsSection}>
-        <ColorField
-          label={t.stylePanel.backgroundLabel}
-          value={draft.palette.bg}
-          onChange={(v) =>
-            update((d) => {
-              d.palette.bg = v;
-            }, 'design:palette.bg')
-          }
-        />
-        <ColorField
-          label={t.stylePanel.textLabel}
-          value={draft.palette.text}
-          onChange={(v) =>
-            update((d) => {
-              d.palette.text = v;
-            }, 'design:palette.text')
-          }
-        />
-        <ColorField
-          label={t.stylePanel.accentLabel}
-          value={draft.palette.accent}
-          onChange={(v) =>
-            update((d) => {
-              d.palette.accent = v;
-            }, 'design:palette.accent')
-          }
-        />
-      </Section>
+      <div className={designLocked ? 'pointer-events-none opacity-50' : undefined}>
+        <Section title={t.stylePanel.colorsSection}>
+          <ColorField
+            label={t.stylePanel.backgroundLabel}
+            value={draft.palette.bg}
+            onChange={(v) =>
+              update((d) => {
+                d.palette.bg = v;
+              }, 'design:palette.bg')
+            }
+          />
+          <ColorField
+            label={t.stylePanel.textLabel}
+            value={draft.palette.text}
+            onChange={(v) =>
+              update((d) => {
+                d.palette.text = v;
+              }, 'design:palette.text')
+            }
+          />
+          <ColorField
+            label={t.stylePanel.accentLabel}
+            value={draft.palette.accent}
+            onChange={(v) =>
+              update((d) => {
+                d.palette.accent = v;
+              }, 'design:palette.accent')
+            }
+          />
+        </Section>
 
-      <Separator />
+        <Separator />
 
-      <Section title={t.stylePanel.typographySection}>
-        <FontField
-          label={t.stylePanel.displayFontLabel}
-          value={draft.fonts.display}
-          onChange={(v) =>
-            update((d) => {
-              d.fonts.display = v;
-            }, 'design:fonts.display')
-          }
-        />
-        <FontField
-          label={t.stylePanel.bodyFontLabel}
-          value={draft.fonts.body}
-          onChange={(v) =>
-            update((d) => {
-              d.fonts.body = v;
-            }, 'design:fonts.body')
-          }
-        />
-        <SliderField
-          label={t.stylePanel.heroLabel}
-          value={draft.typeScale.hero}
-          min={48}
-          max={240}
-          step={2}
-          suffix="px"
-          onChange={(n) =>
-            update((d) => {
-              d.typeScale.hero = n;
-            }, 'design:typeScale.hero')
-          }
-        />
-        <SliderField
-          label={t.stylePanel.bodyLabel}
-          value={draft.typeScale.body}
-          min={16}
-          max={72}
-          step={1}
-          suffix="px"
-          onChange={(n) =>
-            update((d) => {
-              d.typeScale.body = n;
-            }, 'design:typeScale.body')
-          }
-        />
-      </Section>
+        <Section title={t.stylePanel.typographySection}>
+          <FontField
+            label={t.stylePanel.displayFontLabel}
+            value={draft.fonts.display}
+            onChange={(v) =>
+              update((d) => {
+                d.fonts.display = v;
+              }, 'design:fonts.display')
+            }
+          />
+          <FontField
+            label={t.stylePanel.bodyFontLabel}
+            value={draft.fonts.body}
+            onChange={(v) =>
+              update((d) => {
+                d.fonts.body = v;
+              }, 'design:fonts.body')
+            }
+          />
+          <SliderField
+            label={t.stylePanel.heroLabel}
+            value={draft.typeScale.hero}
+            min={48}
+            max={240}
+            step={2}
+            suffix="px"
+            onChange={(n) =>
+              update((d) => {
+                d.typeScale.hero = n;
+              }, 'design:typeScale.hero')
+            }
+          />
+          <SliderField
+            label={t.stylePanel.bodyLabel}
+            value={draft.typeScale.body}
+            min={16}
+            max={72}
+            step={1}
+            suffix="px"
+            onChange={(n) =>
+              update((d) => {
+                d.typeScale.body = n;
+              }, 'design:typeScale.body')
+            }
+          />
+        </Section>
 
-      <Separator />
+        <Separator />
 
-      <Section title={t.stylePanel.shapeSection}>
-        <SliderField
-          label={t.stylePanel.radiusLabel}
-          value={draft.radius}
-          min={0}
-          max={80}
-          step={1}
-          suffix="px"
-          onChange={(n) =>
-            update((d) => {
-              d.radius = n;
-            }, 'design:radius')
-          }
-        />
-      </Section>
+        <Section title={t.stylePanel.shapeSection}>
+          <SliderField
+            label={t.stylePanel.radiusLabel}
+            value={draft.radius}
+            min={0}
+            max={80}
+            step={1}
+            suffix="px"
+            onChange={(n) =>
+              update((d) => {
+                d.radius = n;
+              }, 'design:radius')
+            }
+          />
+        </Section>
+      </div>
     </PanelShell>
   );
 }

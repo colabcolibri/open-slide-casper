@@ -10,7 +10,7 @@
 - [ ] `design.typeScale.body` matches format + scoping density (`canvas-and-layout.md`); default **38** for new `slide` decks unless dense.
 - [ ] All body copy and bullets use **`var(--osd-size-body)`** (shared `BodyCopy` / `BulletList`) — no orphan 28–32px literals.
 - [ ] Top-level `export const design: DesignSystem` + `var(--osd-X)` unless intentionally locked one-off.
-- [ ] **CONTENT** holds all deck copy; no duplicate string literals across pages for the same meaning (`deck-layers.md`).
+- [ ] Vertical rhythm: layout gaps use **`var(--osd-gap)`** where possible; per-element **margin** only via Inspect or rare exceptions — no stray margin literals on typography roles.
 - [ ] One idea per page.
 - [ ] Repeated visuals = explicit `<Component />` instances, not `map` lists (`repeated-elements.md`).
 - [ ] Assets exist — slide `assets/` or `@assets/`.

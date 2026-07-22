@@ -8,7 +8,6 @@ import {
   removePageFromDefaultExportInSource,
   reorderDefaultExportPagesInSource,
   reorderNotesArrayInSource,
-  resolveSlideEntry,
   rmSlideDir,
   SLIDE_ID_RE,
   updateMetaFormatInSource,
@@ -25,7 +24,7 @@ import {
   sendCustomHmrEvent,
   vmodResolved,
 } from '../dev-sync.ts';
-import { type ApiContext, json, readBody } from './context.ts';
+import { type ApiContext, exampleSlideMutationBlocked, json, readBody } from './context.ts';
 
 // PUT    /__slides/:id/reorder            reorder pages { order: number[] }
 // DELETE /__slides/:id/pages/:i           remove page
@@ -51,6 +50,8 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
         }
         const slideId = reorderMatch[1];
         if (!SLIDE_ID_RE.test(slideId)) return json(res, 400, { error: 'invalid slideId' });
+        const readOnly = exampleSlideMutationBlocked(ctx, slideId);
+        if (readOnly.blocked) return json(res, 403, { error: readOnly.error });
 
         const body = (await readBody(req)) as { order?: unknown };
         if (!Array.isArray(body.order)) return json(res, 400, { error: 'invalid order' });
@@ -60,7 +61,7 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
           order.push(v as number);
         }
 
-        const entry = resolveSlideEntry(ctx.slidesRoot, slideId);
+        const entry = ctx.resolveSlideEntry(slideId);
         if (!entry) return json(res, 400, { error: 'invalid slideId' });
 
         let source: string;
@@ -94,6 +95,8 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
         const pageIndex = Number.parseInt(pageOpMatch[2], 10);
         const op = pageOpMatch[3];
         if (!SLIDE_ID_RE.test(slideId)) return json(res, 400, { error: 'invalid slideId' });
+        const readOnlyPage = exampleSlideMutationBlocked(ctx, slideId);
+        if (readOnlyPage.blocked) return json(res, 403, { error: readOnlyPage.error });
         if (!Number.isInteger(pageIndex) || pageIndex < 0)
           return json(res, 400, { error: 'invalid page index' });
 
@@ -105,7 +108,7 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
           return json(res, requestCheck.status, { error: requestCheck.error });
         }
 
-        const entry = resolveSlideEntry(ctx.slidesRoot, slideId);
+        const entry = ctx.resolveSlideEntry(slideId);
         if (!entry) return json(res, 400, { error: 'invalid slideId' });
 
         let source: string;
@@ -149,6 +152,8 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
         }
         const slideId = duplicateMatch[1];
         if (!SLIDE_ID_RE.test(slideId)) return json(res, 400, { error: 'invalid slideId' });
+        const readOnlyDup = exampleSlideMutationBlocked(ctx, slideId);
+        if (readOnlyDup.blocked) return json(res, 403, { error: readOnlyDup.error });
 
         const body = (await readBody(req)) as DuplicateSlideBody;
         if (body.newId !== undefined && typeof body.newId !== 'string') {
@@ -173,6 +178,8 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
       if (!SLIDE_ID_RE.test(slideId)) return json(res, 400, { error: 'invalid slideId' });
 
       if (method === 'PATCH') {
+        const readOnlyPatch = exampleSlideMutationBlocked(ctx, slideId);
+        if (readOnlyPatch.blocked) return json(res, 403, { error: readOnlyPatch.error });
         const requestCheck = validateMutationRequest(req, { requireJsonBody: true });
         if (!requestCheck.ok) {
           return json(res, requestCheck.status, { error: requestCheck.error });
@@ -189,7 +196,7 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
         const format = hasFormat ? validateMetaCanvasFormat(body.format) : undefined;
         if (hasFormat && !format) return json(res, 400, { error: 'invalid format' });
 
-        const entry = resolveSlideEntry(ctx.slidesRoot, slideId);
+        const entry = ctx.resolveSlideEntry(slideId);
         if (!entry) return json(res, 400, { error: 'invalid slideId' });
 
         let source: string;
@@ -232,6 +239,8 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
       }
 
       if (method === 'DELETE') {
+        const readOnlyDel = exampleSlideMutationBlocked(ctx, slideId);
+        if (readOnlyDel.blocked) return json(res, 403, { error: readOnlyDel.error });
         const requestCheck = validateMutationRequest(req);
         if (!requestCheck.ok) {
           return json(res, requestCheck.status, { error: requestCheck.error });

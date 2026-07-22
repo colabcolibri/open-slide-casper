@@ -40,6 +40,7 @@ export const en: Locale = {
     draft: 'Draft',
     duplicate: 'Duplicate',
     themes: 'Themes',
+    examples: 'Examples',
     assets: 'Assets',
     folders: 'Folders',
     slides: 'Slides',
@@ -237,6 +238,12 @@ export const en: Locale = {
     boldAria: 'Bold',
     italicAria: 'Italic',
     lineHeightLabel: 'Line height',
+    marginTopLabel: 'Margin top',
+    marginBottomLabel: 'Margin bottom',
+    authoringLegacyBanner:
+      'Legacy deck — Inspect style edits are disabled. Use the deck-template scaffold for full tooling.',
+    authoringNoLocBanner:
+      'This element is not mapped to source (no data-slide-loc) — style edits are disabled.',
     trackingLabel: 'Tracking',
     alignLabel: 'Align',
     clearAria: 'Clear',
@@ -294,6 +301,8 @@ export const en: Locale = {
     fontPresetCustom: 'Custom…',
     shuffleAria: 'Shuffle design',
     shuffleTitle: 'Shuffle for inspiration',
+    authoringLegacyBanner:
+      'This deck does not follow the authoring contract — copy the deck-template scaffold to enable Design edits.',
   },
 
   asset: {

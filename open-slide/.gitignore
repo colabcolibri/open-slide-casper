@@ -9,7 +9,6 @@ packages/cli/template/.agents/skills
 packages/core/e2e/.scratch
 playwright-report
 test-results
-apps/demo/slides-backup
 # Conteúdo de produção / dogfood local — não publicar neste remoto
 apps/demo/slides/
 apps/demo/assets/

@@ -154,11 +154,13 @@ export function applyNotesEdit(source: string, index: number, text: string): App
 export type NotesPluginOptions = {
   userCwd: string;
   slidesDir?: string;
+  examplesDir?: string | false;
 };
 
 export function notesPlugin(opts: NotesPluginOptions): Plugin {
   const userCwd = opts.userCwd;
   const slidesDir = opts.slidesDir ?? 'slides';
+  const examplesDir = opts.examplesDir;
 
   return {
     name: 'open-slide:notes',
@@ -180,7 +182,7 @@ export function notesPlugin(opts: NotesPluginOptions): Plugin {
         try {
           const body = (await readBody(req)) as NotesBody;
           const slideId = body.slideId ?? '';
-          const file = resolveSlidePath(userCwd, slidesDir, slideId);
+          const file = resolveSlidePath(userCwd, slidesDir, slideId, examplesDir);
           if (!file) return json(res, 400, { error: 'invalid slideId' });
           if (typeof body.index !== 'number') return json(res, 400, { error: 'missing index' });
           if (typeof body.text !== 'string') return json(res, 400, { error: 'missing text' });

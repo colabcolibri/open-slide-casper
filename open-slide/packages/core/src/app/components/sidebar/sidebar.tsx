@@ -15,6 +15,7 @@ export const ALL_SLIDES_ID = '__all__';
 export const DRAFT_ID = 'draft';
 export const THEMES_ID = '__themes__';
 export const ASSETS_ID = '__assets__';
+export const EXAMPLES_ID = '__examples__';
 
 export const FOLDER_DND_MIME = 'application/x-folder-id';
 
@@ -24,6 +25,7 @@ export function Sidebar({
   allCount,
   themesCount,
   assetsCount,
+  examplesCount,
   selectedId,
   onSelect,
   onCreate,
@@ -39,6 +41,7 @@ export function Sidebar({
   allCount: number;
   themesCount: number;
   assetsCount: number;
+  examplesCount: number;
   selectedId: string;
   onSelect: (id: string) => void;
   onCreate: (name: string, icon: FolderIcon) => Promise<Folder> | undefined;
@@ -150,6 +153,15 @@ export function Sidebar({
           onSelect={() => onSelect(THEMES_ID)}
           onDropSlide={() => {}}
         />
+        {examplesCount > 0 && (
+          <FolderItem
+            row={{ kind: 'examples' }}
+            count={examplesCount}
+            selected={selectedId === EXAMPLES_ID}
+            onSelect={() => onSelect(EXAMPLES_ID)}
+            onDropSlide={() => {}}
+          />
+        )}
         {import.meta.env.DEV && (
           <FolderItem
             row={{ kind: 'assets' }}

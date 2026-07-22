@@ -13,6 +13,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Field, NumberField, Section } from '@/components/panel/panel-fields';
 import { PANEL_TRANSITION_MS, PanelShell, useAnimatedOpen } from '@/components/panel/panel-shell';
+import { useAuthoringContract } from '@/components/style-panel/design-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -45,6 +46,8 @@ type ElementSnapshot = {
   textAlign: 'left' | 'center' | 'right' | 'justify';
   lineHeight: number | null;
   letterSpacing: number;
+  marginTop: number;
+  marginBottom: number;
   text: string | null;
   imageSrc: string | null;
   placeholder: { hint: string; width?: number; height?: number } | null;
@@ -78,6 +81,8 @@ export function InspectorPanel() {
   const [rangeStylePreview, setRangeStylePreview] = useState<RangeStylePreview | null>(null);
   const reloadCounter = useReloadCounter();
   const t = useLocale();
+  const { authoringContract, authoringReasons } = useAuthoringContract();
+  const inspectFileLocked = authoringContract !== 'full';
 
   useEffect(() => {
     void selected;
@@ -131,13 +136,15 @@ export function InspectorPanel() {
 
   const apply = useCallback(
     (ops: EditOp[]) => {
+      if (inspectFileLocked) return;
       if (!selected) return;
+      if (!selected.anchor.dataset.slideLoc) return;
       const target = resolveSelectedTarget(selected, slideId);
       if (target !== selected) setSelected(target);
       bufferOps(target.line, target.column, target.anchor, ops);
       if (target.anchor.isConnected) setSnapshot(readSnapshot(target.anchor));
     },
-    [selected, setSelected, slideId, bufferOps],
+    [selected, setSelected, slideId, bufferOps, inspectFileLocked],
   );
 
   // `pinned` keeps the last selection rendered through the close-out
@@ -159,6 +166,14 @@ export function InspectorPanel() {
 
   if (!pinned) return null;
   const { s: pinSelected, n: pinSnapshot } = pinned;
+  const stylePanelLocked = inspectFileLocked || !pinSelected.anchor.dataset.slideLoc;
+  const inspectBanner = inspectFileLocked
+    ? authoringReasons.length > 0
+      ? `${t.inspector.authoringLegacyBanner} ${authoringReasons.join('; ')}`
+      : t.inspector.authoringLegacyBanner
+    : !pinSelected.anchor.dataset.slideLoc
+      ? t.inspector.authoringNoLocBanner
+      : null;
   const contentRange =
     pinSnapshot.text !== null && contentSelection && contentSelection.end > contentSelection.start
       ? contentSelection
@@ -173,6 +188,8 @@ export function InspectorPanel() {
     ? withStylePreview(pinSnapshot, rangeStylePreview.values)
     : pinSnapshot;
   const applyTextStyle = (ops: EditOp[]) => {
+    if (inspectFileLocked) return;
+    if (!pinSelected.anchor.dataset.slideLoc) return;
     const styleOps = ops.flatMap((op) => (op.kind === 'set-style' ? [op] : []));
     const target = resolveSelectedTarget(pinSelected, slideId);
     if (target !== pinSelected) setSelected(target);
@@ -261,71 +278,107 @@ export function InspectorPanel() {
         </>
       }
       footer={<CommentsSection selected={pinSelected} onAdd={add} />}
+      banner={
+        inspectBanner ? (
+          <div className="border-b border-hairline bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-800 dark:bg-amber-400/10 dark:text-amber-200">
+            {inspectBanner}
+          </div>
+        ) : undefined
+      }
     >
-      {pinSnapshot.text !== null && (
-        <>
-          <Section title={t.inspector.contentSection}>
-            <ContentField
-              snapshot={pinSnapshot}
-              apply={apply}
-              onSelectionChange={setContentSelection}
-            />
-          </Section>
-          <Separator />
-        </>
-      )}
+      <div className={stylePanelLocked ? 'pointer-events-none opacity-50' : undefined}>
+        {pinSnapshot.text !== null && (
+          <>
+            <Section title={t.inspector.contentSection}>
+              <ContentField
+                snapshot={pinSnapshot}
+                apply={apply}
+                disabled={inspectFileLocked}
+                onSelectionChange={setContentSelection}
+              />
+            </Section>
+            <Separator />
+          </>
+        )}
 
-      <Section title={t.inspector.typographySection}>
-        <FontSizeField snapshot={typographySnapshot} apply={applyTextStyle} />
-        <FontWeightField snapshot={typographySnapshot} apply={applyTextStyle} />
-        <StyleToggles snapshot={typographySnapshot} apply={applyTextStyle} />
-        <LineHeightField snapshot={pinSnapshot} apply={apply} />
-        <LetterSpacingField snapshot={pinSnapshot} apply={apply} />
-        <TextAlignField snapshot={pinSnapshot} apply={apply} />
-      </Section>
+        <Section title={t.inspector.typographySection}>
+          <FontSizeField snapshot={typographySnapshot} apply={applyTextStyle} />
+          <FontWeightField snapshot={typographySnapshot} apply={applyTextStyle} />
+          <StyleToggles snapshot={typographySnapshot} apply={applyTextStyle} />
+          <LineHeightField snapshot={pinSnapshot} apply={apply} />
+          <LetterSpacingField snapshot={pinSnapshot} apply={apply} />
+          <MarginField
+            label={t.inspector.marginTopLabel}
+            value={pinSnapshot.marginTop}
+            onChange={(px) =>
+              apply([
+                {
+                  kind: 'set-style',
+                  key: 'marginTop',
+                  value: px === 0 ? null : `${Math.round(px)}px`,
+                },
+              ])
+            }
+          />
+          <MarginField
+            label={t.inspector.marginBottomLabel}
+            value={pinSnapshot.marginBottom}
+            onChange={(px) =>
+              apply([
+                {
+                  kind: 'set-style',
+                  key: 'marginBottom',
+                  value: px === 0 ? null : `${Math.round(px)}px`,
+                },
+              ])
+            }
+          />
+          <TextAlignField snapshot={pinSnapshot} apply={apply} />
+        </Section>
 
-      <Separator />
+        <Separator />
 
-      <Section title={t.inspector.colorSection}>
-        <ColorField
-          label={t.inspector.textColor}
-          value={typographySnapshot.color}
-          onChange={(v) => applyTextStyle([{ kind: 'set-style', key: 'color', value: v }])}
-          clearable={false}
-        />
-        <ColorField
-          label={t.inspector.backgroundColor}
-          value={pinSnapshot.backgroundColor ?? '#ffffff'}
-          dim={!pinSnapshot.backgroundColor}
-          onChange={(v) => apply([{ kind: 'set-style', key: 'backgroundColor', value: v }])}
-          onClear={() => apply([{ kind: 'set-style', key: 'backgroundColor', value: null }])}
-          clearable
-        />
-      </Section>
+        <Section title={t.inspector.colorSection}>
+          <ColorField
+            label={t.inspector.textColor}
+            value={typographySnapshot.color}
+            onChange={(v) => applyTextStyle([{ kind: 'set-style', key: 'color', value: v }])}
+            clearable={false}
+          />
+          <ColorField
+            label={t.inspector.backgroundColor}
+            value={pinSnapshot.backgroundColor ?? '#ffffff'}
+            dim={!pinSnapshot.backgroundColor}
+            onChange={(v) => apply([{ kind: 'set-style', key: 'backgroundColor', value: v }])}
+            onClear={() => apply([{ kind: 'set-style', key: 'backgroundColor', value: null }])}
+            clearable
+          />
+        </Section>
 
-      {pinSnapshot.imageSrc !== null && (
-        <>
-          <Separator />
-          <Section title={t.inspector.imageSection}>
-            <ImageField src={pinSnapshot.imageSrc} anchor={pinSelected.anchor} />
-          </Section>
-        </>
-      )}
+        {pinSnapshot.imageSrc !== null && (
+          <>
+            <Separator />
+            <Section title={t.inspector.imageSection}>
+              <ImageField src={pinSnapshot.imageSrc} anchor={pinSelected.anchor} />
+            </Section>
+          </>
+        )}
 
-      {pinSnapshot.placeholder && (
-        <>
-          <Separator />
-          <Section title={t.inspector.imagePlaceholderSection}>
-            <PlaceholderField
-              slideId={slideId}
-              hint={pinSnapshot.placeholder.hint}
-              line={pinSelected.line}
-              column={pinSelected.column}
-              applyEdit={applyEdit}
-            />
-          </Section>
-        </>
-      )}
+        {pinSnapshot.placeholder && (
+          <>
+            <Separator />
+            <Section title={t.inspector.imagePlaceholderSection}>
+              <PlaceholderField
+                slideId={slideId}
+                hint={pinSnapshot.placeholder.hint}
+                line={pinSelected.line}
+                column={pinSelected.column}
+                applyEdit={applyEdit}
+              />
+            </Section>
+          </>
+        )}
+      </div>
     </PanelShell>
   );
 }
@@ -376,10 +429,12 @@ function withStylePreview(snapshot: ElementSnapshot, preview: StylePreview): Ele
 function ContentField({
   snapshot,
   apply,
+  disabled,
   onSelectionChange,
 }: {
   snapshot: ElementSnapshot;
   apply: (ops: EditOp[]) => void;
+  disabled?: boolean;
   onSelectionChange?: (selection: ContentSelection | null) => void;
 }) {
   // Mirror the value locally and skip syncs during IME composition;
@@ -402,6 +457,7 @@ function ContentField({
   return (
     <Textarea
       value={local}
+      disabled={disabled}
       onCompositionStart={() => {
         composingRef.current = true;
       }}
@@ -614,6 +670,30 @@ function LetterSpacingField({
         max={50}
         suffix="px"
       />
+    </Field>
+  );
+}
+
+function MarginField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (px: number) => void;
+}) {
+  return (
+    <Field label={label}>
+      <Slider
+        min={0}
+        max={120}
+        step={1}
+        value={[value]}
+        onValueChange={(next) => onChange((Array.isArray(next) ? next[0] : next) ?? value)}
+        className="flex-1"
+      />
+      <NumberField value={Math.round(value)} onChange={onChange} min={0} max={200} suffix="px" />
     </Field>
   );
 }
@@ -973,6 +1053,8 @@ function readSnapshot(el: HTMLElement): ElementSnapshot {
     textAlign: normalizeTextAlign(cs.textAlign),
     lineHeight: parseLineHeight(cs.lineHeight, parseFloat(cs.fontSize) || 16),
     letterSpacing: parseLetterSpacing(cs.letterSpacing),
+    marginTop: parseMarginPx(cs.marginTop),
+    marginBottom: parseMarginPx(cs.marginBottom),
     text,
     imageSrc,
     placeholder,
@@ -1087,6 +1169,12 @@ function parseLetterSpacing(value: string): number {
   if (!value || value === 'normal') return 0;
   const n = parseFloat(value);
   return Number.isFinite(n) ? round2(n) : 0;
+}
+
+function parseMarginPx(value: string): number {
+  if (!value || value === 'auto') return 0;
+  const n = parseFloat(value);
+  return Number.isFinite(n) ? Math.round(n) : 0;
 }
 
 function round2(n: number): number {

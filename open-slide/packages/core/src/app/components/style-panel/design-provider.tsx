@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { useHistory } from '@/components/history-provider';
+import type { AuthoringContractLevel } from '../../lib/authoring-contract';
 import { type DesignSystem, defaultDesign, designToCssVars } from '../../lib/design';
 import { shuffleDesign } from '../../lib/design-presets';
 import { useDesign as useDesignFetch } from './use-design';
@@ -19,6 +20,8 @@ type DesignCtx = {
   loaded: boolean;
   exists: boolean;
   warning: string | null;
+  authoringContract: AuthoringContractLevel;
+  authoringReasons: string[];
   design: DesignSystem | null;
   draft: DesignSystem | null;
   dirty: boolean;
@@ -38,12 +41,21 @@ export function useDesignPanelState(): DesignCtx {
   return v;
 }
 
+export function useAuthoringContract(): Pick<DesignCtx, 'authoringContract' | 'authoringReasons'> {
+  const v = useContext(Ctx);
+  return {
+    authoringContract: v?.authoringContract ?? 'legacy',
+    authoringReasons: v?.authoringReasons ?? [],
+  };
+}
+
 function clone<T>(d: T): T {
   return JSON.parse(JSON.stringify(d)) as T;
 }
 
 export function DesignProvider({ slideId, children }: { slideId: string; children: ReactNode }) {
-  const { design, exists, warning, loaded, save } = useDesignFetch(slideId);
+  const { design, exists, warning, loaded, save, authoringContract, authoringReasons } =
+    useDesignFetch(slideId);
   const [draft, setDraft] = useState<DesignSystem | null>(null);
   const [committing, setCommitting] = useState(false);
   const history = useHistory();
@@ -61,6 +73,7 @@ export function DesignProvider({ slideId, children }: { slideId: string; childre
 
   const update = useCallback(
     (mut: (d: DesignSystem) => void, coalesceKey?: string) => {
+      if (authoringContract !== 'full') return;
       const prev = draftRef.current;
       if (!prev) return;
       const next = clone(prev);
@@ -72,17 +85,18 @@ export function DesignProvider({ slideId, children }: { slideId: string; childre
         redo: () => setDraft(next),
       });
     },
-    [history],
+    [history, authoringContract],
   );
 
   const commit = useCallback(async () => {
+    if (authoringContract !== 'full') return;
     if (!draft) return;
     setCommitting(true);
     const r = await save(draft);
     setCommitting(false);
     if (!r.ok) toast.error(r.error ?? 'Failed to save');
     history.clear();
-  }, [draft, save, history]);
+  }, [draft, save, history, authoringContract]);
 
   const discard = useCallback(() => {
     if (design) setDraft(clone(design));
@@ -90,6 +104,7 @@ export function DesignProvider({ slideId, children }: { slideId: string; childre
   }, [design, history]);
 
   const resetToDefaults = useCallback(() => {
+    if (authoringContract !== 'full') return;
     const prev = draftRef.current;
     const next = clone(defaultDesign);
     setDraft(next);
@@ -98,9 +113,10 @@ export function DesignProvider({ slideId, children }: { slideId: string; childre
       undo: () => setDraft(prev),
       redo: () => setDraft(next),
     });
-  }, [history]);
+  }, [history, authoringContract]);
 
   const shuffle = useCallback(() => {
+    if (authoringContract !== 'full') return;
     const prev = draftRef.current;
     const next = clone(shuffleDesign(prev));
     setDraft(next);
@@ -108,7 +124,7 @@ export function DesignProvider({ slideId, children }: { slideId: string; childre
       undo: () => setDraft(prev),
       redo: () => setDraft(next),
     });
-  }, [history]);
+  }, [history, authoringContract]);
 
   // SlideCanvas emits its design vars inline on the canvas root, so a draft
   // overlay must use `!important` to outrank those inline styles.
@@ -125,6 +141,8 @@ export function DesignProvider({ slideId, children }: { slideId: string; childre
     loaded,
     exists,
     warning,
+    authoringContract,
+    authoringReasons,
     design,
     draft,
     dirty,

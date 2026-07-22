@@ -4,12 +4,17 @@ import path from 'node:path';
 import fg from 'fast-glob';
 import { loadConfigFromFile, normalizePath, type Plugin, type ViteDevServer } from 'vite';
 import type { OpenSlideConfig } from '../config.ts';
+import {
+  resolveExamplesDir,
+  type SlideCollection,
+} from '../files/slide-locations.ts';
 import { SLIDE_ID_RE } from '../editing/slide-ops.ts';
 import {
   createDebouncedAction,
   DEV_HMR_EVENTS,
   FOLDERS_VMOD,
   invalidateVirtualModule,
+  SLIDES_REGISTRY_SCHEMA_VERSION,
   SLIDES_VMOD,
   sendCustomHmrEvent,
   vmodResolved,
@@ -128,27 +133,50 @@ function parseCreatedAtMs(iso: string | null): number | null {
 const warnedInvalidSlideIds = new Set<string>();
 
 export async function generateSlidesModule(
-  files: string[],
-  slidesRoot: string,
+  scans: { files: string[]; root: string; collection: SlideCollection }[],
   isDev: boolean,
 ): Promise<{ code: string; ignored: string[] }> {
-  const scanned = await Promise.all(
-    files.map(async (abs) => {
-      const id = toId(abs, slidesRoot);
-      const importPath = isDev ? `@fs/${normalizePath(abs).replace(/^\/+/, '')}` : abs;
-      const meta = await readSlideMeta(abs);
-      return { id, importPath, theme: meta.theme, createdAt: parseCreatedAtMs(meta.createdAt) };
-    }),
-  );
+  const scanned = (
+    await Promise.all(
+      scans.flatMap(({ files, root, collection }) =>
+        files.map(async (abs) => {
+          const id = toId(abs, root);
+          const importPath = isDev ? `@fs/${normalizePath(abs).replace(/^\/+/, '')}` : abs;
+          const meta = await readSlideMeta(abs);
+          return {
+            id,
+            importPath,
+            theme: meta.theme,
+            createdAt: parseCreatedAtMs(meta.createdAt),
+            collection,
+          };
+        }),
+      ),
+    )
+  ).flat();
 
-  // Discovery globs every `slides/*/index.*`, but a slide id is used in URLs,
-  // filesystem paths, and the editing routes — all guarded by SLIDE_ID_RE. Drop
-  // folders with an unusable id instead of listing them as slides that then fail
-  // every folder/edit action; `load` warns about each ignored folder.
-  const entries = scanned.filter((e) => SLIDE_ID_RE.test(e.id));
-  const ignored = scanned.filter((e) => !SLIDE_ID_RE.test(e.id)).map((e) => e.id);
+  const byId = new Map<string, (typeof scanned)[number]>();
+  const ignored: string[] = [];
+  for (const entry of scanned) {
+    if (!SLIDE_ID_RE.test(entry.id)) {
+      ignored.push(entry.id);
+      continue;
+    }
+    const prev = byId.get(entry.id);
+    if (!prev) {
+      byId.set(entry.id, entry);
+      continue;
+    }
+    if (prev.collection === 'examples' && entry.collection === 'slides') {
+      byId.set(entry.id, entry);
+    }
+  }
 
-  const ids = JSON.stringify(entries.map((e) => e.id).sort());
+  const entries = Array.from(byId.values()).sort((a, b) => a.id.localeCompare(b.id));
+  const slideIds = entries.filter((e) => e.collection === 'slides').map((e) => e.id);
+  const exampleSlideIds = entries.filter((e) => e.collection === 'examples').map((e) => e.id);
+  const slideCollections = Object.fromEntries(entries.map((e) => [e.id, e.collection]));
+
   const themesMap: Record<string, string> = {};
   const createdAtMap: Record<string, number> = {};
   for (const e of entries) {
@@ -157,6 +185,7 @@ export async function generateSlidesModule(
   }
   const themesJson = JSON.stringify(themesMap);
   const createdAtJson = JSON.stringify(createdAtMap);
+  const slideCollectionsJson = JSON.stringify(slideCollections);
   const importTokens = JSON.stringify(Object.fromEntries(entries.map((e) => [e.id, 0])));
   const devRuntime = isDev
     ? `
@@ -182,7 +211,10 @@ if (import.meta.hot) {
     .join('\n');
 
   const code = `// virtual:open-slide/slides — generated
-export const slideIds = ${ids};
+export const slideRegistrySchemaVersion = ${SLIDES_REGISTRY_SCHEMA_VERSION};
+export const slideIds = ${JSON.stringify(slideIds)};
+export const exampleSlideIds = ${JSON.stringify(exampleSlideIds)};
+export const slideCollections = ${slideCollectionsJson};
 export const slideThemes = ${themesJson};
 export const slideCreatedAt = ${createdAtJson};
 ${devRuntime}
@@ -194,23 +226,32 @@ ${cases}
   }
 }
 `;
-  return { code, ignored };
+  return { code, ignored: [...new Set(ignored)] };
 }
 
 export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
   const { userCwd, config, coreVersion } = opts;
   const slidesDir = config.slidesDir ?? 'slides';
+  const examplesDirConfig = config.examplesDir;
+  const examplesDir = resolveExamplesDir(examplesDirConfig);
   const slidesRoot = path.resolve(userCwd, slidesDir);
+  const examplesRoot = examplesDir ? path.resolve(userCwd, examplesDir) : null;
   const foldersManifestPath = path.join(slidesRoot, '.folders.json');
+
+  const watchedRoots = [{ root: slidesRoot, collection: 'slides' as SlideCollection }];
+  if (examplesRoot) watchedRoots.push({ root: examplesRoot, collection: 'examples' });
 
   let isDev = false;
   const slideIdForEntry = (p: string): string | null => {
-    const rel = path.relative(slidesRoot, p);
-    if (rel.startsWith('..') || path.isAbsolute(rel)) return null;
-    const parts = rel.split(path.sep);
-    if (parts.length !== 2) return null;
-    if (!/^index\.(tsx|jsx|ts|js)$/.test(parts[1])) return null;
-    return parts[0];
+    for (const { root } of watchedRoots) {
+      const rel = path.relative(root, p);
+      if (rel.startsWith('..') || path.isAbsolute(rel)) continue;
+      const parts = rel.split(path.sep);
+      if (parts.length !== 2) continue;
+      if (!/^index\.(tsx|jsx|ts|js)$/.test(parts[1])) continue;
+      return parts[0];
+    }
+    return null;
   };
   const pendingSlideChanges = new Set<string>();
   const slideChangedFlushers = new WeakMap<ViteDevServer, () => void>();
@@ -245,8 +286,21 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
     },
     async load(id) {
       if (id === resolved(SLIDES_VMOD)) {
-        const files = await findSlides(userCwd, slidesDir);
-        const { code, ignored } = await generateSlidesModule(files, slidesRoot, isDev);
+        const scans: { files: string[]; root: string; collection: SlideCollection }[] = [
+          {
+            files: await findSlides(userCwd, slidesDir),
+            root: slidesRoot,
+            collection: 'slides',
+          },
+        ];
+        if (examplesDir && examplesRoot) {
+          scans.push({
+            files: await findSlides(userCwd, examplesDir),
+            root: examplesRoot,
+            collection: 'examples',
+          });
+        }
+        const { code, ignored } = await generateSlidesModule(scans, isDev);
         for (const slideId of ignored) {
           if (warnedInvalidSlideIds.has(slideId)) continue;
           warnedInvalidSlideIds.add(slideId);
@@ -265,7 +319,12 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
               showSlideUi: userBuild.showSlideUi ?? true,
               allowHtmlDownload: userBuild.allowHtmlDownload ?? true,
             };
-        const resolvedConfig = { ...config, build: buildResolved, version: coreVersion };
+        const resolvedConfig = {
+          ...config,
+          examplesDir: examplesDir ?? false,
+          build: buildResolved,
+          version: coreVersion,
+        };
         return `export default ${JSON.stringify(resolvedConfig)};\n`;
       }
       if (id === resolved(FOLDERS_VMOD)) {
@@ -287,6 +346,8 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
       return [];
     },
     configureServer(server) {
+      invalidateVirtualModule(server, resolved(SLIDES_VMOD));
+
       const isSlideEntry = (p: string) => slideIdForEntry(p) !== null;
 
       let registryFlush: (() => void) | undefined;
@@ -304,6 +365,7 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
       // directory itself, since Vite sets `disableGlobbing: true` and would
       // otherwise treat a glob pattern as a literal path.
       if (existsSync(slidesRoot)) server.watcher.add(slidesRoot);
+      if (examplesRoot && existsSync(examplesRoot)) server.watcher.add(examplesRoot);
       server.watcher.on('add', (p) => {
         if (isSlideEntry(p)) reloadRegistry();
       });

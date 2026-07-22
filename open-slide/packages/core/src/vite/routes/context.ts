@@ -1,20 +1,29 @@
 import type { ServerResponse } from 'node:http';
 import path from 'node:path';
 import type { Connect } from 'vite';
-import { SLIDE_ID_RE } from '../../editing/slide-ops.ts';
+import {
+  resolveExamplesDir,
+  resolveSlidePathFromRoots,
+  type SlideCollection,
+} from '../../files/slide-locations.ts';
 
 export type ApiContext = {
   userCwd: string;
   slidesDir: string;
   slidesRoot: string;
+  examplesDir: string | null;
+  examplesRoot: string | null;
   globalAssetsRoot: string;
   manifestPath: string;
   coreVersion: string;
+  resolveSlideEntry: (slideId: string) => string | null;
+  slideCollection: (slideId: string) => SlideCollection | null;
 };
 
 export type ApiPluginOptions = {
   userCwd: string;
   slidesDir?: string;
+  examplesDir?: string | false;
   assetsDir?: string;
   coreVersion: string;
 };
@@ -23,16 +32,27 @@ export function makeContext(opts: ApiPluginOptions): ApiContext {
   const userCwd = opts.userCwd;
   const slidesDir = opts.slidesDir ?? 'slides';
   const assetsDir = opts.assetsDir ?? 'assets';
+  const examplesDir = resolveExamplesDir(opts.examplesDir);
   const slidesRoot = path.resolve(userCwd, slidesDir);
+  const examplesRoot = examplesDir ? path.resolve(userCwd, examplesDir) : null;
   const globalAssetsRoot = path.resolve(userCwd, assetsDir);
   const manifestPath = path.join(slidesRoot, '.folders.json');
+  const resolveSlideEntry = (slideId: string) =>
+    resolveSlidePathFromRoots(userCwd, slidesDir, opts.examplesDir, slideId)?.absolutePath ??
+    null;
+  const slideCollection = (slideId: string) =>
+    resolveSlidePathFromRoots(userCwd, slidesDir, opts.examplesDir, slideId)?.collection ?? null;
   return {
     userCwd,
     slidesDir,
     slidesRoot,
+    examplesDir,
+    examplesRoot,
     globalAssetsRoot,
     manifestPath,
     coreVersion: opts.coreVersion,
+    resolveSlideEntry,
+    slideCollection,
   };
 }
 
@@ -63,14 +83,23 @@ export function resolveSlidePath(
   userCwd: string,
   slidesDir: string,
   slideId: string,
+  examplesDir?: string | false,
 ): string | null {
-  if (!SLIDE_ID_RE.test(slideId)) return null;
-  const slidesRoot = path.resolve(userCwd, slidesDir);
-  const full = path.resolve(slidesRoot, slideId, 'index.tsx');
-  if (!full.startsWith(slidesRoot + path.sep)) return null;
-  return full;
+  return (
+    resolveSlidePathFromRoots(userCwd, slidesDir, examplesDir, slideId)?.absolutePath ?? null
+  );
 }
 
 export function resolveSlideEntryPath(ctx: ApiContext, slideId: string): string | null {
-  return resolveSlidePath(ctx.userCwd, ctx.slidesDir, slideId);
+  return ctx.resolveSlideEntry(slideId);
+}
+
+export function exampleSlideMutationBlocked(
+  ctx: ApiContext,
+  slideId: string,
+): { blocked: true; error: string } | { blocked: false } {
+  if (ctx.slideCollection(slideId) === 'examples') {
+    return { blocked: true, error: 'example decks are read-only in the dev UI' };
+  }
+  return { blocked: false };
 }

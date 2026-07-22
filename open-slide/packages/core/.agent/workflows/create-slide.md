@@ -44,7 +44,7 @@ PHASE A — discovery (required when scoping not already answered):
 
 PHASE B — build (only after user answers Phase A):
 5. Steps 3–8: id → structure (+ CONTENT outline) → visual direction → index.tsx → self-review → handoff.
-6. Step 6: .agent/skills/slide-authoring/references/deck-layers.md then page-types/title-body-footer.md.
+6. Step 6: copy .agent/skills/slide-authoring/references/deck-template/index.tsx → slides/<id>/index.tsx; then deck-layers.md (CONTENT + pages). Grid rules: page-types/title-body-footer.md — not getting-started or demo production decks.
 7. Self-review: .agent/skills/slide-authoring/references/self-review-checklist.md.
 ```
 

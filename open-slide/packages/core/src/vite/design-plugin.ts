@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import { parse as babelParse } from '@babel/parser';
 import type { Plugin, ViteDevServer } from 'vite';
+import { evaluateAuthoringContract } from '../app/lib/authoring-contract.ts';
 import { type DesignSystem, defaultDesign } from '../app/lib/design.ts';
 import type { AstNode } from '../editing/babel-walk.ts';
 import { validateMutationRequest } from '../http/request-guard.ts';
@@ -330,11 +331,13 @@ export function applyDesignWrite(source: string, next: DesignSystem): WriteResul
 export type DesignPluginOptions = {
   userCwd: string;
   slidesDir?: string;
+  examplesDir?: string | false;
 };
 
 export function designPlugin(opts: DesignPluginOptions): Plugin {
   const userCwd = opts.userCwd;
   const slidesDir = opts.slidesDir ?? 'slides';
+  const examplesDir = opts.examplesDir;
 
   return {
     name: 'open-slide:design',
@@ -344,7 +347,7 @@ export function designPlugin(opts: DesignPluginOptions): Plugin {
         const url = new URL(req.url ?? '/', 'http://local');
         const method = req.method ?? 'GET';
         const slideId = url.searchParams.get('slideId') ?? '';
-        const file = resolveSlidePath(userCwd, slidesDir, slideId);
+        const file = resolveSlidePath(userCwd, slidesDir, slideId, examplesDir);
         if (!file) return json(res, 400, { error: 'invalid slideId' });
 
         try {
@@ -356,13 +359,32 @@ export function designPlugin(opts: DesignPluginOptions): Plugin {
               return json(res, 404, { error: 'slide not found' });
             }
             const parsed = parseSlideDesign(source);
+            const contract = evaluateAuthoringContract(source);
             if (parsed.ok) {
-              return json(res, 200, { design: parsed.design, exists: true, warning: null });
+              return json(res, 200, {
+                design: parsed.design,
+                exists: true,
+                warning: null,
+                authoringContract: contract.level,
+                authoringReasons: contract.reasons,
+              });
             }
             if (parsed.exists === false) {
-              return json(res, 200, { design: defaultDesign, exists: false, warning: null });
+              return json(res, 200, {
+                design: defaultDesign,
+                exists: false,
+                warning: null,
+                authoringContract: contract.level,
+                authoringReasons: contract.reasons,
+              });
             }
-            return json(res, 200, { design: defaultDesign, exists: true, warning: parsed.error });
+            return json(res, 200, {
+              design: defaultDesign,
+              exists: true,
+              warning: parsed.error,
+              authoringContract: contract.level,
+              authoringReasons: contract.reasons,
+            });
           }
 
           if (method === 'PUT' && url.pathname === '/') {
@@ -380,6 +402,13 @@ export function designPlugin(opts: DesignPluginOptions): Plugin {
               source = await fs.readFile(file, 'utf8');
             } catch {
               return json(res, 404, { error: 'slide not found' });
+            }
+            const contract = evaluateAuthoringContract(source);
+            if (contract.level !== 'full') {
+              return json(res, 422, {
+                error: 'slide does not meet the authoring contract for Design panel edits',
+                authoringReasons: contract.reasons,
+              });
             }
             const parsed = parseSlideDesign(source);
             const baseDesign = parsed.ok ? parsed.design : defaultDesign;

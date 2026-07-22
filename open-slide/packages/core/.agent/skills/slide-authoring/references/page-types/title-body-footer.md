@@ -1,6 +1,6 @@
 # Page type — title / body / footer (head · body · footer)
 
-Every slide deck owns its layout in **`slides/<id>/index.tsx`**. Do not import layout from `@open-slide/core` — copy the block below once per deck and customize chrome (footer label, gaps, typography components).
+Every slide deck owns its layout in **`slides/<id>/index.tsx`**. Do not import layout from `@open-slide/core`. **New decks:** copy **`../deck-template/index.tsx`** (full scaffold). Use the snippets below only to understand grid regions or to patch an existing deck — avoid duplicating the whole file when deck-template already matches.
 
 ## Contract
 

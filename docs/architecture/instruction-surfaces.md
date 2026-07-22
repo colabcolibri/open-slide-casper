@@ -59,6 +59,8 @@ Publicado em **`open-slide/packages/core/.agent/`** (`SLIDE-KIT.md`, `agents/`, 
 
 **Escopo de escrita:** apenas `slides/<id>/` (+ assets) e `themes/` quando `create-theme`. Nunca `packages/core` src.
 
+**Authoring contract (dev):** `GET /__design` retorna `authoringContract` (`full` | `legacy`) e `authoringReasons`; painéis Design/Inspect bloqueiam escrita fora de `full` — ver `slide-authoring/references/authoring-contract.md`.
+
 Demo: run `./scripts/sync-slide-kit-adapters.sh` — adapters symlink to `packages/core/.agent/`.
 
 ## 2. Framework UI (runtime + web)

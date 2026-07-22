@@ -18,7 +18,34 @@ export const design: DesignSystem = {
 
 `export` it (rather than plain `const`) so the framework can read the object and inject CSS variables at the canvas root automatically.
 
-The shape is intentionally minimal — it only covers what the Design panel can currently tweak. Anything outside this set (heading sizes, spacing, motion, extra palette colors) belongs as plain hard-coded constants in the slide file.
+The shape is intentionally minimal — it only covers what the Design panel can currently tweak. The runtime **derives** extra CSS variables from that object (no extra fields in the slide file):
+
+| Variable | Source |
+| --- | --- |
+| `--osd-muted` | mix of `palette.text` + `palette.bg` |
+| `--osd-line` | lighter mix for dividers |
+| `--osd-size-heading` | `round(typeScale.hero × 0.48)` |
+| `--osd-padding` | `100px 120px` (slide canvas inset) |
+| `--osd-gap` | `round(typeScale.body × 0.85)` px — vertical rhythm in `deck-template` layouts |
+
+Semantic typography in **`deck-template/index.tsx`** should use these vars. Theme-only extras (cards, glow, mono) stay in `themes/<id>.md` until a theme US realigns them.
+
+## Design panel vs Inspect
+
+| | **Design (palette icon)** | **Inspect** |
+| --- | --- | --- |
+| Edits | `export const design` in the slide file | Inline `style` on the **selected** DOM node |
+| Scope | Whole slide (`--osd-*` on canvas) | One element (may override a token, e.g. literal `fontSize` after you change size) |
+| Text | Not for deck copy — use **CONTENT** + agent/`apply-comments` | Content field for simple text nodes only |
+| Spacing | `--osd-padding`, `--osd-gap` via `typeScale.body` / derived vars | **Margin top / bottom** on the selected element |
+
+Prefer **CONTENT** and shared layout (`gap: var(--osd-gap)`) before per-element margins. Use Inspect margin for one-off tweaks.
+
+## Authoring contract gate
+
+Slides are classified **`full`** vs **`legacy`** at dev time (`authoring-contract.md`). Design and Inspect **disable file writes** when `legacy`. Preview, present, and export are never blocked.
+
+Motion and one-off palette keys outside the panel still belong as named constants in the slide when needed.
 
 ## Two consumption surfaces
 
@@ -28,7 +55,7 @@ There are **two consumption surfaces**; both may appear in the same slide:
   ```tsx
   <div style={{ background: 'var(--osd-bg)', color: 'var(--osd-text)', borderRadius: 'var(--osd-radius)', fontFamily: 'var(--osd-font-body)', fontSize: 'var(--osd-size-body)' }}>
   ```
-  Available vars: `--osd-bg`, `--osd-text`, `--osd-accent`, `--osd-font-display`, `--osd-font-body`, `--osd-size-hero`, `--osd-size-body`, `--osd-radius`.
+  Available vars: `--osd-bg`, `--osd-text`, `--osd-accent`, `--osd-muted`, `--osd-line`, `--osd-font-display`, `--osd-font-body`, `--osd-size-hero`, `--osd-size-heading`, `--osd-size-body`, `--osd-radius`, `--osd-padding`, `--osd-gap`.
 
 - **Direct `design.X` reads** — when you need a JS number for arithmetic or to label something in the UI. These update via HMR after the panel commits the file, not while dragging.
   ```tsx

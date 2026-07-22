@@ -33,7 +33,7 @@ import {
 import { format, useLocale } from '@/lib/use-locale';
 import { cn } from '@/lib/utils';
 import { FolderIconChip, SLIDE_DND_MIME } from '../components/sidebar/folder-item';
-import { ALL_SLIDES_ID, DRAFT_ID } from '../components/sidebar/sidebar';
+import { ALL_SLIDES_ID, DRAFT_ID, EXAMPLES_ID } from '../components/sidebar/sidebar';
 import { SlideCanvas } from '../components/slide-canvas';
 import { CanvasSizeProvider } from '../lib/canvas-context';
 import { SlidePageProvider } from '../lib/page-context';
@@ -85,24 +85,28 @@ export function Home() {
     duplicateSlide,
     deleteSlide,
     allSlideIds,
+    exampleSlideIds,
     slideCreatedAt,
   } = useOutletContext<HomeOutletContext>();
   const t = useLocale();
 
   const isAll = selectedId === ALL_SLIDES_ID;
   const isDraft = selectedId === DRAFT_ID;
+  const isExamples = selectedId === EXAMPLES_ID;
   const selectedFolder =
-    isAll || isDraft ? null : (manifest.folders.find((f) => f.id === selectedId) ?? null);
-  const visibleSlides = isAll
-    ? allSlideIds
-    : isDraft
-      ? draftSlides
-      : (slidesByFolder[selectedId] ?? []);
+    isAll || isDraft || isExamples ? null : (manifest.folders.find((f) => f.id === selectedId) ?? null);
+  const visibleSlides = isExamples
+    ? exampleSlideIds
+    : isAll
+      ? allSlideIds
+      : isDraft
+        ? draftSlides
+        : (slidesByFolder[selectedId] ?? []);
 
-  const title = selectedFolder?.name ?? (isAll ? t.home.slides : t.home.draft);
+  const title = selectedFolder?.name ?? (isExamples ? t.home.examples : isAll ? t.home.slides : t.home.draft);
   const headerIcon = selectedFolder?.icon ?? {
     type: 'emoji' as const,
-    value: isAll ? '🎞️' : '📝',
+    value: isExamples ? '🧩' : isAll ? '🎞️' : '📝',
   };
 
   const [query, setQuery] = useState('');
@@ -220,6 +224,7 @@ export function Home() {
             <li key={id}>
               <SlideCard
                 id={id}
+                readOnly={isExamples}
                 folders={manifest.folders}
                 currentFolderId={manifest.assignments[id] ?? null}
                 onRename={(name) => renameSlide(id, name)}
@@ -454,6 +459,7 @@ type DialogKind = null | 'rename' | 'move' | 'delete';
 
 function SlideCard({
   id,
+  readOnly = false,
   folders,
   currentFolderId,
   onRename,
@@ -463,6 +469,7 @@ function SlideCard({
   onTitleResolved,
 }: {
   id: string;
+  readOnly?: boolean;
   folders: Folder[];
   currentFolderId: string | null;
   onRename: (name: string) => Promise<void> | void;
@@ -500,8 +507,9 @@ function SlideCard({
     <>
       {/* biome-ignore lint/a11y/noStaticElementInteractions: drag source wraps an interactive Link */}
       <div
-        draggable
+        draggable={!readOnly}
         onDragStart={(e) => {
+          if (readOnly) return;
           e.dataTransfer.setData(SLIDE_DND_MIME, id);
           e.dataTransfer.effectAllowed = 'move';
           const chip = createDragChip(displayTitle);
@@ -554,7 +562,7 @@ function SlideCard({
           )}
         </div>
 
-        {import.meta.env.DEV && (
+        {import.meta.env.DEV && !readOnly && (
           <div className="absolute right-2 top-2">
             <DropdownMenu>
               <DropdownMenuTrigger

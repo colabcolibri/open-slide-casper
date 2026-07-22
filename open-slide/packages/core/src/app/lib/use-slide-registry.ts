@@ -4,27 +4,30 @@ import {
   slideThemes as bootThemes,
 } from 'virtual:open-slide/slides';
 import { useCallback, useEffect, useState } from 'react';
+import type { SlideCollection } from '@/lib/slide-collection';
+import {
+  normalizeSlideRegistry,
+  type SlidesVirtualModule,
+} from '@/lib/slide-registry-normalize';
 
 export type SlideRegistry = {
   slideIds: string[];
+  exampleSlideIds: string[];
+  slideCollections: Record<string, SlideCollection>;
   slideThemes: Record<string, string>;
   slideCreatedAt: Record<string, number>;
 };
 
 async function loadRegistryFromVite(): Promise<SlideRegistry> {
-  const mod = await import('virtual:open-slide/slides');
-  return {
-    slideIds: [...mod.slideIds],
-    slideThemes: { ...mod.slideThemes },
-    slideCreatedAt: { ...mod.slideCreatedAt },
-  };
+  const mod = (await import('virtual:open-slide/slides')) as SlidesVirtualModule;
+  return normalizeSlideRegistry(mod);
 }
 
-const bootRegistry: SlideRegistry = {
-  slideIds: [...bootIds],
-  slideThemes: { ...bootThemes },
-  slideCreatedAt: { ...bootCreatedAt },
-};
+const bootRegistry: SlideRegistry = normalizeSlideRegistry({
+  slideIds: bootIds,
+  slideThemes: bootThemes,
+  slideCreatedAt: bootCreatedAt,
+});
 
 export function useSlideRegistry(): SlideRegistry {
   const [registry, setRegistry] = useState<SlideRegistry>(bootRegistry);
@@ -34,6 +37,10 @@ export function useSlideRegistry(): SlideRegistry {
       .then(setRegistry)
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   useEffect(() => {
     if (!import.meta.hot) return;

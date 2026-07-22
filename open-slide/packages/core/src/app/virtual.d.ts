@@ -1,6 +1,9 @@
 declare module 'virtual:open-slide/slides' {
   import type { SlideModule } from './lib/sdk';
+  export const slideRegistrySchemaVersion: number;
   export const slideIds: string[];
+  export const exampleSlideIds: string[];
+  export const slideCollections: Record<string, 'slides' | 'examples'>;
   export const slideThemes: Record<string, string>;
   export const slideCreatedAt: Record<string, number>;
   export function loadSlide(id: string): Promise<SlideModule>;
@@ -12,6 +15,7 @@ declare module 'virtual:open-slide/config' {
   const config: {
     base?: string;
     slidesDir?: string;
+    examplesDir?: string | false;
     port?: number;
     locale?: Locale;
     version: string;
