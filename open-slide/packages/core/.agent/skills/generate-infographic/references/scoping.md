@@ -18,9 +18,9 @@ Then ask in one `AskUserQuestion` (multi-question form), or an equivalent number
 
 3. **Output resolution (optional)** — if relevant: `512` | `1K` (default) | `2K` | `4K` per **`aspect-ratios.md`** § Resolução.
 
-4. **Layout archetype** — pick from **`infographic-catalog/references/layouts-by-category.md`** (or 3 options with id + `description` from `catalog.json`). Use `previews/layouts/` when comparing.
+4. **Layout archetype** — pick from **`infographic-catalog/references/layouts-by-category.md`** (or 3 options with id + `description` from `catalog.json`). Use `previews/layouts/` when comparing. Full inventory: **`/list-infographic-layouts`** (optional filter: category name).
 
-5. **Visual style** — pick from **`catalog.json`** `styles` (filter by `vibe` / `format` if helpful). Show 3 tailored options; `previews/styles/`.
+5. **Visual style** — pick from **`catalog.json`** `styles` (filter by `vibe` / `format` if helpful). Show 3 tailored options; `previews/styles/`. Full inventory: **`/list-infographic-styles`** (optional filter: vibe or format tag).
 
 6. **Optional overrides** — reference images + guidance, or author **priority** (`finalInstruction`).
 

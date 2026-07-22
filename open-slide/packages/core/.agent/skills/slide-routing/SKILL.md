@@ -29,6 +29,8 @@ Read **`workflows/`** when the user invokes a named flow. Load the **agent** nam
 | Apply inspector comments | `slide-author` | **`/apply-comments`** → `.agent/workflows/apply-comments.md` | **`apply-comments`**, **`slide-authoring`** |
 | New or extract theme | `theme-author` | **`/create-theme`** → `.agent/workflows/create-theme.md` | **`create-theme`**, **`slide-authoring`** |
 | Plan image infographic (layout/style + prompts) | `infographic-author` | **`/generate-infographic`** → `.agent/workflows/generate-infographic.md` | **`generate-infographic`**, **`infographic-catalog`** |
+| List infographic layouts (39) | `infographic-author` | **`/list-infographic-layouts`** → `.agent/workflows/list-infographic-layouts.md` | **`infographic-catalog`** |
+| List infographic visual styles (56) | `infographic-author` | **`/list-infographic-styles`** → `.agent/workflows/list-infographic-styles.md` | **`infographic-catalog`** |
 | “This page”, “current slide”, present URL | `slide-author` | skill **`current-slide`** only | then **`slide-authoring`** |
 | Tweak layout, palette, steps, morph on known slide | `slide-author` | skill **`slide-authoring`** | `.agent/skills/slide-authoring/references/*` |
 | Edit `@open-slide/core` UI, Vite, CLI | **Stop** — not slide kit | `open-slide/AGENTS.md` | framework maintenance |

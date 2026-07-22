@@ -34,7 +34,8 @@ Edit **only** canonical files under **`packages/core/.agent/`** (monorepo) or up
 **You invoke workflows (slash commands), not skills.** Agents and skills are loaded by the model from the workflow (or from `@agent-name` if you override routing).
 
 ```txt
-YOU  →  /create-slide, /apply-comments, /create-theme, /generate-infographic     (workflow)
+YOU  →  /create-slide, /apply-comments, /create-theme, /generate-infographic,
+         /list-infographic-layouts, /list-infographic-styles     (workflow)
          ↓
 Agent (@slide-author, @theme-author)                       (persona + scope)
          ↓
@@ -141,8 +142,10 @@ If adapters were committed before gitignore, remove from the index only: `git rm
 | **`/apply-comments`** | `workflows/apply-comments.md` | `slide-author` | inspector `@slide-comment` markers |
 | **`/create-theme`** | `workflows/create-theme.md` | `theme-author` | `themes/<id>.md` + demo |
 | **`/generate-infographic`** | `workflows/generate-infographic.md` | `infographic-author` | catalog + prompt plan (no `slides/`) |
+| **`/list-infographic-layouts`** | `workflows/list-infographic-layouts.md` | `infographic-author` | read-only layout inventory |
+| **`/list-infographic-styles`** | `workflows/list-infographic-styles.md` | `infographic-author` | read-only visual style inventory |
 
-Delegate new themes from deck work to **`theme-author`** + **`/create-theme`**; delegate deck edits from theme work to **`slide-author`** + **`/create-slide`** when the user asks for slide TSX. Delegate infographics to **`infographic-author`** + **`/generate-infographic`** — not **`slide-authoring`** pattern library.
+Delegate new themes from deck work to **`theme-author`** + **`/create-theme`**; delegate deck edits from theme work to **`slide-author`** + **`/create-slide`** when the user asks for slide TSX. Delegate infographics to **`infographic-author`** + **`/generate-infographic`** — not **`slide-authoring`** pattern library. Use **`/list-infographic-*`** when the user or agent needs the full id list before scoping.
 
 ## How to reference (agents + humans)
 
@@ -155,6 +158,8 @@ In a **consumer slide workspace** (after `open-slide sync:kit`), paths are relat
 | **`/apply-comments`** | `.cursor/commands/apply-comments.md` | `packages/core/.agent/workflows/apply-comments.md` |
 | **`/create-theme`** | `.cursor/commands/create-theme.md` | `packages/core/.agent/workflows/create-theme.md` |
 | **`/generate-infographic`** | `.cursor/commands/generate-infographic.md` | `packages/core/.agent/workflows/generate-infographic.md` |
+| **`/list-infographic-layouts`** | `.cursor/commands/list-infographic-layouts.md` | `packages/core/.agent/workflows/list-infographic-layouts.md` |
+| **`/list-infographic-styles`** | `.cursor/commands/list-infographic-styles.md` | `packages/core/.agent/workflows/list-infographic-styles.md` |
 | Skill **`create-slide`** | `.agents/skills/create-slide/SKILL.md` | `.agent/skills/create-slide/SKILL.md` |
 | Skill **`apply-comments`** | `.agents/skills/apply-comments/SKILL.md` | `.agent/skills/apply-comments/SKILL.md` |
 | Skill **`create-theme`** | `.agents/skills/create-theme/SKILL.md` | `.agent/skills/create-theme/SKILL.md` |

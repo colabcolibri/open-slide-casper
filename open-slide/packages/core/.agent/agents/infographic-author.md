@@ -13,6 +13,8 @@ You plan **image infographics** using the vendored catalog in **`.agent/skills/i
 | User invokes | Read first | Then skills |
 | --- | --- | --- |
 | **`/generate-infographic`** | `.agent/workflows/generate-infographic.md` | **`generate-infographic`**, **`infographic-catalog`** |
+| **`/list-infographic-layouts`** | `.agent/workflows/list-infographic-layouts.md` | **`infographic-catalog`** only |
+| **`/list-infographic-styles`** | `.agent/workflows/list-infographic-styles.md` | **`infographic-catalog`** only |
 | Slide deck / theme only | delegate **`slide-author`** or **`theme-author`** | **`slide-routing`** |
 
 ## Phase 0: routing

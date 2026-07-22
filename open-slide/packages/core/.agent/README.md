@@ -29,7 +29,8 @@ Framework UI (runtime, web) **não** mora aqui — ver `docs/` na raiz do reposi
 ## Camadas (o que invocar)
 
 ```txt
-Você          →  /create-slide, /apply-comments, /create-theme, /generate-infographic   (workflow)
+Você          →  /create-slide, /apply-comments, /create-theme, /generate-infographic,
+                 /list-infographic-layouts, /list-infographic-styles   (workflow)
                     ↓
 Agente        →  @slide-author, @theme-author, @infographic-author
                     ↓
@@ -99,7 +100,9 @@ Fluxo separado dos slides TSX: **`/generate-infographic`** → agente **`infogra
 | --- | --- |
 | [`skills/infographic-catalog/`](./skills/infographic-catalog/SKILL.md) | Catálogo (`references/catalog.json`, layouts, styles, previews) |
 | [`skills/generate-infographic/`](./skills/generate-infographic/SKILL.md) | Procedimento de plano + montagem de prompt |
-| [`workflows/generate-infographic.md`](./workflows/generate-infographic.md) | Entrada do slash command |
+| [`workflows/generate-infographic.md`](./workflows/generate-infographic.md) | Plano + prompt |
+| [`workflows/list-infographic-layouts.md`](./workflows/list-infographic-layouts.md) | Lista os 39 layouts (opcional: categoria em `$ARGUMENTS`) |
+| [`workflows/list-infographic-styles.md`](./workflows/list-infographic-styles.md) | Lista os 56 estilos visuais (opcional: vibe/format em `$ARGUMENTS`) |
 
 Ver [`infographic-catalog/references/README.md`](./skills/infographic-catalog/references/README.md).
 

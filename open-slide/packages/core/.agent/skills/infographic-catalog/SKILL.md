@@ -25,6 +25,7 @@ Entry workflow: **`/generate-infographic`** → skill **`generate-infographic`**
 | `references/layouts/<id>.md` | Full layout prompt for one archetype |
 | `references/styles/<id>.md` | Full style prompt modifier |
 | `references/prompt-assembly.md` | **Mandatory** before composing final image prompt |
+| `references/list-catalog.md` | **`/list-infographic-layouts`** and **`/list-infographic-styles`** |
 | `references/README.md` | Maintainer refresh of `.md` / `catalog.json` |
 
 Preview images: `references/previews/layouts/`, `references/previews/styles/`.

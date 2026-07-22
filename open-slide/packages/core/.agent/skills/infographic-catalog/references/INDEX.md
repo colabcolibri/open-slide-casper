@@ -10,6 +10,7 @@ Machine-readable index: **`catalog.json`**. Prompt bodies: **`layouts/`** (**39*
 | [aspect-ratios.json](aspect-ratios.json) | Same list, machine-readable |
 | [layouts-by-category.md](layouts-by-category.md) | All layout ids grouped by taxonomy |
 | [README.md](README.md) | Maintainer refresh of `.md` / `catalog.json` |
+| [list-catalog.md](list-catalog.md) | **`/list-infographic-layouts`** / **`/list-infographic-styles`** output rules |
 | [prompt-assembly.md](prompt-assembly.md) | Prompt composition order |
 | [catalog.json](catalog.json) | ids, tags, paths |
 
