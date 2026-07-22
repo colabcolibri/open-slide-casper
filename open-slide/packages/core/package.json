@@ -1,6 +1,7 @@
 {
   "name": "@open-slide/core",
   "version": "1.17.1",
+  "private": true,
   "description": "Runtime and CLI for open-slide — write slides in slides/, we handle the rest.",
   "type": "module",
   "exports": {
@@ -61,9 +62,6 @@
   },
   "bugs": {
     "url": "https://github.com/1weiho/open-slide/issues"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "dependencies": {
     "@babel/parser": "^7.29.2",

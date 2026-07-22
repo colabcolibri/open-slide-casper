@@ -7,6 +7,7 @@
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=web",
     "dev:demo": "turbo run dev --filter=demo",
+    "init:slides": "node scripts/init-local-workspace.mjs",
     "build:core": "pnpm --filter @open-slide/core build",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
@@ -21,17 +22,12 @@
     "test:e2e": "pnpm --filter @open-slide/core test:e2e",
     "core": "pnpm --filter @open-slide/core",
     "cli": "pnpm --filter @open-slide/cli",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo run build --filter=@open-slide/core --filter=@open-slide/cli && changeset publish",
     "sync:kit:demo": "bash scripts/sync-slide-kit-adapters.sh apps/demo",
     "sync:kit:adapters": "bash scripts/sync-slide-kit-adapters.sh",
     "themes:list": "pnpm --filter demo themes:list"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.12",
-    "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.31.0",
     "turbo": "^2.10.5",
     "vitest": "^2.1.9"
   }

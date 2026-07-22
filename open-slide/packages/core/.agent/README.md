@@ -18,7 +18,10 @@ Regras normativas e prioridades: **[`SLIDE-KIT.md`](./SLIDE-KIT.md)**. Este READ
 # Monorepo → demo
 pnpm sync:kit:demo
 
-# Projeto consumidor
+# Novo workspace local (sem npx) — apps/* com workspace:*
+pnpm init:slides [nome-ou-caminho]
+
+# Projeto consumidor (npm publicado)
 pnpm exec open-slide sync:kit
 ```
 
@@ -119,7 +122,7 @@ Sem `examplesDir` no config, o menu **Examples** usa os decks em `packages/core/
 1. Alterar só **`packages/core/.agent/`** no monorepo.
 2. Rodar testes do core (`pnpm test` na raiz `open-slide/`).
 3. `pnpm sync:kit:demo` (ou `sync:kit` no consumidor).
-4. Release via changeset em `@open-slide/core` quando for público.
+4. Commit + PR no fork. **Sem changeset** — publicação npm é só no upstream.
 
 Documentação de arquitetura do monorepo: [`docs/architecture/instruction-surfaces.md`](../../../../docs/architecture/instruction-surfaces.md) (caminho a partir do clone open-slide na raiz Meridian).
 

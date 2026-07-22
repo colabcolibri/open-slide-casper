@@ -8,7 +8,7 @@ This repository is **three things at once**:
 2. The **home for Casper** — product docs, production direction, and fork-only changes for Instagram/LinkedIn-style output.
 3. A **[Meridian](https://github.com/colabcolibri/meridian) harness** — how we govern docs, backlog, and agent workflows while evolving the fork (see below).
 
-We do **not** replace open-slide. We **vendor the upstream tree** and build Casper around it. Framework releases still belong to [1weiho/open-slide](https://github.com/1weiho/open-slide) and [open-slide.dev](https://open-slide.dev); changes under `open-slide/packages/core` and `open-slide/packages/cli` should stay small and mergeable upstream when possible.
+We do **not** replace open-slide. We **vendor the upstream tree** and build Casper around it. **This fork does not publish to npm** — no `pnpm release` or Changesets in day-to-day work ([fork-local-only.md](docs/architecture/fork-local-only.md)). Upstream [1weiho/open-slide](https://github.com/1weiho/open-slide) owns public releases; keep core/cli changes mergeable when possible.
 
 ---
 
@@ -116,7 +116,7 @@ Edit skills only in `packages/core/.agent/`. `apps/demo/.agent/` is generated on
 | [docs/05_architecture.md](docs/05_architecture.md) | System map |
 | [docs/architecture/instruction-surfaces.md](docs/architecture/instruction-surfaces.md) | Meridian docs vs slide kit vs IDE adapters |
 
-Framework changes: `pnpm check` and `pnpm test` from `open-slide/`; changesets for publishable packages — [CONTRIBUTING.md](open-slide/CONTRIBUTING.md).
+Framework changes: `pnpm check` and `pnpm test` from `open-slide/` — [CONTRIBUTING.md](open-slide/CONTRIBUTING.md). **No npm release in this fork.**
 
 ---
 

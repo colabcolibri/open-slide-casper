@@ -46,6 +46,8 @@ pnpm dev
 
 `apps/demo` is the fastest way to exercise framework changes — edit `packages/core`, the demo hot-reloads.
 
+**Slide workspace without `npx`:** from the monorepo root, `pnpm init:slides [dir]` scaffolds via local `@open-slide/cli`, wires `@open-slide/core` as `workspace:*` (under `apps/`) or `file:…/packages/core` (outside the repo), then `pnpm install` and `pnpm --filter <name> dev`. Published users still use `npx @open-slide/cli init`.
+
 ## Useful scripts
 
 ```bash
@@ -75,26 +77,10 @@ pnpm cli <script>
    pnpm test
    ```
    `pnpm check:fix` will auto-fix most formatting and lint issues.
-4. **Add a changeset if you touched `packages/core` or `packages/cli`:**
-   ```bash
-   pnpm changeset
-   ```
-   Pick the affected package(s) and the right bump:
-   - `patch` — bug fixes, internal refactors, polish.
-   - `minor` — new public API, additive features.
-   - `major` — breaking changes.
+4. **Open a PR.** Describe the problem, the change, and how you tested it. Link related issues. Screenshots or short clips help for UI changes.
+5. **Address review feedback** by pushing follow-up commits. We'll squash on merge.
 
-   Apps (`apps/demo`, `apps/web`) and root tooling do **not** need a changeset.
-
-   Keep the description **short and direct** — one line, present-tense, what changed from a user's perspective. Match the tone of existing `.changeset/*.md` files. No paragraphs, no rationale, no "this PR…".
-
-   > Good: `Replace spinner with a hairline + sliding bar for slide and presenter loading states.`
-   >
-   > Bad: `This change introduces a new loading indicator because the previous spinner felt heavy…`
-
-   Don't bump versions or edit `CHANGELOG.md` by hand — `changeset version` owns that.
-5. **Open the PR.** Describe the problem, the change, and how you tested it. Link related issues. Screenshots or short clips help for UI changes.
-6. **Address review feedback** by pushing follow-up commits. We'll squash on merge.
+**This fork (Casper):** we do **not** publish `@open-slide/*` to npm. Do **not** add changesets or run `pnpm release` here. See repo-root `docs/architecture/fork-local-only.md`.
 
 ## Style & conventions
 
@@ -107,10 +93,6 @@ pnpm cli <script>
 
 - Unit tests run via `pnpm test` (Vitest). Add tests next to the code (`*.test.ts`) when fixing a bug or adding logic that warrants it.
 - For runtime/UI changes, please verify the change in `apps/demo` and describe what you exercised in the PR.
-
-## Releases
-
-Releases are cut by the maintainer via `pnpm release`, which builds `@open-slide/core` + `@open-slide/cli` and runs `changeset publish`. Contributors don't need to publish anything — just land the changeset alongside your code.
 
 ## Questions
 

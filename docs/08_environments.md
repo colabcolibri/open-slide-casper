@@ -1,8 +1,8 @@
 ---
 title: Environments
-status: approved
+status: review
 version: 1.0
-updated: 2026-07-21
+updated: 2026-07-22
 depends_on: [01_tech_stack.md, 05_architecture.md]
 blocks: [10_test_strategy.md]
 ---
@@ -15,7 +15,7 @@ blocks: [10_test_strategy.md]
 | ----------- | ------- | ---- | -------------- |
 | local-dev | Author + contributor | laptop | manual `pnpm dev` |
 | ci | Verify PR/main | GitHub Actions | push/PR to `main` |
-| npm | Package distribution | registry.npmjs.org | release workflow + changeset |
+| npm | Package distribution (upstream only) | registry.npmjs.org | **Not used in Casper fork** — see [fork-local-only.md](architecture/fork-local-only.md) |
 | web-prod | Marketing/docs | Vercel (assumed) | merge to main |
 
 ## Local setup (product monorepo)
@@ -64,11 +64,11 @@ Document per Next.js conventions when `/seo-pass` runs (e.g. `VERCEL_URL`, analy
 
 Cache: `open-slide/pnpm-lock.yaml`
 
-## Release pipeline (`.github/workflows/release.yml`)
+## Release pipeline
 
-1. `pnpm install --frozen-lockfile`
-2. changesets/action → `pnpm version-packages` / `pnpm release`
-3. Publishes `@open-slide/core` and `@open-slide/cli` with npm provenance
+**Casper fork:** removed `.github/workflows/release.yml`; no `pnpm release` or Changesets. `@open-slide/core` and `@open-slide/cli` are `private: true` in this repo.
+
+**Upstream open-slide** (reference): changesets/action publishes public packages — out of scope for this fork.
 
 ## Consumer project layout (after `cli init`)
 
@@ -89,7 +89,7 @@ Deploy: run `open-slide build`, upload `dist/` to static host.
 | `.agent/` | Kit source at git root |
 | `.meridian/` | Delivery DB + `projects.json` |
 | `docs/` | Phase docs (Meridian) |
-| `open-slide/` | Product monorepo (npm) |
+| `open-slide/` | Product monorepo (workspace-local core; no npm publish from fork) |
 
 ## Gaps / open questions
 
