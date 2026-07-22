@@ -29,7 +29,7 @@ export function editorCanvas(page: Page): Locator {
 
 // The first visit per page load holds an asset-warm loading gate (up to 15s).
 // A slide duplicated moments earlier can also 404 until the slides virtual
-// module refreshes (watcher debounce), and the server's full-reload broadcast
+// module refreshes (watcher debounce), and the HMR registry broadcast
 // can fire before this page's HMR socket connects — so retry with a reload.
 export async function openSlide(page: Page, slideId: string, query = ''): Promise<void> {
   await page.goto(`/s/${slideId}${query}`);

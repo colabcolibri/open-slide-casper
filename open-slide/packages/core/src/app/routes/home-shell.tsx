@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { LanguageToggle } from '@/components/language-toggle';
@@ -17,8 +17,8 @@ import { cn } from '@/lib/utils';
 import { FolderIconChip } from '../components/sidebar/folder-item';
 import { ALL_SLIDES_ID, ASSETS_ID, Sidebar, THEMES_ID } from '../components/sidebar/sidebar';
 import type { FoldersManifest } from '../lib/sdk';
-import { slideIds } from '../lib/slides';
-import { themes as themeRegistry } from '../lib/themes';
+import { useSlideRegistry } from '../lib/use-slide-registry';
+import { useThemeRegistry } from '../lib/use-theme-registry';
 
 export type HomeOutletContext = {
   manifest: FoldersManifest;
@@ -35,6 +35,8 @@ export type HomeOutletContext = {
   setSlideFormat: (slideId: string, format: 'slide' | '4x5') => Promise<void>;
   duplicateSlide: (slideId: string, newId?: string) => Promise<string>;
   deleteSlide: (slideId: string) => Promise<void>;
+  allSlideIds: string[];
+  slideCreatedAt: Record<string, number>;
 };
 
 function pathToSelectedId(pathname: string, search: URLSearchParams): string {
@@ -62,6 +64,9 @@ export function HomeShell() {
   const [searchParams] = useSearchParams();
   const t = useLocale();
 
+  const { slideIds: allSlideIds, slideCreatedAt } = useSlideRegistry();
+  const themeRegistry = useThemeRegistry();
+
   const selectedId = pathToSelectedId(location.pathname, searchParams);
 
   const [titleMap, setTitleMap] = useState<Record<string, string>>({});
@@ -69,6 +74,22 @@ export function HomeShell() {
     setTitleMap((prev) =>
       prev[slideId] === slideTitle ? prev : { ...prev, [slideId]: slideTitle },
     );
+  }, []);
+
+  useEffect(() => {
+    if (!import.meta.hot) return;
+    const onMeta = (data: unknown) => {
+      const payload = data as { slideId?: string; name?: string };
+      const id = payload.slideId;
+      const name = payload.name;
+      if (id && typeof name === 'string') {
+        setTitleMap((prev) => (prev[id] === name ? prev : { ...prev, [id]: name }));
+      }
+    };
+    import.meta.hot.on('open-slide:slide-meta-changed', onMeta);
+    return () => {
+      import.meta.hot?.off('open-slide:slide-meta-changed', onMeta);
+    };
   }, []);
 
   const selectFolder = useCallback(
@@ -88,7 +109,7 @@ export function HomeShell() {
     const byFolder: Record<string, string[]> = {};
     const draft: string[] = [];
     const known = new Set(manifest.folders.map((f) => f.id));
-    for (const id of slideIds) {
+    for (const id of allSlideIds) {
       const folderId = manifest.assignments[id];
       if (folderId && known.has(folderId)) {
         byFolder[folderId] ??= [];
@@ -98,7 +119,15 @@ export function HomeShell() {
       }
     }
     return { draftSlides: draft, slidesByFolder: byFolder };
-  }, [manifest]);
+  }, [manifest, allSlideIds]);
+
+  const renameSlideWithTitle = useCallback(
+    async (slideId: string, name: string) => {
+      await renameSlide(slideId, name);
+      setTitleMap((prev) => (prev[slideId] === name ? prev : { ...prev, [slideId]: name }));
+    },
+    [renameSlide],
+  );
 
   const countFor = (folderId: string | null) =>
     folderId === null ? draftSlides.length : (slidesByFolder[folderId]?.length ?? 0);
@@ -131,10 +160,12 @@ export function HomeShell() {
     reportTitle,
     titleMap,
     assign,
-    renameSlide,
+    renameSlide: renameSlideWithTitle,
     setSlideFormat,
     duplicateSlide,
     deleteSlide,
+    allSlideIds,
+    slideCreatedAt,
   };
 
   return (
@@ -143,7 +174,7 @@ export function HomeShell() {
         <Sidebar
           folders={manifest.folders}
           countFor={countFor}
-          allCount={slideIds.length}
+          allCount={allSlideIds.length}
           themesCount={themeRegistry.length}
           assetsCount={globalAssets.length}
           selectedId={selectedId}
@@ -202,7 +233,7 @@ export function HomeShell() {
                 >
                   <FolderIconChip icon={{ type: 'emoji', value: '🎞️' }} />
                   <span className="flex-1 truncate">{t.home.slides}</span>
-                  <span className="folio">{slideIds.length.toString().padStart(2, '0')}</span>
+                  <span className="folio">{allSlideIds.length.toString().padStart(2, '0')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => selectFolder(THEMES_ID)}

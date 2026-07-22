@@ -38,7 +38,7 @@ import { SlideCanvas } from '../components/slide-canvas';
 import { CanvasSizeProvider } from '../lib/canvas-context';
 import { SlidePageProvider } from '../lib/page-context';
 import { type Folder, type FolderIcon, resolveCanvasSize, type SlideModule } from '../lib/sdk';
-import { loadSlide, slideCreatedAt, slideIds } from '../lib/slides';
+import { loadSlide } from '../lib/slides';
 import type { HomeOutletContext } from './home-shell';
 
 type SortKey = 'created-desc' | 'created-asc' | 'title-asc' | 'title-desc';
@@ -84,6 +84,8 @@ export function Home() {
     renameSlide,
     duplicateSlide,
     deleteSlide,
+    allSlideIds,
+    slideCreatedAt,
   } = useOutletContext<HomeOutletContext>();
   const t = useLocale();
 
@@ -92,7 +94,7 @@ export function Home() {
   const selectedFolder =
     isAll || isDraft ? null : (manifest.folders.find((f) => f.id === selectedId) ?? null);
   const visibleSlides = isAll
-    ? slideIds
+    ? allSlideIds
     : isDraft
       ? draftSlides
       : (slidesByFolder[selectedId] ?? []);
@@ -132,7 +134,7 @@ export function Home() {
         list.sort((a, b) => (slideCreatedAt[b] ?? 0) - (slideCreatedAt[a] ?? 0));
     }
     return list;
-  }, [filteredSlides, sortKey, titleMap]);
+  }, [filteredSlides, sortKey, titleMap, slideCreatedAt]);
   const isSearching = trimmedQuery.length > 0;
 
   return (
@@ -162,7 +164,7 @@ export function Home() {
               >
                 <FolderIconChip icon={{ type: 'emoji', value: '🎞️' }} />
                 <span className="flex-1 truncate">{t.home.slides}</span>
-                <span className="folio">{slideIds.length.toString().padStart(2, '0')}</span>
+                <span className="folio">{allSlideIds.length.toString().padStart(2, '0')}</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => selectFolder(DRAFT_ID)}

@@ -18,6 +18,13 @@ import {
 } from '../../editing/slide-ops.ts';
 import { readManifest, writeManifest } from '../../files/folders.ts';
 import { validateMutationRequest } from '../../http/request-guard.ts';
+import {
+  DEV_HMR_EVENTS,
+  invalidateVirtualModule,
+  SLIDES_VMOD,
+  sendCustomHmrEvent,
+  vmodResolved,
+} from '../dev-sync.ts';
 import { type ApiContext, json, readBody } from './context.ts';
 
 // PUT    /__slides/:id/reorder            reorder pages { order: number[] }
@@ -214,10 +221,13 @@ export function registerSlideRoutes(server: ViteDevServer, ctx: ApiContext): voi
         if (updated !== source) {
           await fs.writeFile(entry, updated, 'utf8');
         }
-        // The TSX edit lands through Vite's normal HMR pipeline, but the
-        // React state holding `slide.meta` in the editor won't re-fetch on
-        // its own — tell every client to refresh so the new title shows up.
-        server.ws.send({ type: 'full-reload' });
+        invalidateVirtualModule(server, vmodResolved(SLIDES_VMOD));
+        sendCustomHmrEvent(server, DEV_HMR_EVENTS.slideMetaChanged, {
+          slideId,
+          ...(name !== undefined ? { name } : {}),
+          ...(format !== undefined ? { format } : {}),
+        });
+        sendCustomHmrEvent(server, DEV_HMR_EVENTS.slideChanged, { slideIds: [slideId] });
         return json(res, 200, { ok: true, slideId, name, format });
       }
 

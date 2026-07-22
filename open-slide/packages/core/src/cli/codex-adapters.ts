@@ -31,11 +31,14 @@ function tomlEscape(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
-async function writeCodexAgentToml(agentFile: string, outFile: string, dryRun: boolean): Promise<void> {
+async function writeCodexAgentToml(
+  agentFile: string,
+  outFile: string,
+  dryRun: boolean,
+): Promise<void> {
   const raw = await readFile(agentFile, 'utf8');
   const name = parseFrontmatterField(raw, 'name') || path.basename(agentFile, '.md');
-  const description =
-    parseFrontmatterField(raw, 'description') || `open-slide agent ${name}`;
+  const description = parseFrontmatterField(raw, 'description') || `open-slide agent ${name}`;
 
   if (dryRun) return;
 

@@ -38,9 +38,11 @@ export function useSlideModule(slideId: string) {
       }
     };
     import.meta.hot.on('open-slide:slide-changed', handler);
+    import.meta.hot.on('open-slide:slide-meta-changed', handler);
     return () => {
       cancelled = true;
       import.meta.hot?.off('open-slide:slide-changed', handler);
+      import.meta.hot?.off('open-slide:slide-meta-changed', handler);
     };
   }, [slideId, reload]);
 

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { format, useLocale } from '@/lib/use-locale';
 import { SlidePageProvider } from '../../lib/page-context';
-import { loadThemeDemo, type Theme, type ThemeDemoModule, themes } from '../../lib/themes';
+import { loadThemeDemo, type Theme, type ThemeDemoModule } from '../../lib/themes';
+import { useThemeRegistry } from '../../lib/use-theme-registry';
 import { SlideCanvas } from '../slide-canvas';
 
 export function ThemesGallery({ onOpen }: { onOpen: (id: string) => void }) {
   const t = useLocale();
+  const themes = useThemeRegistry();
 
   if (themes.length === 0) {
     return <ThemesEmptyState />;

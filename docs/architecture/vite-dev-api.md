@@ -32,6 +32,8 @@ All mutation handlers should call `validateMutationRequest` from `packages/core/
 | `/__restart-server` / `/__server-status` | `restart.ts` | Dev server lifecycle |
 | watchers | `watchers.ts` | HMR ping on manifest/asset changes |
 
+Custom dev events (via `dev-sync.ts`): `open-slide:registry-changed`, `open-slide:themes-changed`, `open-slide:slide-meta-changed` — see `open-slide-plugin.ts` / `themes-plugin.ts`.
+
 See manifest comments at top of each route file for method/path listing.
 
 ## Context object

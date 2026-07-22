@@ -51,7 +51,10 @@ function parseFrontmatterLines(fmText: string, themeId: string): ThemeFrontmatte
   };
 }
 
-export function parseThemeMarkdown(raw: string, themeId: string): { frontmatter: ThemeFrontmatter; body: string } {
+export function parseThemeMarkdown(
+  raw: string,
+  themeId: string,
+): { frontmatter: ThemeFrontmatter; body: string } {
   const match = raw.match(FM_RE);
   const fmText = match ? match[1] : '';
   const body = match ? match[2] : raw;
@@ -65,13 +68,14 @@ export function resolveThemesRoot(userCwd: string, themesDir = 'themes'): string
   return path.resolve(userCwd, themesDir);
 }
 
-export async function findThemeMarkdownFiles(userCwd: string, themesDir = 'themes'): Promise<string[]> {
+export async function findThemeMarkdownFiles(
+  userCwd: string,
+  themesDir = 'themes',
+): Promise<string[]> {
   const abs = resolveThemesRoot(userCwd, themesDir);
   if (!existsSync(abs)) return [];
   const hits = await fg('*.md', { cwd: abs, absolute: true, onlyFiles: true });
-  return hits
-    .filter((p) => !SKIP_BASENAMES.has(path.basename(p).toLowerCase()))
-    .sort();
+  return hits.filter((p) => !SKIP_BASENAMES.has(path.basename(p).toLowerCase())).sort();
 }
 
 export function resolveThemeDemoAbs(themesRoot: string, id: string): string | null {
@@ -91,7 +95,10 @@ export async function readThemeFile(mdAbs: string, themesRoot: string): Promise<
   return { id, frontmatter, body, demoAbs };
 }
 
-export async function listThemeCatalog(userCwd: string, themesDir = 'themes'): Promise<ThemeCatalogEntry[]> {
+export async function listThemeCatalog(
+  userCwd: string,
+  themesDir = 'themes',
+): Promise<ThemeCatalogEntry[]> {
   const themesRoot = resolveThemesRoot(userCwd, themesDir);
   const files = await findThemeMarkdownFiles(userCwd, themesDir);
   const entries: ThemeCatalogEntry[] = [];

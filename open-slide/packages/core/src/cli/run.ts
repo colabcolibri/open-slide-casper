@@ -196,7 +196,9 @@ export async function run(argv: string[]): Promise<void> {
 
   themes
     .command('list')
-    .description('Print theme ids and frontmatter (name, description, mode) — for agents and pickers')
+    .description(
+      'Print theme ids and frontmatter (name, description, mode) — for agents and pickers',
+    )
     .option('--json', 'JSON array (recommended for agents)')
     .action(async (flags: { json?: boolean }) => {
       const { themesList } = await import('./themes-list.ts');

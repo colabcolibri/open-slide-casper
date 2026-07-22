@@ -7,13 +7,17 @@ import { cn } from '@/lib/utils';
 import { CanvasSizeProvider } from '../../lib/canvas-context';
 import { SlidePageProvider } from '../../lib/page-context';
 import { resolveCanvasSize, type SlideModule } from '../../lib/sdk';
-import { loadSlide, slidesByTheme } from '../../lib/slides';
-import { loadThemeDemo, type ThemeDemoModule, themes } from '../../lib/themes';
+import { loadSlide } from '../../lib/slides';
+import { loadThemeDemo, type ThemeDemoModule } from '../../lib/themes';
+import { slidesByThemeFromRegistry, useSlideRegistry } from '../../lib/use-slide-registry';
+import { useThemeRegistry } from '../../lib/use-theme-registry';
 import { SlideCanvas } from '../slide-canvas';
 
 export function ThemeDetail({ themeId, onBack }: { themeId: string; onBack: () => void }) {
   const t = useLocale();
-  const theme = useMemo(() => themes.find((th) => th.id === themeId), [themeId]);
+  const themes = useThemeRegistry();
+  const slideRegistry = useSlideRegistry();
+  const theme = useMemo(() => themes.find((th) => th.id === themeId), [themes, themeId]);
   const [demo, setDemo] = useState<ThemeDemoModule | null>(null);
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -34,7 +38,10 @@ export function ThemeDetail({ themeId, onBack }: { themeId: string; onBack: () =
 
   const pages = demo?.default ?? [];
   const totalPages = pages.length;
-  const usedBySlideIds = useMemo(() => (theme ? slidesByTheme(theme.id) : []), [theme]);
+  const usedBySlideIds = useMemo(
+    () => (theme ? slidesByThemeFromRegistry(slideRegistry, theme.id) : []),
+    [theme, slideRegistry],
+  );
 
   const promptRef = useRef<HTMLPreElement>(null);
   const [promptExpanded, setPromptExpanded] = useState(false);

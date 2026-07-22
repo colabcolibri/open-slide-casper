@@ -1,6 +1,12 @@
+import colibriLogo from '@assets/Colibri - Logotipo RGB-01.svg';
 import type { DesignSystem, Page, SlideMeta, SlideTransition } from '@open-slide/core';
 import { useSlidePageNumber } from '@open-slide/core';
 import type { CSSProperties, ReactNode } from 'react';
+import desconfortoSilencioso from './assets/desconforto-silencioso.png';
+import elefanteNaSala from './assets/elefante-na-sala.png';
+import equipeEvento from './assets/equipe-evento.png';
+import noveloRelacoes from './assets/novelo-relacoes.png';
+import pressaoAcumulada from './assets/pressao-acumulada.png';
 
 export const design: DesignSystem = {
   palette: { bg: '#fbf7f0', text: '#231f1a', accent: '#a6533f' },
@@ -8,7 +14,7 @@ export const design: DesignSystem = {
     display: 'Georgia, "Times New Roman", serif',
     body: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
   },
-  typeScale: { hero: 122, body: 38 },
+  typeScale: { hero: 118, body: 36 },
   radius: 18,
 };
 
@@ -27,7 +33,7 @@ const phaseTwo = '#b84b3a';
 const phaseThree = '#5f7d5f';
 const phaseFour = '#9b6a35';
 const hairline = '#d8cabb';
-const PAGE_GAP = 30;
+const PAGE_GAP = 28;
 
 type PageBodyAlign = 'start' | 'center' | 'end';
 type PhaseTone = 'one' | 'two' | 'three' | 'four';
@@ -47,7 +53,7 @@ const pageFrameStyle: CSSProperties = {
   display: 'grid',
   gridTemplateRows: 'auto 1fr auto',
   rowGap: PAGE_GAP,
-  padding: '86px 74px 70px',
+  padding: '78px 70px 64px',
   background: 'var(--osd-bg)',
   color: 'var(--osd-text)',
   fontFamily: 'var(--osd-font-body)',
@@ -70,11 +76,18 @@ const DeckFooter = ({ label }: { label: string }) => {
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
-        fontSize: 22,
+        fontSize: 21,
         color: muted,
       }}
     >
-      <span>{label}</span>
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 16 }}>
+        <img
+          src={colibriLogo}
+          alt="Colibri"
+          style={{ width: 118, height: 'auto', display: 'block', objectFit: 'contain' }}
+        />
+        <span style={{ color: muted }}>{label}</span>
+      </span>
       <span>
         {String(current).padStart(2, '0')} / {String(total).padStart(2, '0')}
       </span>
@@ -84,7 +97,7 @@ const DeckFooter = ({ label }: { label: string }) => {
 
 const PageLayout = ({
   head,
-  bodyAlign = 'start',
+  bodyAlign = 'center',
   footerLabel,
   children,
 }: {
@@ -98,7 +111,7 @@ const PageLayout = ({
     {head ? (
       <header
         data-slide-region="head"
-        style={{ display: 'flex', flexDirection: 'column', gap: 22 }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 20, gridRow: 1 }}
       >
         {head}
       </header>
@@ -114,11 +127,12 @@ const PageLayout = ({
         gap: PAGE_GAP,
         position: 'relative',
         zIndex: 1,
+        gridRow: 2,
       }}
     >
       {children}
     </div>
-    <footer data-slide-region="footer" style={{ position: 'relative', zIndex: 1 }}>
+    <footer data-slide-region="footer" style={{ position: 'relative', zIndex: 1, gridRow: 3 }}>
       <DeckFooter label={footerLabel} />
     </footer>
   </div>
@@ -130,20 +144,20 @@ const BackgroundMarks = () => (
       aria-hidden
       style={{
         position: 'absolute',
-        width: 480,
-        height: 480,
+        width: 450,
+        height: 450,
         borderRadius: '50%',
         border: `1px solid ${soft}`,
-        right: -160,
-        top: 90,
+        right: -170,
+        top: 80,
       }}
     />
     <div
       aria-hidden
       style={{
         position: 'absolute',
-        width: 320,
-        height: 320,
+        width: 300,
+        height: 300,
         borderRadius: '50%',
         border: `1px solid ${soft}`,
         left: -120,
@@ -158,9 +172,9 @@ const Eyebrow = ({ children }: { children: ReactNode }) => (
     style={{
       alignSelf: 'flex-start',
       color: 'var(--osd-accent)',
-      fontSize: 22,
-      fontWeight: 700,
-      letterSpacing: '0.08em',
+      fontSize: 30,
+      fontWeight: 800,
+      letterSpacing: '0.06em',
       textTransform: 'uppercase',
     }}
   >
@@ -188,8 +202,8 @@ const PageTitle = ({ children }: { children: ReactNode }) => (
   <h2
     style={{
       fontFamily: 'var(--osd-font-display)',
-      fontSize: 72,
-      lineHeight: 1.06,
+      fontSize: 68,
+      lineHeight: 1.05,
       fontWeight: 700,
       margin: 0,
       color: 'var(--osd-text)',
@@ -204,7 +218,7 @@ const BodyCopy = ({ children, maxWidth = 850 }: { children: ReactNode; maxWidth?
   <p
     style={{
       fontSize: 'var(--osd-size-body)',
-      lineHeight: 1.38,
+      lineHeight: 1.36,
       color: muted,
       maxWidth,
       margin: 0,
@@ -220,7 +234,7 @@ const QuoteCard = ({ children }: { children: ReactNode }) => (
       background: cream,
       border: `1px solid ${hairline}`,
       borderRadius: 'var(--osd-radius)',
-      padding: 42,
+      padding: 38,
       boxShadow: '0 24px 60px rgba(80, 60, 30, 0.08)',
     }}
   >
@@ -228,8 +242,8 @@ const QuoteCard = ({ children }: { children: ReactNode }) => (
       style={{
         margin: 0,
         fontFamily: 'var(--osd-font-display)',
-        fontSize: 50,
-        lineHeight: 1.18,
+        fontSize: 48,
+        lineHeight: 1.16,
         color: ink,
         textWrap: 'balance',
       }}
@@ -239,17 +253,43 @@ const QuoteCard = ({ children }: { children: ReactNode }) => (
   </div>
 );
 
+const ImageSlot = ({ alt, src }: { alt: string; src: string }) => (
+  <div
+    style={{
+      background: cream,
+      border: `1px solid ${hairline}`,
+      borderRadius: 'var(--osd-radius)',
+      padding: 16,
+      boxShadow: '0 20px 50px rgba(80, 60, 30, 0.07)',
+      height: 500,
+      overflow: 'hidden',
+    }}
+  >
+    <img
+      src={src}
+      alt={alt}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        objectFit: 'cover',
+        borderRadius: 12,
+      }}
+    />
+  </div>
+);
+
 const PhaseBadge = ({ tone, label }: { tone: PhaseTone; label: string }) => (
   <div
     style={{
-      width: 96,
-      height: 96,
+      width: 90,
+      height: 90,
       borderRadius: '50%',
       background: toneColor(tone),
       color: '#fffaf2',
       display: 'grid',
       placeItems: 'center',
-      fontSize: 40,
+      fontSize: 38,
       fontWeight: 800,
       flex: '0 0 auto',
     }}
@@ -272,19 +312,19 @@ const PhaseCard = ({
   <div
     style={{
       display: 'flex',
-      gap: 24,
+      gap: 22,
       alignItems: 'flex-start',
       background: cream,
       border: `1px solid ${hairline}`,
       borderRadius: 'var(--osd-radius)',
-      padding: 30,
-      minHeight: 178,
+      padding: 26,
+      minHeight: 166,
     }}
   >
     <PhaseBadge tone={tone} label={number} />
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <h3 style={{ margin: 0, fontSize: 38, lineHeight: 1.1, color: toneColor(tone) }}>{title}</h3>
-      <p style={{ margin: 0, fontSize: 28, lineHeight: 1.32, color: muted }}>{body}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <h3 style={{ margin: 0, fontSize: 36, lineHeight: 1.08, color: toneColor(tone) }}>{title}</h3>
+      <p style={{ margin: 0, fontSize: 27, lineHeight: 1.28, color: muted }}>{body}</p>
     </div>
   </div>
 );
@@ -293,7 +333,7 @@ const Signal = ({ children, tone }: { children: ReactNode; tone: PhaseTone }) =>
   <div
     style={{
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       gap: 18,
       fontSize: 31,
       lineHeight: 1.24,
@@ -308,6 +348,7 @@ const Signal = ({ children, tone }: { children: ReactNode; tone: PhaseTone }) =>
         borderRadius: '50%',
         background: toneColor(tone),
         flex: '0 0 auto',
+        marginTop: 10,
       }}
     />
     <span>{children}</span>
@@ -320,9 +361,9 @@ const RoleChip = ({ children }: { children: ReactNode }) => (
       background: cream,
       border: `1px solid ${hairline}`,
       borderRadius: 16,
-      padding: '24px 22px',
+      padding: '22px 20px',
       color: phaseTwo,
-      fontSize: 30,
+      fontSize: 29,
       fontWeight: 800,
     }}
   >
@@ -335,21 +376,21 @@ const CycleStep = ({ tone, label, title }: { tone: PhaseTone; label: string; tit
     style={{
       display: 'flex',
       alignItems: 'center',
-      gap: 20,
-      padding: '24px 28px',
+      gap: 18,
+      padding: '22px 26px',
       borderRadius: 'var(--osd-radius)',
       border: `1px solid ${hairline}`,
       background: cream,
     }}
   >
     <PhaseBadge tone={tone} label={label} />
-    <strong style={{ fontSize: 34, lineHeight: 1.12, color: ink }}>{title}</strong>
+    <strong style={{ fontSize: 32, lineHeight: 1.1, color: ink }}>{title}</strong>
   </div>
 );
 
 const Cover: Page = () => (
   <PageLayout footerLabel="as 4 fases do conflito" bodyAlign="center">
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
       <Eyebrow>conflito como leitura</Eyebrow>
       <Title>As 4 fases do conflito</Title>
       <BodyCopy>
@@ -360,12 +401,30 @@ const Cover: Page = () => (
   </PageLayout>
 );
 
+const SimpleNotSimplist: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>um aviso</Eyebrow>
+        <PageTitle>É simples. Não é simplista.</PageTitle>
+      </>
+    }
+    bodyAlign="center"
+  >
+    <BodyCopy>
+      Depois que o óbvio é nomeado, ele parece fácil. Antes disso, pode ser um ponto cego.
+    </BodyCopy>
+    <QuoteCard>O mapa não resolve o conflito por você. Ele amplia a consciência.</QuoteCard>
+  </PageLayout>
+);
+
 const Definition: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
     head={
       <>
-        <Eyebrow>antes das fases</Eyebrow>
+        <Eyebrow>definição</Eyebrow>
         <PageTitle>Conflito começa antes da briga.</PageTitle>
       </>
     }
@@ -380,6 +439,26 @@ const Definition: Page = () => (
   </PageLayout>
 );
 
+const Pressure: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>o acúmulo</Eyebrow>
+        <PageTitle>Uma gota d'água raramente vem sozinha.</PageTitle>
+      </>
+    }
+  >
+    <ImageSlot
+      src={pressaoAcumulada}
+      alt="Panela com vapor e água transbordando, simbolizando incômodos acumulados."
+    />
+    <BodyCopy>
+      Um incômodo leve pode passar. Um conjunto de incômodos pode virar tempestade.
+    </BodyCopy>
+  </PageLayout>
+);
+
 const Overview: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
@@ -390,7 +469,7 @@ const Overview: Page = () => (
       </>
     }
   >
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
       <PhaseCard
         tone="one"
         number="1"
@@ -419,7 +498,7 @@ const Overview: Page = () => (
   </PageLayout>
 );
 
-const PhaseOnePage: Page = () => (
+const PhaseOneIntro: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
     head={
@@ -430,32 +509,64 @@ const PhaseOnePage: Page = () => (
     }
   >
     <BodyCopy>Existe desconforto, mas ele parece pequeno demais para virar conversa.</BodyCopy>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 26 }}>
       <Signal tone="one">"Não vale me estressar por tão pouco."</Signal>
       <Signal tone="one">"Eu me incomodei, mas vou lidar comigo mesmo."</Signal>
-      <Signal tone="one">O corpo já dá sinais, mesmo quando a boca silencia.</Signal>
+      <Signal tone="one">A relação segue, mas algo ficou sem nome.</Signal>
     </div>
   </PageLayout>
 );
 
-const PhaseTwoPage: Page = () => (
+const PhaseOneBody: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>fase 1</Eyebrow>
+        <PageTitle>Mesmo calado, o corpo fala.</PageTitle>
+      </>
+    }
+  >
+    <BodyCopy>
+      O conflito pode já existir sem ter sido comunicado. O sinal aparece no tom, no olhar, no
+      afastamento, na tensão.
+    </BodyCopy>
+    <ImageSlot
+      src={desconfortoSilencioso}
+      alt="Pessoa desconfortável e silenciosa durante uma conversa em grupo."
+    />
+  </PageLayout>
+);
+
+const PhaseTwoIntro: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
     head={
       <>
         <Eyebrow>fase 2</Eyebrow>
-        <PageTitle>O conflito é nomeado.</PageTitle>
+        <PageTitle>O elefante é nomeado.</PageTitle>
       </>
     }
   >
-    <BodyCopy>Quando a tensão captura a atenção, começamos a performar papéis.</BodyCopy>
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 18,
-      }}
-    >
+    <ImageSlot
+      src={elefanteNaSala}
+      alt="Elefante em uma sala de conversa, simbolizando o conflito que não pode mais ser ignorado."
+    />
+    <BodyCopy>Quando a tensão captura a atenção, entramos formalmente no conflito.</BodyCopy>
+  </PageLayout>
+);
+
+const PhaseTwoRoles: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>fase 2</Eyebrow>
+        <PageTitle>Os papéis aparecem rápido.</PageTitle>
+      </>
+    }
+  >
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
       <RoleChip>Pacificador</RoleChip>
       <RoleChip>Incendiário</RoleChip>
       <RoleChip>Conciliador</RoleChip>
@@ -463,29 +574,85 @@ const PhaseTwoPage: Page = () => (
       <RoleChip>Defensor</RoleChip>
       <RoleChip>Fugitivo</RoleChip>
     </div>
+    <BodyCopy>Não são identidades fixas. São posições que alternamos em segundos.</BodyCopy>
   </PageLayout>
 );
 
-const PhaseThreePage: Page = () => (
+const PhaseTwoRisk: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>fase 2</Eyebrow>
+        <PageTitle>Quanto mais tempo aqui, maior o risco de escalada.</PageTitle>
+      </>
+    }
+  >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 26 }}>
+      <Signal tone="two">Acusação puxa defesa.</Signal>
+      <Signal tone="two">Defesa pode virar contra-ataque.</Signal>
+      <Signal tone="two">A conversa perde complexidade e vira disputa.</Signal>
+    </div>
+  </PageLayout>
+);
+
+const PhaseThreeIntro: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
     head={
       <>
         <Eyebrow>fase 3</Eyebrow>
-        <PageTitle>Escutar apesar de.</PageTitle>
+        <PageTitle>Empatia é escutar apesar de.</PageTitle>
       </>
     }
   >
-    <BodyCopy>Empatia não faz o conflito desaparecer. Ela muda a posição de onde olhamos.</BodyCopy>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-      <Signal tone="three">Para onde o outro aponta?</Signal>
-      <Signal tone="three">E se houvesse 1% de verdade na fala do outro?</Signal>
-      <Signal tone="three">Escutar não significa concordar.</Signal>
+    <BodyCopy>
+      O conflito não precisa desaparecer para que a escuta comece. Discordar ainda permite tentar
+      compreender.
+    </BodyCopy>
+    <QuoteCard>Escutar não significa concordar.</QuoteCard>
+  </PageLayout>
+);
+
+const PhaseThreePointing: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>exercício 1</Eyebrow>
+        <PageTitle>Para onde o outro aponta?</PageTitle>
+      </>
+    }
+  >
+    <BodyCopy>
+      Saia, por um instante, do lugar de alvo. Vá para o lado da pessoa e olhe para o mesmo ponto.
+    </BodyCopy>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <Signal tone="three">Que valor foi ferido?</Signal>
+      <Signal tone="three">Que expectativa não foi cuidada?</Signal>
+      <Signal tone="three">Que pedido ainda não foi traduzido?</Signal>
     </div>
   </PageLayout>
 );
 
-const PhaseFourPage: Page = () => (
+const PhaseThreeOnePercent: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>exercício 2</Eyebrow>
+        <PageTitle>E se houver 1% de verdade?</PageTitle>
+      </>
+    }
+  >
+    <QuoteCard>O 1% abre uma fresta de curiosidade.</QuoteCard>
+    <BodyCopy>
+      Não é abrir mão da sua percepção. É suspender a certeza por tempo suficiente para escutar.
+    </BodyCopy>
+  </PageLayout>
+);
+
+const PhaseFourIntro: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
     head={
@@ -495,10 +662,28 @@ const PhaseFourPage: Page = () => (
       </>
     }
   >
-    <QuoteCard>Desatar um nó não elimina todos os próximos nós.</QuoteCard>
     <BodyCopy>
-      A relação segue porque novos combinados surgem. Até que outro incômodo peça passagem.
+      A resolução acontece quando o conflito passa por empatia mútua e chega a novos combinados.
     </BodyCopy>
+    <QuoteCard>É momentânea porque a vida continua produzindo novos nós.</QuoteCard>
+  </PageLayout>
+);
+
+const Crochet: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>metáfora</Eyebrow>
+        <PageTitle>Relacionar-se é seguir tecendo.</PageTitle>
+      </>
+    }
+  >
+    <ImageSlot
+      src={noveloRelacoes}
+      alt="Novelo e crochê com fios embaraçados, simbolizando relações e nós a desatar."
+    />
+    <BodyCopy>Desatar um nó permite continuar. Não garante que outro nó não apareça.</BodyCopy>
   </PageLayout>
 );
 
@@ -512,7 +697,7 @@ const Cycle: Page = () => (
       </>
     }
   >
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <CycleStep tone="one" label="1" title="Incômodo aparece ou fica escondido" />
       <CycleStep tone="two" label="2" title="Tensão é nomeada e escala" />
       <CycleStep tone="three" label="3" title="Escuta abre outra perspectiva" />
@@ -521,7 +706,7 @@ const Cycle: Page = () => (
   </PageLayout>
 );
 
-const Practice: Page = () => (
+const PracticeSetup: Page = () => (
   <PageLayout
     footerLabel="as 4 fases do conflito"
     head={
@@ -531,12 +716,48 @@ const Practice: Page = () => (
       </>
     }
   >
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <ImageSlot
+      src={equipeEvento}
+      alt="Equipe em reunião de planejamento de evento, em conversa focada."
+    />
+    <BodyCopy>Divergências sobre tema, logística e palestrantes começam pequenas.</BodyCopy>
+  </PageLayout>
+);
+
+const PracticeFlow: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>na prática</Eyebrow>
+        <PageTitle>O mesmo ciclo em quatro passos.</PageTitle>
+      </>
+    }
+  >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
       <Signal tone="one">Opiniões são guardadas para evitar atrito.</Signal>
       <Signal tone="two">Divergências viram atraso, custo e tensão.</Signal>
-      <Signal tone="three">Alguém sustenta a conversa e pergunta pelo 1% de verdade.</Signal>
+      <Signal tone="three">Alguém pergunta pelo 1% de verdade.</Signal>
       <Signal tone="four">O grupo cria canais e combinados melhores.</Signal>
     </div>
+  </PageLayout>
+);
+
+const Return: Page = () => (
+  <PageLayout
+    footerLabel="as 4 fases do conflito"
+    head={
+      <>
+        <Eyebrow>retorno</Eyebrow>
+        <PageTitle>Depois da resolução, o ciclo pode recomeçar.</PageTitle>
+      </>
+    }
+  >
+    <BodyCopy>
+      A paz eterna não é o ponto. O ponto é reconhecer mais cedo quando um novo incômodo pede
+      conversa.
+    </BodyCopy>
+    <QuoteCard>Família. Amigos. Trabalho. Sociedade. Os ciclos rodam em paralelo.</QuoteCard>
   </PageLayout>
 );
 
@@ -579,13 +800,23 @@ export const transition: SlideTransition = {
 
 export default [
   Cover,
+  SimpleNotSimplist,
   Definition,
+  Pressure,
   Overview,
-  PhaseOnePage,
-  PhaseTwoPage,
-  PhaseThreePage,
-  PhaseFourPage,
+  PhaseOneIntro,
+  PhaseOneBody,
+  PhaseTwoIntro,
+  PhaseTwoRoles,
+  PhaseTwoRisk,
+  PhaseThreeIntro,
+  PhaseThreePointing,
+  PhaseThreeOnePercent,
+  PhaseFourIntro,
+  Crochet,
   Cycle,
-  Practice,
+  PracticeSetup,
+  PracticeFlow,
+  Return,
   Close,
 ] satisfies Page[];

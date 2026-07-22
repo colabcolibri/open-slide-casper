@@ -3,11 +3,12 @@ import { useLocale } from '@/lib/use-locale';
 import { FolderIconChip } from '../components/sidebar/folder-item';
 import { ThemeDetail } from '../components/themes/theme-detail';
 import { ThemesGallery } from '../components/themes/themes-gallery';
-import { themes as themeRegistry } from '../lib/themes';
+import { useThemeRegistry } from '../lib/use-theme-registry';
 
 export function ThemesGalleryPage() {
   const navigate = useNavigate();
   const t = useLocale();
+  const themes = useThemeRegistry();
   return (
     <>
       <header className="mb-8 md:mb-12">
@@ -17,7 +18,7 @@ export function ThemesGalleryPage() {
             {t.themes.title}
           </h1>
           <span className="folio ml-1 self-end pb-2">
-            {themeRegistry.length.toString().padStart(2, '0')}
+            {themes.length.toString().padStart(2, '0')}
           </span>
         </div>
       </header>

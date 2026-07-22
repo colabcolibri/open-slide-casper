@@ -16,9 +16,7 @@ function formatTable(entries: ThemeCatalogEntry[]): string {
   }
   const lines = ['id\tname\tdescription\tmode\thasDemo'];
   for (const e of entries) {
-    lines.push(
-      [e.id, e.name, e.description, e.mode ?? '', e.hasDemo ? 'yes' : 'no'].join('\t'),
-    );
+    lines.push([e.id, e.name, e.description, e.mode ?? '', e.hasDemo ? 'yes' : 'no'].join('\t'));
   }
   return `${lines.join('\n')}\n`;
 }

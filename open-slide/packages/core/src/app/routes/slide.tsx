@@ -140,6 +140,14 @@ export function Slide() {
     [pageCount, setSearchParams],
   );
 
+  useEffect(() => {
+    if (pageCount === 0) return;
+    const raw = Number(searchParams.get('p') ?? '1') - 1;
+    if (Number.isFinite(raw) && raw >= pageCount) {
+      goTo(pageCount - 1);
+    }
+  }, [pageCount, searchParams, goTo]);
+
   const reorderPage = useCallback(
     async (from: number, to: number) => {
       if (from === to) return;

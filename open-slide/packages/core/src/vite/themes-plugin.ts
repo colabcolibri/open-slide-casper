@@ -2,17 +2,25 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { normalizePath, type Plugin } from 'vite';
 import type { OpenSlideConfig } from '../config.ts';
-import { findThemeMarkdownFiles, readThemeFile, type ParsedThemeFile } from '../themes/catalog.ts';
+import { findThemeMarkdownFiles, type ParsedThemeFile, readThemeFile } from '../themes/catalog.ts';
+import {
+  createDebouncedAction,
+  DEV_HMR_EVENTS,
+  invalidateVirtualModule,
+  sendCustomHmrEvent,
+  THEMES_VMOD,
+  vmodResolved,
+} from './dev-sync.ts';
 
 export type ThemesPluginOptions = {
   userCwd: string;
   config: OpenSlideConfig;
 };
 
-const THEMES_VMOD = 'virtual:open-slide/themes';
+const THEMES_VMOD_ID = THEMES_VMOD;
 
 function resolved(id: string): string {
-  return `\0${id}`;
+  return vmodResolved(id);
 }
 
 function generateThemesModule(themes: ParsedThemeFile[], isDev: boolean): string {
@@ -61,11 +69,11 @@ export function themesPlugin(opts: ThemesPluginOptions): Plugin {
       isDev = env.command === 'serve';
     },
     resolveId(id) {
-      if (id === THEMES_VMOD) return resolved(THEMES_VMOD);
+      if (id === THEMES_VMOD_ID) return resolved(THEMES_VMOD_ID);
       return null;
     },
     async load(id) {
-      if (id !== resolved(THEMES_VMOD)) return null;
+      if (id !== resolved(THEMES_VMOD_ID)) return null;
       const files = await findThemeMarkdownFiles(userCwd, themesDir);
       const themes = await Promise.all(files.map((f) => readThemeFile(f, themesRoot)));
       return generateThemesModule(themes, isDev);
@@ -78,26 +86,26 @@ export function themesPlugin(opts: ThemesPluginOptions): Plugin {
         return /\.(md|demo\.(tsx|jsx|ts|js))$/.test(rel);
       };
 
-      let reloadTimer: ReturnType<typeof setTimeout> | null = null;
-      const reload = () => {
-        if (reloadTimer) clearTimeout(reloadTimer);
-        reloadTimer = setTimeout(() => {
-          reloadTimer = null;
-          const mod = server.moduleGraph.getModuleById(resolved(THEMES_VMOD));
-          if (mod) server.moduleGraph.invalidateModule(mod);
-          server.ws.send({ type: 'full-reload' });
-        }, 150);
+      let themesFlush: (() => void) | undefined;
+      const reloadThemes = () => {
+        if (!themesFlush) {
+          themesFlush = createDebouncedAction(150, () => {
+            invalidateVirtualModule(server, resolved(THEMES_VMOD_ID));
+            sendCustomHmrEvent(server, DEV_HMR_EVENTS.themesChanged);
+          });
+        }
+        themesFlush();
       };
 
       if (existsSync(themesRoot)) server.watcher.add(themesRoot);
       server.watcher.on('add', (p) => {
-        if (isThemeFile(p)) reload();
+        if (isThemeFile(p)) reloadThemes();
       });
       server.watcher.on('unlink', (p) => {
-        if (isThemeFile(p)) reload();
+        if (isThemeFile(p)) reloadThemes();
       });
       server.watcher.on('change', (p) => {
-        if (isThemeFile(p)) reload();
+        if (isThemeFile(p)) reloadThemes();
       });
     },
   };

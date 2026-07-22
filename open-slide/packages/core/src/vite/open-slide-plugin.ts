@@ -5,6 +5,15 @@ import fg from 'fast-glob';
 import { loadConfigFromFile, normalizePath, type Plugin, type ViteDevServer } from 'vite';
 import type { OpenSlideConfig } from '../config.ts';
 import { SLIDE_ID_RE } from '../editing/slide-ops.ts';
+import {
+  createDebouncedAction,
+  DEV_HMR_EVENTS,
+  FOLDERS_VMOD,
+  invalidateVirtualModule,
+  SLIDES_VMOD,
+  sendCustomHmrEvent,
+  vmodResolved,
+} from './dev-sync.ts';
 import { hasRecentWrite } from './recent-writes.ts';
 
 export type { OpenSlideConfig };
@@ -17,9 +26,7 @@ export type OpenSlidePluginOptions = {
 
 const CONFIG_FILE = 'open-slide.config.ts';
 
-const SLIDES_VMOD = 'virtual:open-slide/slides';
 const CONFIG_VMOD = 'virtual:open-slide/config';
-const FOLDERS_VMOD = 'virtual:open-slide/folders';
 
 type FoldersManifest = {
   folders: unknown[];
@@ -46,7 +53,7 @@ async function readFoldersManifest(file: string): Promise<FoldersManifest> {
 }
 
 function resolved(id: string): string {
-  return `\0${id}`;
+  return vmodResolved(id);
 }
 
 async function findSlides(userCwd: string, slidesDir: string): Promise<string[]> {
@@ -205,23 +212,21 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
     if (!/^index\.(tsx|jsx|ts|js)$/.test(parts[1])) return null;
     return parts[0];
   };
-  let slideChangeTimer: ReturnType<typeof setTimeout> | null = null;
   const pendingSlideChanges = new Set<string>();
+  const slideChangedFlushers = new WeakMap<ViteDevServer, () => void>();
   const queueSlideChanged = (server: ViteDevServer, id: string) => {
     pendingSlideChanges.add(id);
-    if (slideChangeTimer) clearTimeout(slideChangeTimer);
-    slideChangeTimer = setTimeout(() => {
-      slideChangeTimer = null;
-      const mod = server.moduleGraph.getModuleById(resolved(SLIDES_VMOD));
-      if (mod) server.moduleGraph.invalidateModule(mod);
-      const slideIds = Array.from(pendingSlideChanges);
-      pendingSlideChanges.clear();
-      server.ws.send({
-        type: 'custom',
-        event: 'open-slide:slide-changed',
-        data: { slideIds },
+    let flush = slideChangedFlushers.get(server);
+    if (!flush) {
+      flush = createDebouncedAction(100, () => {
+        invalidateVirtualModule(server, resolved(SLIDES_VMOD));
+        const slideIds = Array.from(pendingSlideChanges);
+        pendingSlideChanges.clear();
+        sendCustomHmrEvent(server, DEV_HMR_EVENTS.slideChanged, { slideIds });
       });
-    }, 100);
+      slideChangedFlushers.set(server, flush);
+    }
+    flush();
   };
 
   return {
@@ -284,15 +289,15 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
     configureServer(server) {
       const isSlideEntry = (p: string) => slideIdForEntry(p) !== null;
 
-      let reloadTimer: ReturnType<typeof setTimeout> | null = null;
-      const reload = () => {
-        if (reloadTimer) clearTimeout(reloadTimer);
-        reloadTimer = setTimeout(() => {
-          reloadTimer = null;
-          const mod = server.moduleGraph.getModuleById(resolved(SLIDES_VMOD));
-          if (mod) server.moduleGraph.invalidateModule(mod);
-          server.ws.send({ type: 'full-reload' });
-        }, 150);
+      let registryFlush: (() => void) | undefined;
+      const reloadRegistry = () => {
+        if (!registryFlush) {
+          registryFlush = createDebouncedAction(150, () => {
+            invalidateVirtualModule(server, resolved(SLIDES_VMOD));
+            sendCustomHmrEvent(server, DEV_HMR_EVENTS.registryChanged);
+          });
+        }
+        registryFlush();
       };
       // Vite's `root` is the core app dir, so chokidar doesn't watch the
       // user's slides folder by default. Add it explicitly — and pass the
@@ -300,20 +305,20 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
       // otherwise treat a glob pattern as a literal path.
       if (existsSync(slidesRoot)) server.watcher.add(slidesRoot);
       server.watcher.on('add', (p) => {
-        if (isSlideEntry(p)) reload();
+        if (isSlideEntry(p)) reloadRegistry();
       });
       server.watcher.on('unlink', (p) => {
-        if (isSlideEntry(p)) reload();
+        if (isSlideEntry(p)) reloadRegistry();
       });
 
-      let foldersTimer: ReturnType<typeof setTimeout> | null = null;
+      let foldersFlush: (() => void) | undefined;
       const invalidateFolders = () => {
-        if (foldersTimer) clearTimeout(foldersTimer);
-        foldersTimer = setTimeout(() => {
-          foldersTimer = null;
-          const mod = server.moduleGraph.getModuleById(resolved(FOLDERS_VMOD));
-          if (mod) server.moduleGraph.invalidateModule(mod);
-        }, 100);
+        if (!foldersFlush) {
+          foldersFlush = createDebouncedAction(100, () => {
+            invalidateVirtualModule(server, resolved(FOLDERS_VMOD));
+          });
+        }
+        foldersFlush();
       };
       server.watcher.add(foldersManifestPath);
       server.watcher.on('change', (p) => {

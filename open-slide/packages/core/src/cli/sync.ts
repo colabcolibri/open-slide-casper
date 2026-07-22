@@ -270,8 +270,7 @@ async function syncAgentKitRoot(agentKitDir: string, opts: SyncSkillsOptions = {
   const dst = path.join(cwd, '.agent');
   const srcHash = await hashDir(agentKitDir);
   const dstHash = existsSync(dst) ? await hashDir(dst) : null;
-  const status: Status =
-    dstHash === null ? 'added' : dstHash !== srcHash ? 'updated' : 'unchanged';
+  const status: Status = dstHash === null ? 'added' : dstHash !== srcHash ? 'updated' : 'unchanged';
 
   if (dryRun) {
     process.stdout.write(
