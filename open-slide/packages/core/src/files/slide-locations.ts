@@ -9,11 +9,19 @@ export const DEFAULT_EXAMPLES_DIR = 'examples';
 
 let cachedCorePackageRoot: string | null = null;
 
-/** Package root of `@open-slide/core` (works from `src/` and published `dist/`). */
+function findPackageRoot(fromFile: string): string {
+  let dir = path.dirname(fromFile);
+  while (dir !== path.dirname(dir)) {
+    if (existsSync(path.join(dir, 'package.json'))) return dir;
+    dir = path.dirname(dir);
+  }
+  throw new Error(`Could not find package.json walking up from ${fromFile}`);
+}
+
+/** Package root of `@open-slide/core` (src, dist chunks, and published tarball). */
 export function getCorePackageRoot(): string {
   if (cachedCorePackageRoot) return cachedCorePackageRoot;
-  const here = fileURLToPath(import.meta.url);
-  cachedCorePackageRoot = path.resolve(path.dirname(here), '../..');
+  cachedCorePackageRoot = findPackageRoot(fileURLToPath(import.meta.url));
   return cachedCorePackageRoot;
 }
 

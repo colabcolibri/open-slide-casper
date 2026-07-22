@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bash ../../scripts/sync-slide-kit-adapters.sh . && open-slide dev",
+    "dev": "pnpm -w build:core && bash ../../scripts/sync-slide-kit-adapters.sh . && open-slide dev",
     "build": "open-slide build",
     "preview": "open-slide preview",
     "themes:list": "open-slide themes list --json"

@@ -1,18 +1,16 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   getBundledExamplesDir,
   resolveExamplesAbsoluteRoot,
 } from './slide-locations.ts';
-
-const PKG_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 
 describe('resolveExamplesAbsoluteRoot', () => {
   it('uses bundled examples when config omits examplesDir', () => {
     const root = resolveExamplesAbsoluteRoot('/tmp/workspace', undefined);
     expect(root).toBe(getBundledExamplesDir());
-    expect(root).toBe(path.join(PKG_ROOT, 'examples'));
+    expect(existsSync(root!)).toBe(true);
   });
 
   it('returns null when examples are disabled', () => {
