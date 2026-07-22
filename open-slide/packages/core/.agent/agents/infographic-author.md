@@ -25,7 +25,7 @@ You plan **image infographics** using the vendored catalog in **`.agent/skills/i
 
 ## Mission
 
-- Run **`/generate-infographic`** via **`generate-infographic`** — always load **`infographic-catalog/references/catalog.json`** and **`prompt-assembly.md`**.
+- Run **`/generate-infographic`** via **`generate-infographic`** — **scoping first** (`generate-infographic/references/scoping.md`), then catalog + **`prompt-assembly.md`**.
 - Output layout id, style id, `visualDescription`, and assembled image prompt for a future image step.
 - Use preview images under `references/previews/` when explaining catalog choices.
 

@@ -5,11 +5,12 @@ Everything agents need for **infographic layout archetypes** and **visual styles
 | Path | Contents |
 | --- | --- |
 | `catalog.json` | ids, labels, categories/tags, paths to prompts and previews |
+| `layouts-by-category.md` | Layout ids grouped by taxonomy (**generated** with the build script) |
 | `layouts/*.md` | Full layout prompt (`promptInstruction` equivalent) |
 | `styles/*.md` | Full style prompt (`promptModifier` equivalent) |
 | `previews/layouts/*.webp` | Layout thumbnail references |
 | `previews/styles/*.webp` | Style thumbnail references |
-| `snapshot/` | Vendored TS/JSON used only to regenerate `.md` + `catalog.json` (maintainers) |
+| `snapshot/` | Vendored TS/JSON used only to regenerate `.md`, `catalog.json`, and `layouts-by-category.md` (maintainers) |
 
 ## Refreshing prompts after editing snapshot
 

@@ -51,6 +51,13 @@ describe('slide-authoring infographic catalog', () => {
     expect(missing, missing.join('\n')).toEqual([]);
   });
 
+  it('aspect-ratios.json lists 14 canvas ratios', async () => {
+    const raw = await fs.readFile(path.join(CATALOG_ROOT, 'aspect-ratios.json'), 'utf8');
+    const data = JSON.parse(raw) as { ratios: unknown[] };
+    expect(data.ratios).toHaveLength(14);
+    await fs.access(path.join(CATALOG_ROOT, 'aspect-ratios.md'));
+  });
+
   it('INDEX and prompt-assembly docs exist', async () => {
     await fs.access(path.join(CATALOG_ROOT, 'INDEX.md'));
     await fs.access(path.join(CATALOG_ROOT, 'prompt-assembly.md'));

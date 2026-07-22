@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "defaultAspectRatio": "4:5",
+  "catalogThumbnailAspectRatio": "1:1",
+  "ratios": [
+    {
+      "id": "1:1",
+      "label": "Quadrado",
+      "hint": "Ícones e capas",
+      "orientation": "square"
+    },
+    {
+      "id": "9:16",
+      "label": "Stories",
+      "hint": "Reels, TikTok, celular",
+      "orientation": "portrait"
+    },
+    {
+      "id": "4:5",
+      "label": "Feed retrato",
+      "hint": "Instagram e Facebook",
+      "orientation": "portrait",
+      "recommendedDefault": true
+    },
+    {
+      "id": "2:3",
+      "label": "Foto retrato",
+      "hint": "Proporção clássica",
+      "orientation": "portrait"
+    },
+    {
+      "id": "3:4",
+      "label": "Retrato alto",
+      "hint": "Documentos verticais",
+      "orientation": "portrait"
+    },
+    {
+      "id": "1:4",
+      "label": "Vertical longo",
+      "hint": "Rolagem infográfica",
+      "orientation": "portrait"
+    },
+    {
+      "id": "1:8",
+      "label": "Vertical extra",
+      "hint": "Conteúdo extenso",
+      "orientation": "portrait"
+    },
+    {
+      "id": "16:9",
+      "label": "Apresentação",
+      "hint": "Slides e YouTube",
+      "orientation": "landscape"
+    },
+    {
+      "id": "21:9",
+      "label": "Ultrawide",
+      "hint": "Cinema e hero",
+      "orientation": "landscape"
+    },
+    {
+      "id": "3:2",
+      "label": "Foto paisagem",
+      "hint": "Proporção clássica",
+      "orientation": "landscape"
+    },
+    {
+      "id": "4:3",
+      "label": "Slide 4:3",
+      "hint": "Projetor tradicional",
+      "orientation": "landscape"
+    },
+    {
+      "id": "5:4",
+      "label": "Monitor",
+      "hint": "Tela desktop",
+      "orientation": "landscape"
+    },
+    {
+      "id": "4:1",
+      "label": "Banner",
+      "hint": "Faixa horizontal",
+      "orientation": "landscape"
+    },
+    {
+      "id": "8:1",
+      "label": "Faixa larga",
+      "hint": "Header web",
+      "orientation": "landscape"
+    }
+  ],
+  "outputSizes": [
+    { "id": "512", "label": "Rascunho", "hint": "Prévia rápida" },
+    { "id": "1K", "label": "Padrão", "hint": "Uso geral" },
+    { "id": "2K", "label": "Alta", "hint": "Mais detalhe" },
+    { "id": "4K", "label": "Máxima", "hint": "Export grande" }
+  ],
+  "defaultOutputSize": "1K"
+}

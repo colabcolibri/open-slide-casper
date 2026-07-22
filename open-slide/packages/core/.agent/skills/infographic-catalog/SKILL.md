@@ -17,7 +17,10 @@ Entry workflow: **`/generate-infographic`** → skill **`generate-infographic`**
 
 | File | When to read |
 | ---- | ------------ |
-| `references/INDEX.md` | Overview and defaults |
+| `references/INDEX.md` | Overview — links to layouts-by-category and styles count |
+| `references/aspect-ratios.md` | **Mandatory** Step 2 — all 14 canvas ratios (+ optional output size) |
+| `references/aspect-ratios.json` | Same ratios for programmatic checks |
+| `references/layouts-by-category.md` | All 39 layout ids grouped by taxonomy |
 | `references/catalog.json` | Machine-readable ids, tags, paths |
 | `references/layouts/<id>.md` | Full layout prompt for one archetype |
 | `references/styles/<id>.md` | Full style prompt modifier |

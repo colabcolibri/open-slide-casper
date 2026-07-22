@@ -2,29 +2,29 @@
 
 How to compose prompts for **image-based infographics** using this kit. Load **`catalog.json`**, then **`layouts/<layoutId>.md`** and **`styles/<styleId>.md`**.
 
-## Pipeline (target)
+## Pipeline
 
 ```txt
 Source text
-  → guardrail (sanitize)
-  → strategy LLM
-       inputs: style prompt, layout prompt, persona, detailLevel, …
+  → sanitize / guard content
+  → strategy (text)
+       inputs: style prompt, layout prompt, detailLevel, aspectRatio, …
        output: visualDescription
-  → final image prompt shell (orientation + layout label + scene + overrides)
-  → image API (aspectRatio, imageSize, optional reference images)
+  → final image prompt (orientation + layout label + scene + overrides)
+  → image generation step (product integration — not specified in this kit)
 ```
 
 ## Strategy phase
 
-The strategy model should receive:
+The strategy step should receive:
 
 1. **Visual style** — body of `styles/<styleId>.md`.
 2. **Layout structure** — body of `layouts/<layoutId>.md` (CONCEPTUAL CORE, VISUAL GEOMETRY, etc.).
-3. **Canvas geometry** — from `aspectRatio` (default `9:16`).
+3. **Canvas geometry** — from `aspectRatio` (default `9:16` portrait).
 4. **Detail level** — `summary` | `full` | `specific` | `addendum`.
-5. Optional: persona, user highlights, reference guidance, author `finalInstruction` (highest priority).
+5. Optional: tone/persona, user highlights, reference guidance, author `finalInstruction` (highest priority).
 
-Output: **`visualDescription`** with quoted label text for the image model.
+Output: **`visualDescription`** with quoted label text for rendering on the image.
 
 ## Image phase (final prompt)
 
@@ -44,19 +44,18 @@ INSTRUCTION:
 Render this scene exactly as described…
 ```
 
-- **`layoutReference`** — short human name + description (from `catalog.json` / labels), not the full STRUCTURE block (that already fed strategy).
+- **`layoutReference`** — short human name + description (from `catalog.json`), not the full STRUCTURE block (that already fed strategy).
 - **`visualDescription`** — strategy output.
 
-## Catalog thumbnails (1:1)
+## Catalog thumbnails
 
-Maintainer previews in `previews/` use **plain neutral layout** or **fixed style demo** compositions at **1:1**. Production infographics use the user’s aspect ratio and full style modifier.
+Maintainer previews in `previews/` use **plain neutral layout** or **fixed style demo** at **1:1**. Production pieces use the user’s chosen aspect ratio and full style modifier.
 
-## Defaults
+## Typical parameters (from scoping)
 
-| Parameter | Typical production value |
+| Parameter | Default |
 | --- | --- |
-| `aspectRatio` | `9:16` |
-| `imageSize` | `1K` |
-| `imageModelId` | `gemini-3.1-flash-image` |
+| `aspectRatio` | `4:5` (see `aspect-ratios.json`; 14 allowed values) |
+| `detailLevel` | `summary` |
 
-Future: `workflows/generate-infographic.md` + agent/skill that loads this folder before calling an image provider.
+Do not assume a specific image backend in this document — only prompt shape and catalog content. Allowed ratios and sizes: **`aspect-ratios.md`**.
