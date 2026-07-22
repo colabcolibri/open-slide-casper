@@ -1,7 +1,7 @@
 export type Plural = { one: string; other: string };
 
 export type Locale = {
-  id: 'en' | 'zh-TW' | 'zh-CN' | 'ja';
+  id: 'en';
 
   common: {
     cancel: string;
@@ -118,11 +118,15 @@ export type Locale = {
     toastCopyLinkFailed: string;
     exportAsHtml: string;
     exportAsPdf: string;
+    exportAsPng: string;
+    exportAsJpg: string;
     exportAsImagePptx: string;
     exportAsPptx: string;
     comingSoon: string;
     pptxComingSoonTooltip: string;
     pdfExportFailed: string;
+    pngExportFailed: string;
+    jpgExportFailed: string;
     imagePptxExportFailed: string;
     pdfExportSafariUnsupported: string;
     present: string;
@@ -430,6 +434,14 @@ export type Locale = {
   };
 
   pptxToast: {
+    title: string;
+    /** template: "Rendering page {current} of {total}" */
+    processing: string;
+    generating: string;
+    done: string;
+  };
+
+  rasterToast: {
     title: string;
     /** template: "Rendering page {current} of {total}" */
     processing: string;

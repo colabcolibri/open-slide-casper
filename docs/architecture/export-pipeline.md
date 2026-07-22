@@ -17,6 +17,8 @@ depends_on: [05_architecture.md]
 | Static site | CLI `open-slide build` | Vite `dist/` (SPA + assets) | Node + Vite production build |
 | Single-file HTML | UI export action | `.html` or `.zip` with inlined assets | Browser (`export-html.ts`) |
 | PDF | UI export | Print pipeline via browser | Browser (`export-pdf.ts`) |
+| PNG | UI export | `.png` or `.zip` of per-page images | Browser (`export-raster.ts` + `export-slide-capture.ts`) |
+| JPG | UI export | `.jpg` or `.zip` of per-page images | Browser (`export-raster.ts` + `export-slide-capture.ts`) |
 | PPTX | UI export | Generated deck file | Browser (`export-pptx.ts`) |
 
 ## Static build (`open-slide build`)
@@ -44,7 +46,11 @@ Entry: `export-pdf.ts` — uses print/CSS page sizing aligned with canvas dimens
 
 ## PPTX export
 
-Entry: `export-pptx.ts` — rasterizes or embeds slide frames built in hidden DOM hosts (see `export-pptx.ts` canvas hosts). Heavy client work; quality tied to canvas 1920×1080 defaults.
+Entry: `export-pptx.ts` — rasterizes slide frames via shared `export-slide-capture.ts`, then assembles PPTX with `fflate`. Heavy client work; quality tied to canvas 1920×1080 defaults and `CAPTURE_PIXEL_RATIO`.
+
+## PNG / JPG export
+
+Entry: `export-raster.ts` — same off-DOM capture as image PPTX; single-page decks download one file (`{slideId}.png` / `.jpg`), multi-page decks download `{slideId}.zip` with `{slideId}-01.png` style names. JPG encodes at quality 0.92 after PNG capture.
 
 ## Security boundary
 

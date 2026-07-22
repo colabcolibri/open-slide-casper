@@ -61,6 +61,7 @@ import { OverviewGrid } from '../components/overview-grid';
 import { PdfProgressToast } from '../components/pdf-progress-toast';
 import { openPresenterWindow, Player } from '../components/player';
 import { PptxProgressToast } from '../components/pptx-progress-toast';
+import { RasterExportProgressToast } from '../components/raster-export-progress-toast';
 import { SlideCanvas } from '../components/slide-canvas';
 import { isDeckWarmed, markDeckWarmed, SlidePreloadLayer } from '../components/slide-preload-layer';
 import { SlideTransitionLayer } from '../components/slide-transition-layer';
@@ -69,6 +70,7 @@ import { CanvasSizeProvider } from '../lib/canvas-context';
 import { exportSlideAsHtml } from '../lib/export-html';
 import { exportSlideAsPdf, isSafari } from '../lib/export-pdf';
 import { exportSlideAsImagePptx } from '../lib/export-pptx';
+import { exportSlideAsJpg, exportSlideAsPng } from '../lib/export-raster';
 import { remapNotesSessionCacheAfterReorder } from '../lib/inspector/use-notes';
 import type { SlideCanvasFormat, SlideModule } from '../lib/sdk';
 import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion';
@@ -517,6 +519,39 @@ export function Slide() {
     }
   };
 
+  const runRasterExport = async (format: 'png' | 'jpg') => {
+    if (!slide || exporting) return;
+    setExporting(true);
+    const toastId = `raster-export-${format}-${slideId}`;
+    const failedMessage = format === 'png' ? t.slide.pngExportFailed : t.slide.jpgExportFailed;
+    const exportFn = format === 'png' ? exportSlideAsPng : exportSlideAsJpg;
+    toast.custom(
+      () => (
+        <RasterExportProgressToast
+          progress={{ phase: 'processing', current: 0, total: pages.length, percent: 0 }}
+        />
+      ),
+      { id: toastId, duration: Infinity },
+    );
+    try {
+      await exportFn(slide, slideId, (p) => {
+        toast.custom(() => <RasterExportProgressToast progress={p} />, {
+          id: toastId,
+          duration: Infinity,
+        });
+      });
+    } catch (err) {
+      console.error(`[open-slide] ${format} export failed`, err);
+      toast.error(failedMessage, { id: toastId, duration: 4000 });
+    } finally {
+      setExporting(false);
+      toast.dismiss(toastId);
+    }
+  };
+
+  const exportPng = () => runRasterExport('png');
+  const exportJpg = () => runRasterExport('jpg');
+
   const exportMenuItems = (
     <>
       <DropdownMenuItem disabled={exporting} onClick={exportHtml}>
@@ -526,6 +561,14 @@ export function Slide() {
       <DropdownMenuItem disabled={exporting} onClick={exportPdf}>
         <FileText />
         {t.slide.exportAsPdf}
+      </DropdownMenuItem>
+      <DropdownMenuItem disabled={exporting} onClick={exportPng}>
+        <FileImage />
+        {t.slide.exportAsPng}
+      </DropdownMenuItem>
+      <DropdownMenuItem disabled={exporting} onClick={exportJpg}>
+        <FileImage />
+        {t.slide.exportAsJpg}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem disabled={exporting} onClick={exportImagePptx}>
