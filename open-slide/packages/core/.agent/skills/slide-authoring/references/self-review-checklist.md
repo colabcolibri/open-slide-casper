@@ -7,7 +7,8 @@
 - [ ] Content inside padding (no edge-kissing text).
 - [ ] **Every page:** sum (font × lineHeight × lines) + gaps + 2×padding ≤ 1080px; split if tight. No `overflow: auto`.
 - [ ] No wrapping bullets at chosen font size.
-- [ ] One visual direction (palette + type scale).
+- [ ] `design.typeScale.body` matches format + scoping density (`canvas-and-layout.md`); default **38** for new `slide` decks unless dense.
+- [ ] All body copy and bullets use **`var(--osd-size-body)`** (shared `BodyCopy` / `BulletList`) — no orphan 28–32px literals.
 - [ ] Top-level `export const design: DesignSystem` + `var(--osd-X)` unless intentionally locked one-off.
 - [ ] **CONTENT** holds all deck copy; no duplicate string literals across pages for the same meaning (`deck-layers.md`).
 - [ ] One idea per page.

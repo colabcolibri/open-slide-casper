@@ -52,7 +52,7 @@ export const defaultDesign: DesignSystem = {
   },
   typeScale: {
     hero: 168,
-    body: 36,
+    body: 38,
   },
   radius: 12,
 };

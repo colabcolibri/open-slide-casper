@@ -35,7 +35,7 @@ export default [Cover, Body] satisfies Page[];
 import type { DesignSystem, Page, SlideMeta } from '@open-slide/core';
 // …PageLayout + DeckFooter from page-types/title-body-footer.md…
 
-export const design: DesignSystem = { /* … */ };
+export const design: DesignSystem = { /* palette + fonts; typeScale.body 38 default — canvas-and-layout.md */ };
 
 const CONTENT = {
   deckTitle: 'The big idea',
@@ -52,7 +52,7 @@ const CONTENT = {
 } as const;
 
 // --- templates (layer 2) ---
-// PageLayout, DeckFooter, optional BulletList …
+// PageLayout, DeckFooter, BodyCopy, BulletList from page-types/title-body-footer.md …
 
 const BulletList = ({ items }: { items: readonly string[] }) => (
   <ul style={{ fontSize: 'var(--osd-size-body)', lineHeight: 1.6, margin: 0, paddingLeft: 48 }}>

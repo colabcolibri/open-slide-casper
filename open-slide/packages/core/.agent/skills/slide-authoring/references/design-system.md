@@ -11,7 +11,7 @@ export const design: DesignSystem = {
     display: 'Georgia, "Times New Roman", serif',
     body: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
   },
-  typeScale: { hero: 168, body: 36 },
+  typeScale: { hero: 168, body: 38 },
   radius:    12,
 };
 ```

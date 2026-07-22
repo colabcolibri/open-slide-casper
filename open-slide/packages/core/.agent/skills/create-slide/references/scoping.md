@@ -16,7 +16,10 @@ Then ask in one `AskUserQuestion` (multi-question form), or an equivalent number
 
 2. **Page count** — 3–5 (short), 6–10 (standard), 11–20 (deep dive); "Other" for custom.
 
-3. **Text density** — minimal / light / standard / dense (drives type scale and layout).
+3. **Text density** — minimal / light / standard / dense (drives type scale and layout). Map to **`design.typeScale.body`** when writing the deck (`canvas-and-layout.md`):
+   - **minimal / light** → body **40–42** (`slide`) or **38–40** (`4x5`)
+   - **standard** → body **38** (`slide`) or **36–38** (`4x5`)
+   - **dense** → body **34–36** — only if every page still passes vertical budget; otherwise add pages instead of shrinking type
 
 4. **Motion** — static / subtle / rich. If animated: `<Steps>`, `SlideTransition`, morph per `slide-authoring`; CSS keyframes OK; no extra libraries.
 

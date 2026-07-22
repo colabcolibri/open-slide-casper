@@ -5,7 +5,8 @@
 - ❌ Vertical overflow on 1080px canvas — split pages.
 - ❌ `overflow: auto/scroll/hidden` to hide overflow bugs.
 - ❌ Type below scale or padding below 100px to cram content — split instead.
-- ❌ Body type under 28px for projection.
+- ❌ Body type under **34px** on `slide` or under **32px** on `4x5` for export legibility — split the page instead.
+- ❌ Bullets or card lines at a **smaller** `fontSize` than paragraphs — use `var(--osd-size-body)` everywhere (`title-body-footer.md` `BodyCopy` / `BulletList`).
 - ❌ Inconsistent palette across pages.
 - ❌ Extra npm packages — only `react`, `@open-slide/core`, web APIs.
 - ❌ Shared CSS files — inline or scoped classes.

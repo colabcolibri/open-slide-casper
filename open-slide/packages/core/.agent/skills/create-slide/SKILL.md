@@ -34,6 +34,6 @@ Entry workflow: **`/create-slide`** → `.agent/workflows/create-slide.md`. This
 3. **Slide id** — kebab-case; check `slides/` (e.g. `q2-roadmap`).
 4. **Structure** — ordered page list; page types from **`slide-authoring`** § Page types; one idea per page; draft **`CONTENT`** keys (titles, bullets, footer label) for each page so Step 6 does not invent copy inline; `<ImagePlaceholder>` only when user must supply assets (`slide-authoring/references/assets.md`).
 5. **Visual direction** — palette/type scale per **`slide-authoring`**; default `export const design: DesignSystem` + `var(--osd-X)`.
-6. **Write `slides/<id>/index.tsx`** — follow **`slide-authoring/references/deck-layers.md`**: paste **`PageLayout`** from `title-body-footer.md` (templates), declare **`CONTENT`**, then `Page` components that reference keys only.
+6. **Write `slides/<id>/index.tsx`** — follow **`slide-authoring/references/deck-layers.md`**: paste **`PageLayout`**, **`BodyCopy`**, **`BulletList`** from `title-body-footer.md`; set `typeScale.body` per scoping (`canvas-and-layout.md`); declare **`CONTENT`**, then `Page` components that reference keys only.
 7. **Self-review** — `slide-authoring/references/self-review-checklist.md`.
 8. **Hand off** — id, path, `/s/<id>` when dev runs; don't start dev unless asked.

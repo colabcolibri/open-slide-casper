@@ -23,7 +23,7 @@ Do not duplicate this skill in other skills — link here.
 | `references/themes-on-slides.md` | Slide follows `themes/<id>.md` |
 | `references/design-system.md` | `design` const + Design panel |
 | `references/starter-skeleton.md` | Example deck after PageLayout paste |
-| `references/page-types/title-body-footer.md` | Default page chrome |
+| `references/page-types/title-body-footer.md` | Default page chrome + **BodyCopy / BulletList** |
 | `references/page-types/cover.md` | Opener |
 | `references/page-types/split.md` | Two columns |
 | `references/assets.md` | Imports, placeholders |

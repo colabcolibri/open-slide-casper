@@ -29,13 +29,26 @@ Default widescreen omits `format` (or `format: 'slide'`) and designs for **1920�
 
 ## Type scale (start here, adjust to taste)
 
-| Element          | Size       |
-| ---------------- | ---------- |
-| Hero title       | 140–200px  |
-| Section heading  | 80–120px   |
-| Page heading     | 56–80px    |
-| Body text        | 32–44px    |
-| Caption / label  | 22–28px    |
+**Legibilidade em preview, present mode e export (HTML/PDF/PPTX):** o canvas escala inteiro — se o corpo nasce pequeno no TSX, continua pequeno publicado. Priorize corpo confortável; **enxugue copy ou divida página** antes de baixar o corpo abaixo do mínimo.
+
+| Element          | `slide` 1920×1080 | `4x5` 1080×1350 |
+| ---------------- | ----------------- | ---------------- |
+| Hero title       | 140–200px         | 96–120px (`var(--osd-size-hero)`) |
+| Section / page heading | 56–80px     | 52–72px (hard-coded `h2` in deck) |
+| **Body + bullets** | **36–42px** (`design.typeScale.body`) | **34–40px** |
+| Caption / eyebrow / footer | 24–28px   | 24–28px |
+
+**Defaults for new decks** (set in `export const design`):
+
+| `meta.format` | Recommended `typeScale.body` | When |
+| --- | --- | --- |
+| `slide` (default) | **38** | standard / light density |
+| `slide` | **40–42** | minimal copy per page |
+| `slide` | **34–36** | dense — only if vertical budget still passes |
+| `4x5` | **36–38** | standard |
+| `4x5` | **34** | dense multi-block pages |
+
+**One size for body:** paragraphs, card copy, and bullet lines should all use **`var(--osd-size-body)`** (via shared `BodyCopy` / `BulletList` in `title-body-footer.md`). Do not hard-code 28–32px for bullets while the paragraph uses 38px — export will look uneven and “small”.
 
 ## Spacing
 

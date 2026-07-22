@@ -112,6 +112,93 @@ const PageLayout = ({
 );
 ```
 
+## Typography templates (layer 2 — copy with `PageLayout`)
+
+Paste these **once per deck** after `PageLayout`. Wire all readable body text through them so export/present mode stays legible.
+
+```tsx
+const Eyebrow = ({ children }: { children: ReactNode }) => (
+  <span
+    style={{
+      fontSize: 26,
+      fontWeight: 500,
+      letterSpacing: '0.14em',
+      textTransform: 'uppercase',
+      color: 'var(--osd-accent)',
+    }}
+  >
+    {children}
+  </span>
+);
+
+const PageTitle = ({ children }: { children: ReactNode }) => (
+  <h2
+    style={{
+      fontFamily: 'var(--osd-font-display)',
+      fontSize: 72,
+      fontWeight: 600,
+      lineHeight: 1.08,
+      margin: 0,
+      color: 'var(--osd-text)',
+      textWrap: 'balance',
+    }}
+  >
+    {children}
+  </h2>
+);
+
+const BodyCopy = ({ children, maxWidth = 900 }: { children: ReactNode; maxWidth?: number }) => (
+  <p
+    style={{
+      maxWidth,
+      margin: 0,
+      fontSize: 'var(--osd-size-body)',
+      lineHeight: 1.56,
+      color: 'var(--osd-muted, #6b6560)',
+    }}
+  >
+    {children}
+  </p>
+);
+
+const BulletList = ({ items }: { items: readonly string[] }) => (
+  <ul style={{ display: 'grid', gap: 20, margin: 0, padding: 0, listStyle: 'none' }}>
+    {items.map((item) => (
+      <li key={item} style={{ display: 'grid', gridTemplateColumns: '18px 1fr', gap: 18, alignItems: 'start' }}>
+        <span
+          style={{
+            width: 10,
+            height: 10,
+            marginTop: '0.35em',
+            borderRadius: 999,
+            background: 'var(--osd-accent)',
+          }}
+        />
+        <span style={{ fontSize: 'var(--osd-size-body)', lineHeight: 1.5, color: 'var(--osd-muted, #6b6560)' }}>
+          {item}
+        </span>
+      </li>
+    ))}
+  </ul>
+);
+```
+
+**`design` baseline** (adjust hero to topic; keep body in range from `canvas-and-layout.md`):
+
+```tsx
+export const design: DesignSystem = {
+  palette: { bg: '#f7f5f0', text: '#1a1814', accent: '#6d4cff' },
+  fonts: {
+    display: 'Georgia, "Times New Roman", serif',
+    body: '-apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif',
+  },
+  typeScale: { hero: 168, body: 38 },
+  radius: 12,
+};
+```
+
+For `meta.format: '4x5'`, typical `hero: 100–112`, `body: 36–38`.
+
 ## Usage
 
 **Standard content page** — head stays top, body grows from the top:
@@ -149,3 +236,4 @@ const Example: Page = () => (
 - `PageLayout` without `gridRow` on head/body/footer — cover pages (no `head`) break footer pinning.
 - Skipping `PageLayout` on “normal” pages while using it elsewhere — padding and footer drift.
 - Footer or eyebrow type below **22px** on a 1920×1080 / 4×5 canvas — use caption scale (`canvas-and-layout.md`).
+- Hard-coded body/bullet sizes (e.g. `fontSize: 29`) instead of **`var(--osd-size-body)`** — looks fine in dev zoom but weak in export; use `BodyCopy` / `BulletList` above.
