@@ -4,15 +4,19 @@
 // slides/<id>/index.tsx
 import type { Page, SlideMeta } from '@open-slide/core';
 
-const Cover: Page = () => <div>…</div>;
+const CONTENT = { title: 'My slide' } as const;
+
+const Cover: Page = () => <div>{CONTENT.title}</div>;
 const Body: Page = () => <div>…</div>;
 
 export const meta: SlideMeta = {
-  title: 'My slide',
+  title: CONTENT.title,
   createdAt: '2026-05-16T12:00:00Z',
 };
 export default [Cover, Body] satisfies Page[];
 ```
+
+Inside one slide file, organize as **CONTENT → templates → pages** (`references/deck-layers.md`). All deck copy should live in CONTENT unless it is a one-off that never repeats.
 
 - `export default` is a **non-empty array of zero-prop React components**, one per page, in order.
 - `meta.title` (optional) shows in the slide header. Default is the folder name.

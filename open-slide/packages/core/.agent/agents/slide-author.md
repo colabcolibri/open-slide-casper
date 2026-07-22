@@ -29,6 +29,7 @@ Canonical agent: **`packages/core/.agent/agents/slide-author.md`**. Skill hubs: 
 
 - Execute **`/create-slide`** and **`/apply-comments`** (or equivalent user request) via the listed skills.
 - Keep canvas, layout, Steps, transitions, and assets aligned with **`slide-authoring`** and **`.agent/skills/slide-authoring/references/`**.
+- New and edited decks use **CONTENT → templates → pages** in `index.tsx` (`deck-layers.md`).
 - Self-review with **`.agent/skills/slide-authoring/references/self-review-checklist.md`** before handoff.
 
 ---

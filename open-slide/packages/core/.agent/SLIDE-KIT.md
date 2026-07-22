@@ -52,7 +52,7 @@ slides/, themes/                                             (what you ship)
 
 **Same name, different job:** **`/create-slide`** (workflow) is what you run; skill **`create-slide`** is the checklist inside that run (theme, scoping, `slides/<id>/`). Workflows stay thin; skills hold the steps.
 
-**No slash of their own (usually):** **`slide-authoring`** — TSX and layout rules shared by create-slide and apply-comments; **`slide-routing`** — pick the right workflow when intent is ambiguous; **`current-slide`** — resolve “this page” before editing.
+**No slash of their own (usually):** **`slide-authoring`** — TSX and layout rules shared by create-slide and apply-comments (including **CONTENT → templates → pages** in `skills/slide-authoring/references/deck-layers.md`); **`slide-routing`** — pick the right workflow when intent is ambiguous; **`current-slide`** — resolve “this page” before editing.
 
 **Adapters** in the slide project (`.cursor/`, `.agents/`, `.claude/`) are **gitignored**; sync recreates **symlinks** into **`.agent/`**. Do not treat them as source of truth — edit the package kit, then re-sync.
 

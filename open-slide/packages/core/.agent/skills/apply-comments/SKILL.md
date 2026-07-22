@@ -13,6 +13,8 @@ Your job: read those markers, perform the described edits, and delete the marker
 
 > **Before making any page edit**, consult the **`slide-authoring`** skill — it is the technical reference for how `slides/<id>/index.tsx` is structured (canvas, type scale, palette, assets, file contract). A comment like *"make this bigger"* or *"change the accent colour"* should be applied in a way that stays consistent with those rules.
 
+**Text / copy comments:** prefer updating the **`CONTENT`** object (`slide-authoring/references/deck-layers.md`) when the note changes wording. If the same string appears on multiple pages, edit one CONTENT key — do not patch only the marker’s page with a new literal.
+
 ## Marker format
 
 ```

@@ -16,6 +16,7 @@ Do not duplicate this skill in other skills — link here.
 | File | When to read |
 | ---- | ------------ |
 | `references/file-contract.md` | New slide or `meta` / exports |
+| `references/deck-layers.md` | **Mandatory** for new decks and copy edits — CONTENT → templates → pages |
 | `references/editing-existing-slide.md` | Touch one page in a large deck |
 | `references/canvas-and-layout.md` | Layout, type scale, 1080px budget |
 | `references/visual-direction.md` | Palette, aesthetic commitment |
@@ -68,6 +69,7 @@ Read the reference **before** using the primitive on a page:
 
 ## Hard rules
 
+- **`index.tsx` layers:** declare **`CONTENT`** (all strings), then **templates** (reused components), then **`Page` structure** — see `references/deck-layers.md`. No duplicate copy across pages outside CONTENT.
 - Slide under `slides/<kebab-case-id>/`; entry `index.tsx`; media in `slides/<id>/assets/`.
 - Do **not** touch `package.json`, `open-slide.config.ts`, or other slides.
 - No new dependencies. Only `react`, `@open-slide/core`, standard web APIs.

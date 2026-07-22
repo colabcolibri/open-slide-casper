@@ -25,3 +25,5 @@ Then ask in one `AskUserQuestion` (multi-question form), or an equivalent number
 Follow-ups only if still unclear (brand colors, required assets).
 
 **Done when:** user has answered (or confirmed your restatement). Then proceed to **`create-slide`** Step 3.
+
+At **Step 4 (structure)**, list each page and the main **CONTENT** fields (title, bullets, labels) so Step 6 writes the `CONTENT` object before `Page` components — see **`slide-authoring/references/deck-layers.md`**.

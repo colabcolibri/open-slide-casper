@@ -33,7 +33,7 @@ CONTEXT:
 
 RULES:
 1. Find @slide-comment markers (regex in apply-comments skill).
-2. Decode note text; edit the enclosing element per slide-authoring.
+2. Decode note text; edit the enclosing element per slide-authoring. For copy changes, update CONTENT keys in deck-layers order when applicable.
 3. Delete markers; do not leave stale comment lines.
 4. If no markers remain, say so explicitly.
 ```

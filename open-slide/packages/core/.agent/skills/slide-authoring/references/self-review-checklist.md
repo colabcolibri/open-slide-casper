@@ -9,6 +9,7 @@
 - [ ] No wrapping bullets at chosen font size.
 - [ ] One visual direction (palette + type scale).
 - [ ] Top-level `export const design: DesignSystem` + `var(--osd-X)` unless intentionally locked one-off.
+- [ ] **CONTENT** holds all deck copy; no duplicate string literals across pages for the same meaning (`deck-layers.md`).
 - [ ] One idea per page.
 - [ ] Repeated visuals = explicit `<Component />` instances, not `map` lists (`repeated-elements.md`).
 - [ ] Assets exist — slide `assets/` or `@assets/`.

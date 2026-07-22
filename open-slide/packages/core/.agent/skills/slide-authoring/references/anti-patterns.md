@@ -11,4 +11,5 @@
 - ❌ Shared CSS files — inline or scoped classes.
 - ❌ `README.md` or extra files in slide folder.
 - ❌ Edit `package.json`, config, other slides.
+- ❌ Duplicate the same headline, footer label, or bullet text on multiple pages — use **CONTENT** keys (`deck-layers.md`).
 - ❌ Use a primitive without reading its `references/*.md` first.
