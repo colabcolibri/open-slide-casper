@@ -24,7 +24,7 @@ Do not duplicate this skill in other skills — link here.
 | `references/design-system.md` | `design` const + Design panel |
 | `references/deck-template/index.tsx` | **Mandatory** new deck — copy scaffold (placeholder) |
 | `references/pattern-library/README.md` | Overview — links INDEX, SCHEMA, FORMAT (full kit tour: `.agent/README.md`) |
-| `references/pattern-library/INDEX.md` | **Before new layout/motion TSX** — pick skeleton id; not `apps/demo/examples/` |
+| `references/pattern-library/INDEX.md` | **Before new layout/motion TSX** — pick skeleton id; not `packages/core/examples/` |
 | `references/pattern-library/SCHEMA.md` | Adding or editing **catalog** entries (`kit-doc: pattern`) |
 | `references/pattern-library/FORMAT-GUIDANCE.md` | **When scoping `slide` vs `4x5`** — format matrix per pattern |
 | `references/authoring-contract.md` | Design/Inspect gates — full vs legacy decks |
@@ -75,7 +75,7 @@ Read the reference **before** using the primitive on a page:
 
 ## Hard rules
 
-- **Pattern library:** before inventing a layout or motion block, open **`references/pattern-library/INDEX.md`** and copy the matching skeleton into templates/pages. **`apps/demo/examples/`** is a read-only vitrine in the dev app — never use it (or production demos under `apps/demo/slides/`) as scaffold; use **`deck-template`** + patterns.
+- **Pattern library:** before inventing a layout or motion block, open **`references/pattern-library/INDEX.md`** and copy the matching skeleton into templates/pages. **`packages/core/examples/`** is a read-only vitrine in the dev app — never use it (or production demos under `apps/demo/slides/`) as scaffold; use **`deck-template`** + patterns.
 - **`index.tsx` layers:** declare **`CONTENT`** (all strings), then **templates** (reused components), then **`Page` structure** — see `references/deck-layers.md`. No duplicate copy across pages outside CONTENT.
 - Slide under `slides/<kebab-case-id>/`; entry `index.tsx`; media in `slides/<id>/assets/`.
 - Do **not** touch `package.json`, `open-slide.config.ts`, or other slides.

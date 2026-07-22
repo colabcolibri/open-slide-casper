@@ -10,7 +10,7 @@ import { designPlugin } from './design-plugin.ts';
 import { locTagsPlugin } from './loc-tags-plugin.ts';
 import { notesPlugin } from './notes-plugin.ts';
 import { loadUserConfig, type OpenSlideConfig, openSlidePlugin } from './open-slide-plugin.ts';
-import { resolveExamplesDir } from '../files/slide-locations.ts';
+import { resolveExamplesAbsoluteRoot } from '../files/slide-locations.ts';
 import { themesPlugin } from './themes-plugin.ts';
 
 function findPackageRoot(fromFile: string): string {
@@ -46,11 +46,10 @@ export async function createViteConfig(opts: CreateViteConfigOptions): Promise<I
   const userCwd = path.resolve(opts.userCwd);
   const config = opts.config ?? (await loadUserConfig(userCwd));
   const slidesDir = config.slidesDir ?? 'slides';
-  const examplesDir = resolveExamplesDir(config.examplesDir);
   const themesDir = config.themesDir ?? 'themes';
   const assetsDir = config.assetsDir ?? 'assets';
   const slidesAbs = path.resolve(userCwd, slidesDir);
-  const examplesAbs = examplesDir ? path.resolve(userCwd, examplesDir) : null;
+  const examplesAbs = resolveExamplesAbsoluteRoot(userCwd, config.examplesDir);
   const themesAbs = path.resolve(userCwd, themesDir);
   const assetsAbs = path.resolve(userCwd, assetsDir);
 
@@ -60,7 +59,7 @@ export async function createViteConfig(opts: CreateViteConfigOptions): Promise<I
     configFile: false,
     envDir: userCwd,
     plugins: [
-      locTagsPlugin({ userCwd, slidesDir, examplesDir: config.examplesDir }),
+      locTagsPlugin({ userCwd, slidesDir, examplesAbsoluteRoot: examplesAbs }),
       react(),
       tailwindcss(),
       openSlidePlugin({ userCwd, config, coreVersion: CORE_VERSION }),

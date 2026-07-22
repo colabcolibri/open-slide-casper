@@ -6,12 +6,12 @@ import { describe, expect, it } from 'vitest';
 import { evaluateAuthoringContract } from './authoring-contract.ts';
 
 const PKG_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const DEMO_EXAMPLES = path.resolve(PKG_ROOT, '../../apps/demo/examples');
+const BUNDLED_EXAMPLES = path.join(PKG_ROOT, 'examples');
 
-describe('demo design examples authoring contract', () => {
-  it('every apps/demo/examples deck is full contract', async () => {
+describe('bundled design examples authoring contract', () => {
+  it('every @open-slide/core/examples deck is full contract', async () => {
     const entries = await fg('*/index.tsx', {
-      cwd: DEMO_EXAMPLES,
+      cwd: BUNDLED_EXAMPLES,
       absolute: true,
       onlyFiles: true,
     });

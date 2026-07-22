@@ -58,7 +58,7 @@ Detalhe das famílias: **SLIDE-KIT.md** § Reference families.
 1. **`/create-slide`** — workflow chama skill **`create-slide`** + **`slide-authoring`**.
 2. **Scoping** — tema, formato (`slide` 16∶9 ou `4x5`), densidade, motion; **não** escrever TSX antes das respostas.
 3. **Estrutura** — lista de páginas; para cada uma escolha um **id** em [`pattern-library/INDEX.md`](./skills/slide-authoring/references/pattern-library/INDEX.md) (e/ou page-types).
-4. **Scaffold** — copiar [`deck-template/index.tsx`](./skills/slide-authoring/references/deck-template/index.tsx) → `slides/<id>/index.tsx` (**não** clonar `apps/demo/slides/` nem `apps/demo/examples/`).
+4. **Scaffold** — copiar [`deck-template/index.tsx`](./skills/slide-authoring/references/deck-template/index.tsx) → `slides/<id>/index.tsx` (**não** clonar `apps/demo/slides/` nem `packages/core/examples/`).
 5. **Camadas no arquivo** — [`deck-layers.md`](./skills/slide-authoring/references/deck-layers.md): `CONTENT` → templates (skeletons do catálogo) → `Page`.
 6. **Formato** — [`FORMAT-GUIDANCE.md`](./skills/slide-authoring/references/pattern-library/FORMAT-GUIDANCE.md) + [`canvas-and-layout.md`](./skills/slide-authoring/references/canvas-and-layout.md).
 7. **Self-review** — [`self-review-checklist.md`](./skills/slide-authoring/references/self-review-checklist.md).
@@ -110,7 +110,7 @@ Ver [`infographic-catalog/references/README.md`](./skills/infographic-catalog/re
 
 ## Examples no dev server
 
-`examplesDir` em `open-slide.config.ts` aponta para decks **vitrine** (menu Examples). São **read-only** no editor e **não** são scaffold para `/create-slide`. Scaffold = **deck-template** + **pattern library**.
+Sem `examplesDir` no config, o menu **Examples** usa os decks em `packages/core/examples/` (incluídos no pacote npm). Override com um caminho no projeto ou `examplesDir: false` para desligar. São **read-only** no editor e **não** são scaffold para `/create-slide`. Scaffold = **deck-template** + **pattern library**.
 
 ---
 

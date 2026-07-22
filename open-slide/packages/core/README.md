@@ -37,7 +37,7 @@ import type { OpenSlideConfig } from '@open-slide/core';
 
 const openSlideConfig: OpenSlideConfig = {
   slidesDir: 'slides',
-  examplesDir: 'examples', // design reference decks (sidebar → Examples); set false to disable
+  // examplesDir omitted → bundled design decks (sidebar → Examples); override with a path or `false`
   port: 5173,
 };
 

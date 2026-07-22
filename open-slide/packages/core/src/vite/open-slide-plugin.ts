@@ -5,6 +5,7 @@ import fg from 'fast-glob';
 import { loadConfigFromFile, normalizePath, type Plugin, type ViteDevServer } from 'vite';
 import type { OpenSlideConfig } from '../config.ts';
 import {
+  resolveExamplesAbsoluteRoot,
   resolveExamplesDir,
   type SlideCollection,
 } from '../files/slide-locations.ts';
@@ -61,8 +62,8 @@ function resolved(id: string): string {
   return vmodResolved(id);
 }
 
-async function findSlides(userCwd: string, slidesDir: string): Promise<string[]> {
-  const abs = path.resolve(userCwd, slidesDir);
+async function findSlidesAtRoot(absRoot: string): Promise<string[]> {
+  const abs = path.resolve(absRoot);
   if (!existsSync(abs)) return [];
   const hits = await fg('*/index.{tsx,jsx,ts,js}', {
     cwd: abs,
@@ -70,6 +71,10 @@ async function findSlides(userCwd: string, slidesDir: string): Promise<string[]>
     onlyFiles: true,
   });
   return hits.sort();
+}
+
+async function findSlides(userCwd: string, slidesDir: string): Promise<string[]> {
+  return findSlidesAtRoot(path.resolve(userCwd, slidesDir));
 }
 
 function toId(absFile: string, slidesRoot: string): string {
@@ -233,9 +238,8 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
   const { userCwd, config, coreVersion } = opts;
   const slidesDir = config.slidesDir ?? 'slides';
   const examplesDirConfig = config.examplesDir;
-  const examplesDir = resolveExamplesDir(examplesDirConfig);
+  const examplesRoot = resolveExamplesAbsoluteRoot(userCwd, examplesDirConfig);
   const slidesRoot = path.resolve(userCwd, slidesDir);
-  const examplesRoot = examplesDir ? path.resolve(userCwd, examplesDir) : null;
   const foldersManifestPath = path.join(slidesRoot, '.folders.json');
 
   const watchedRoots = [{ root: slidesRoot, collection: 'slides' as SlideCollection }];
@@ -293,9 +297,9 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
             collection: 'slides',
           },
         ];
-        if (examplesDir && examplesRoot) {
+        if (examplesRoot) {
           scans.push({
-            files: await findSlides(userCwd, examplesDir),
+            files: await findSlidesAtRoot(examplesRoot),
             root: examplesRoot,
             collection: 'examples',
           });
@@ -319,9 +323,13 @@ export function openSlidePlugin(opts: OpenSlidePluginOptions): Plugin {
               showSlideUi: userBuild.showSlideUi ?? true,
               allowHtmlDownload: userBuild.allowHtmlDownload ?? true,
             };
+        const resolvedExamplesDir =
+          examplesDirConfig === false || !examplesRoot
+            ? false
+            : (examplesDirConfig ?? resolveExamplesDir(undefined));
         const resolvedConfig = {
           ...config,
-          examplesDir: examplesDir ?? false,
+          examplesDir: resolvedExamplesDir ?? false,
           build: buildResolved,
           version: coreVersion,
         };

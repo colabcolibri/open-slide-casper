@@ -10,7 +10,7 @@ Copy-paste **skeletons** for common layouts and motion. Read **`FORMAT-GUIDANCE.
 4. Pick patterns below → paste skeletons into **templates** / **pages**.
 5. Grid contracts for regions live in **`../page-types/`**; this library adds ready-made `Page` bodies.
 
-**Not a scaffold:** `apps/demo/examples/` is a read-only design vitrine. Do not clone example decks when creating new slides.
+**Not a scaffold:** `packages/core/examples/` is a read-only design vitrine. Do not clone example decks when creating new slides.
 
 ---
 

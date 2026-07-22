@@ -2,6 +2,7 @@ import type { ServerResponse } from 'node:http';
 import path from 'node:path';
 import type { Connect } from 'vite';
 import {
+  resolveExamplesAbsoluteRoot,
   resolveExamplesDir,
   resolveSlidePathFromRoots,
   type SlideCollection,
@@ -34,7 +35,7 @@ export function makeContext(opts: ApiPluginOptions): ApiContext {
   const assetsDir = opts.assetsDir ?? 'assets';
   const examplesDir = resolveExamplesDir(opts.examplesDir);
   const slidesRoot = path.resolve(userCwd, slidesDir);
-  const examplesRoot = examplesDir ? path.resolve(userCwd, examplesDir) : null;
+  const examplesRoot = resolveExamplesAbsoluteRoot(userCwd, opts.examplesDir);
   const globalAssetsRoot = path.resolve(userCwd, assetsDir);
   const manifestPath = path.join(slidesRoot, '.folders.json');
   const resolveSlideEntry = (slideId: string) =>

@@ -1,15 +1,47 @@
+import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { SLIDE_ID_RE } from '../editing/slide-ops.ts';
 
 export type SlideCollection = 'slides' | 'examples';
 
 export const DEFAULT_EXAMPLES_DIR = 'examples';
 
+let cachedCorePackageRoot: string | null = null;
+
+/** Package root of `@open-slide/core` (works from `src/` and published `dist/`). */
+export function getCorePackageRoot(): string {
+  if (cachedCorePackageRoot) return cachedCorePackageRoot;
+  const here = fileURLToPath(import.meta.url);
+  cachedCorePackageRoot = path.resolve(path.dirname(here), '../..');
+  return cachedCorePackageRoot;
+}
+
+export function getBundledExamplesDir(): string {
+  return path.join(getCorePackageRoot(), DEFAULT_EXAMPLES_DIR);
+}
+
 export function resolveExamplesDir(configExamplesDir: string | false | undefined): string | null {
   if (configExamplesDir === false) return null;
   const dir = configExamplesDir ?? DEFAULT_EXAMPLES_DIR;
   if (!dir.trim()) return null;
   return dir;
+}
+
+/** Absolute path to the examples tree (bundled in core when config omits `examplesDir`). */
+export function resolveExamplesAbsoluteRoot(
+  userCwd: string,
+  configExamplesDir: string | false | undefined,
+): string | null {
+  if (configExamplesDir === false) return null;
+  if (configExamplesDir === undefined) {
+    const bundled = getBundledExamplesDir();
+    return existsSync(bundled) ? bundled : null;
+  }
+  const dir = configExamplesDir.trim();
+  if (!dir) return null;
+  if (path.isAbsolute(dir)) return dir;
+  return path.resolve(userCwd, dir);
 }
 
 export function slideEntryRelativePath(slideId: string): string {
@@ -45,12 +77,15 @@ export function resolveSlidePathFromRoots(
   if (inSlides) {
     return { collection: 'slides', absolutePath: inSlides, relativeDir: slidesDir };
   }
-  const exDir = resolveExamplesDir(examplesDir);
-  if (!exDir) return null;
-  const examplesRoot = path.resolve(userCwd, exDir);
+  const examplesRoot = resolveExamplesAbsoluteRoot(userCwd, examplesDir);
+  if (!examplesRoot) return null;
   const inExamples = resolveSlidePathInDir(examplesRoot, slideId);
   if (inExamples) {
-    return { collection: 'examples', absolutePath: inExamples, relativeDir: exDir };
+    const relativeDir =
+      typeof examplesDir === 'string' && examplesDir.trim()
+        ? examplesDir
+        : DEFAULT_EXAMPLES_DIR;
+    return { collection: 'examples', absolutePath: inExamples, relativeDir };
   }
   return null;
 }

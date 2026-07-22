@@ -44,7 +44,7 @@ PHASE A — discovery (required when scoping not already answered):
 
 PHASE B — build (only after user answers Phase A):
 5. Steps 3–8: id → structure (+ CONTENT outline + pattern ids from INDEX) → visual direction → index.tsx → self-review → handoff.
-6. Step 6: copy .agent/skills/slide-authoring/references/deck-template/index.tsx → slides/<id>/index.tsx; then deck-layers.md (CONTENT + pages) and pattern skeletons from pattern-library/INDEX.md. Grid rules: page-types/title-body-footer.md — not getting-started, demo production decks, or apps/demo/examples/.
+6. Step 6: copy .agent/skills/slide-authoring/references/deck-template/index.tsx → slides/<id>/index.tsx; then deck-layers.md (CONTENT + pages) and pattern skeletons from pattern-library/INDEX.md. Grid rules: page-types/title-body-footer.md — not getting-started, demo production decks, or packages/core/examples/.
 7. Self-review: .agent/skills/slide-authoring/references/self-review-checklist.md.
 ```
 

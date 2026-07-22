@@ -9,7 +9,7 @@ export type OpenSlideBuildConfig = {
 export type OpenSlideConfig = {
   base?: string;
   slidesDir?: string;
-  /** Design reference decks (demo). Set `false` to disable scanning. Default `examples`. */
+  /** Design reference decks shipped with `@open-slide/core`. Set `false` to disable. Omit to use bundled examples. */
   examplesDir?: string | false;
   themesDir?: string;
   assetsDir?: string;

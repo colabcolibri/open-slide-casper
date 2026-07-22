@@ -69,16 +69,15 @@ function isSlideSourceFile(id: string, slidesRootPosix: string): boolean {
 export type LocTagsPluginOptions = {
   userCwd: string;
   slidesDir?: string;
-  examplesDir?: string | false;
+  examplesAbsoluteRoot?: string | null;
 };
 
 export function locTagsPlugin(opts: LocTagsPluginOptions): Plugin {
   const slideRoots = [
     path.resolve(opts.userCwd, opts.slidesDir ?? 'slides').replace(/\\/g, '/'),
   ];
-  if (opts.examplesDir !== false) {
-    const ex = (opts.examplesDir ?? 'examples').trim();
-    if (ex) slideRoots.push(path.resolve(opts.userCwd, ex).replace(/\\/g, '/'));
+  if (opts.examplesAbsoluteRoot) {
+    slideRoots.push(path.resolve(opts.examplesAbsoluteRoot).replace(/\\/g, '/'));
   }
   return {
     name: 'open-slide:loc-tags',
