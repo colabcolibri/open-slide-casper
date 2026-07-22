@@ -2,7 +2,7 @@
 title: Architecture
 status: approved
 version: 1.0
-updated: 2026-07-21
+updated: 2026-07-22
 reviewed: 2026-07-21
 pass: architecture-2026-07-21
 depends_on: [00_scope.md, 01_tech_stack.md, 02_security.md, 03_user_types.md, 04_principles.md]
@@ -136,6 +136,11 @@ flowchart TB
 | [architecture/vite-dev-api.md](architecture/vite-dev-api.md) | Dev server `__*` routes | approved |
 | [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md) | Onde ler regras (docs vs core/.agent) | approved |
 | [architecture/export-pipeline.md](architecture/export-pipeline.md) | build + HTML/PDF/PPTX export | approved |
+| [architecture/desktop-tauri-rig.md](architecture/desktop-tauri-rig.md) | App desktop Tauri + agente Rig + MCP (planejado) | draft |
+
+## Future direction (not shipped)
+
+Experiência **desktop local** para autores sem terminal: shell **Tauri**, motor **Node** (`open-slide dev`), agente embutido **Rig** com tools via **MCP** sobre as rotas `__*`. Rascunho completo, fases e decisões: [architecture/desktop-tauri-rig.md](architecture/desktop-tauri-rig.md).
 
 ## Cross-cutting concerns
 

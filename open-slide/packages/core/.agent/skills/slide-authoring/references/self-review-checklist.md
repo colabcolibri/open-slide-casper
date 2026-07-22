@@ -2,6 +2,8 @@
 
 - [ ] `slides/<id>/index.tsx` `export default`s a non-empty `Page[]`.
 - [ ] Every page root fills `100% × 100%`.
+- [ ] `PageLayout`: `gridRow` 1 / 2 / 3 on head, body, footer; cover (no head) still pins footer to bottom.
+- [ ] Footer + eyebrow/label type ≥ 22px (see `canvas-and-layout.md` caption scale).
 - [ ] Content inside padding (no edge-kissing text).
 - [ ] **Every page:** sum (font × lineHeight × lines) + gaps + 2×padding ≤ 1080px; split if tight. No `overflow: auto`.
 - [ ] No wrapping bullets at chosen font size.

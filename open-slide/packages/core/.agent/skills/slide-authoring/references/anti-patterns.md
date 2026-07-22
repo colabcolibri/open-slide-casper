@@ -1,6 +1,6 @@
 # Authoring anti-patterns
 
-- ❌ Walls of text — split if > ~40 words per page.
+- ❌ Cover / title page without `gridRow` on `PageLayout` body + footer — footer floats mid-page when `head` is omitted.
 - ❌ Body copy without 100–160px padding.
 - ❌ Vertical overflow on 1080px canvas — split pages.
 - ❌ `overflow: auto/scroll/hidden` to hide overflow bugs.

@@ -15,6 +15,8 @@ Paste **`PageLayout` + `DeckFooter`** from `title-body-footer.md` once per deck 
 
 Omit `head`. Center the body band with `bodyAlign="center"`. Keep copy minimal — hero title + one subtitle line fits the vertical budget.
 
+Requires **`PageLayout` from `title-body-footer.md` with `gridRow` on body (2) and footer (3)** — otherwise the footer hugs the title instead of the canvas bottom.
+
 ```tsx
 const Cover: Page = () => (
   <PageLayout footerLabel="my deck" bodyAlign="center">

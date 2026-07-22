@@ -12,6 +12,10 @@ Every slide deck owns its layout in **`slides/<id>/index.tsx`**. Do not import l
 
 Grid: `auto 1fr auto`. Footer is **not** `position: absolute` so the body band is real vertical space.
 
+**Pin rows explicitly** — always set `gridRow: 1` (head), `gridRow: 2` (body), `gridRow: 3` (footer). Cover pages omit `head`, so only body + footer are grid children; without explicit rows they auto-place into rows **1 and 2**, the footer sits under the title block, and row 3 stays empty (looks “floating”, not bottom-pinned).
+
+Decorative layers (`position: 'absolute'`) do not consume grid rows; they can sit inside the frame or in a single `inset: 0` wrapper.
+
 Regions use `data-slide-region="head|body|footer"` so inspector/tooling can recognize structure later.
 
 ## Copy into the top of `index.tsx` (after `design`)
@@ -55,7 +59,7 @@ const DeckFooter = ({ label }: { label: string }) => {
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
-        fontSize: 18,
+        fontSize: 24,
         color: 'var(--osd-muted, #6b6560)',
       }}
     >
@@ -80,7 +84,10 @@ const PageLayout = ({
 }) => (
   <div style={pageFrameStyle} data-slide-layout="">
     {head ? (
-      <header data-slide-region="head" style={{ display: 'flex', flexDirection: 'column', gap: PAGE_GAP }}>
+      <header
+        data-slide-region="head"
+        style={{ display: 'flex', flexDirection: 'column', gap: PAGE_GAP, gridRow: 1 }}
+      >
         {head}
       </header>
     ) : null}
@@ -93,11 +100,12 @@ const PageLayout = ({
         flexDirection: 'column',
         justifyContent: bodyJustify(bodyAlign),
         gap: PAGE_GAP,
+        gridRow: 2,
       }}
     >
       {children}
     </div>
-    <footer data-slide-region="footer">
+    <footer data-slide-region="footer" style={{ gridRow: 3 }}>
       <DeckFooter label={footerLabel} />
     </footer>
   </div>
@@ -138,4 +146,6 @@ const Example: Page = () => (
 ## Anti-patterns
 
 - Footer with `position: absolute` — steals body height and breaks vertical budget math.
+- `PageLayout` without `gridRow` on head/body/footer — cover pages (no `head`) break footer pinning.
 - Skipping `PageLayout` on “normal” pages while using it elsewhere — padding and footer drift.
+- Footer or eyebrow type below **22px** on a 1920×1080 / 4×5 canvas — use caption scale (`canvas-and-layout.md`).

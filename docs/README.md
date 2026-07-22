@@ -33,6 +33,8 @@ Descoberta PO (governança docs): [discovery/product-brief.md](discovery/product
 
 Arquitetura de instruções: [architecture/instruction-surfaces.md](architecture/instruction-surfaces.md).
 
+Direção futura (rascunho): [architecture/desktop-tauri-rig.md](architecture/desktop-tauri-rig.md) — app Tauri + agente Rig + Node sidecar.
+
 ## Delivery artifacts
 
 | Artifact | Location | Role |
