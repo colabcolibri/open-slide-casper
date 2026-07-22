@@ -20,7 +20,7 @@ $ARGUMENTS
 3. **Scoping gate (P0):** Do **not** create or edit `slides/<id>/index.tsx` (or assets) until Step 2 is done — user answered scoping (or you documented explicit skips with assumptions). A thin `$ARGUMENTS` is **not** enough to skip questions.
 4. **Same turn after `/create-slide`:** Steps 1–2 only — theme pick (if needed) + **`AskUserQuestion`** / chat questions. **Stop** when questions are out; resume Steps 3–8 only after the user replies (new turn or continued thread with answers).
 5. Use **`slide-routing`** when intent could be framework work, themes-only, comments, or ambiguous.
-6. **Mandatory skills:** **`create-slide`**, **`slide-authoring`** — page types under **`.agent/skills/slide-authoring/references/page-types/`** before TSX.
+6. **Mandatory skills:** **`create-slide`**, **`slide-authoring`** — **`pattern-library/INDEX.md`** + page types under **`.agent/skills/slide-authoring/references/page-types/`** before TSX.
 7. **Write scope:** only `slides/<id>/` (+ assets). Never `packages/core`, config, or other slides.
 8. Do not run the dev server unless the user asks.
 
@@ -43,8 +43,8 @@ PHASE A — discovery (required when scoping not already answered):
 4. End turn with questions only — no slides/ writes.
 
 PHASE B — build (only after user answers Phase A):
-5. Steps 3–8: id → structure (+ CONTENT outline) → visual direction → index.tsx → self-review → handoff.
-6. Step 6: copy .agent/skills/slide-authoring/references/deck-template/index.tsx → slides/<id>/index.tsx; then deck-layers.md (CONTENT + pages). Grid rules: page-types/title-body-footer.md — not getting-started or demo production decks.
+5. Steps 3–8: id → structure (+ CONTENT outline + pattern ids from INDEX) → visual direction → index.tsx → self-review → handoff.
+6. Step 6: copy .agent/skills/slide-authoring/references/deck-template/index.tsx → slides/<id>/index.tsx; then deck-layers.md (CONTENT + pages) and pattern skeletons from pattern-library/INDEX.md. Grid rules: page-types/title-body-footer.md — not getting-started, demo production decks, or apps/demo/examples/.
 7. Self-review: .agent/skills/slide-authoring/references/self-review-checklist.md.
 ```
 

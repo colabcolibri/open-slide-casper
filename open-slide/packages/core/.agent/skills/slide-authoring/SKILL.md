@@ -23,6 +23,10 @@ Do not duplicate this skill in other skills — link here.
 | `references/themes-on-slides.md` | Slide follows `themes/<id>.md` |
 | `references/design-system.md` | `design` const + Design panel |
 | `references/deck-template/index.tsx` | **Mandatory** new deck — copy scaffold (placeholder) |
+| `references/pattern-library/INDEX.md` | **Before new layout/motion TSX** — pick skeleton id; not `apps/demo/examples/` |
+| `references/pattern-library/FORMAT-GUIDANCE.md` | **When scoping `slide` vs `4x5`** — format matrix per pattern |
+| `references/infographic-catalog/INDEX.md` | **Infographic image generation (future)** — layout/style prompts + previews; not slide TSX |
+| `references/infographic-catalog/prompt-assembly.md` | How to compose strategy + image prompts (minus-ai parity) |
 | `references/authoring-contract.md` | Design/Inspect gates — full vs legacy decks |
 | `references/starter-skeleton.md` | Checklist after copying deck-template |
 | `references/page-types/title-body-footer.md` | Default page chrome + **BodyCopy / BulletList** |
@@ -71,6 +75,7 @@ Read the reference **before** using the primitive on a page:
 
 ## Hard rules
 
+- **Pattern library:** before inventing a layout or motion block, open **`references/pattern-library/INDEX.md`** and copy the matching skeleton into templates/pages. **`apps/demo/examples/`** is a read-only vitrine in the dev app — never use it (or production demos under `apps/demo/slides/`) as scaffold; use **`deck-template`** + patterns.
 - **`index.tsx` layers:** declare **`CONTENT`** (all strings), then **templates** (reused components), then **`Page` structure** — see `references/deck-layers.md`. No duplicate copy across pages outside CONTENT.
 - Slide under `slides/<kebab-case-id>/`; entry `index.tsx`; media in `slides/<id>/assets/`.
 - Do **not** touch `package.json`, `open-slide.config.ts`, or other slides.
@@ -83,7 +88,7 @@ Read the reference **before** using the primitive on a page:
 
 | Task | Read |
 | --- | --- |
-| New deck | `file-contract.md` → `canvas-and-layout.md` → `page-types/*` → `self-review-checklist.md` |
+| New deck | `file-contract.md` → `pattern-library/INDEX.md` → `canvas-and-layout.md` → `page-types/*` → `self-review-checklist.md` |
 | Edit one page | `editing-existing-slide.md` + primitive reference |
 | Theme-backed slide | `themes-on-slides.md` + theme `.md` file |
 
