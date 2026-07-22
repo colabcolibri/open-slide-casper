@@ -1,33 +1,39 @@
 # open-slide-casper
 
-Harness para **conteúdo social em código**: da ideia e da estrutura de copy a carrosséis, infográficos e export (HTML, PDF, PPTX) — com **humano no loop** e **processo antes de ferramenta**, em cima do framework [open-slide](https://open-slide.dev).
+A **fork and product harness** built on top of the upstream [open-slide](https://github.com/1weiho/open-slide) monorepo. We keep the original framework intact under [`open-slide/`](open-slide/README.md) and evolve **Casper** here: social-first production (carousels, infographics, PDF/HTML/PPTX export) with **humans in the loop** and **process before tooling**.
 
-**Repositório:** [github.com/colabcolibri/open-slide-casper](https://github.com/colabcolibri/open-slide-casper)
+**This repo:** [github.com/colabcolibri/open-slide-casper](https://github.com/colabcolibri/open-slide-casper)  
+**Upstream (source of the engine):** [github.com/1weiho/open-slide](https://github.com/1weiho/open-slide) · [open-slide.dev](https://open-slide.dev)
 
-## Por que este projeto existe
+## Relationship to upstream open-slide
 
-Antes do boom de IA, dava para rodar posts em um pipeline simples: calendário → roteiro → artefatos → publicação. O **Casper** nasceu para transformar isso em carrosséis e PDFs para Instagram e LinkedIn. O **open-slide** trouxe runtime agent-native (TSX, preview, inspector, export). Este repo é o cruzamento: **estágios de produção** + **motor de slides** + **skills para agentes** (Cursor, Claude Code, Codex, etc.).
+| | Upstream | This repository |
+| --- | --- | --- |
+| **What it is** | Agent-native slide framework (`@open-slide/core`, `@open-slide/cli`) | Same codebase **vendored in** `open-slide/`, plus Casper product docs and workflow direction |
+| **Who maintains releases** | Upstream publishes to npm | We track upstream in git; framework changes should stay **merge-friendly** back to [1weiho/open-slide](https://github.com/1weiho/open-slide) |
+| **What we add on top** | — | Production pipeline intent, Colibri/Casper docs in `docs/`, and fork-only features (formats, export, agent skills) as they land |
 
-Não é mais um editor WYSIWYG nem um SaaS de hospedagem. A fonte da verdade continua sendo **React/TSX** no canvas; o que evolui aqui é o **fluxo de produção** e o fork do framework quando precisamos de formatos e tooling para redes.
+**You are not looking at a rewrite of open-slide.** The runtime, Vite plugin, viewer, present mode, inspector, and CLI template still live in the upstream-shaped tree at `open-slide/packages/*` and `open-slide/apps/*`. Clone this repo when you want **our fork + harness**; use `npx @open-slide/cli init` when you only need a vanilla consumer workspace.
 
-## O que tem neste repositório
+Historically, **Casper** turned editorial pipelines into Instagram/LinkedIn carousels and PDFs. **open-slide** added TSX decks, dev preview, and agent skills. **open-slide-casper** is where those lines meet: keep shipping improvements to the forked framework while building the production story around it.
 
-| Parte | Caminho | Papel |
-| ----- | ------- | ----- |
-| **Framework open-slide** | [`open-slide/`](open-slide/README.md) | Monorepo `@open-slide/core` + `@open-slide/cli` — dev server, viewer, present mode, export, slide kit em `packages/core/.agent/` |
-| **Documentação de produto** | [`docs/`](docs/README.md) | Escopo, arquitetura, design system, decisões (phase docs do produto) |
-| **Workspace de decks (local)** | `open-slide/apps/demo/` | Dogfood e decks de produção **na sua máquina** — não versionamos pastas de conteúdo (`slides/`, assets de marca, etc.) neste remoto |
+## What is in this repository
 
-A pasta `.agent/` na raiz é kit **Meridian** (governança interna de docs e backlog). Ela apoia o time que mantém o produto; **não é o que você instala para publicar no Instagram**. Quem consome o projeto começa pelo monorepo `open-slide/`.
+| Piece | Path | Role |
+| ----- | ---- | ---- |
+| **Forked open-slide monorepo** | [`open-slide/`](open-slide/README.md) | Full pnpm/turbo monorepo from upstream — `packages/core`, `packages/cli`, `apps/web`, etc. |
+| **Product & architecture docs** | [`docs/`](docs/README.md) | Scope, architecture, design system, decisions (Casper / fork governance) |
+| **Local slide workspace** | `open-slide/apps/demo/` | Dogfood on your machine — **`slides/` and `assets/` are gitignored** here so production decks stay off GitHub |
+| **Internal Meridian kit** | `.agent/` (repo root) | Maintainer harness for phase docs and backlog — **not** part of the published slide product |
 
-## Pré-requisitos
+## Prerequisites
 
 - **Node.js 22**
 - **pnpm 10.17+** (`corepack enable`)
 
 ## Quick start
 
-Instale e rode o demo **só dentro do monorepo**:
+Work inside the **forked monorepo** (not the repo root alone):
 
 ```bash
 git clone https://github.com/colabcolibri/open-slide-casper.git
@@ -36,47 +42,49 @@ pnpm install
 pnpm dev:demo
 ```
 
-Na raiz do repo há atalhos (`pnpm dev`, `pnpm build`, …) que delegam para `open-slide/`.
+Root-level scripts (`pnpm dev`, `pnpm build`, …) are thin wrappers that run in `open-slide/`.
 
-### Criar um workspace novo (fora deste clone)
+### New slide workspace (vanilla scaffold, no fork)
 
 ```bash
-npx @open-slide/cli init meu-carrossel
-cd meu-carrossel
+npx @open-slide/cli init my-carousel
+cd my-carousel
 pnpm install
 pnpm dev
 ```
 
-Skills de autoría (`/create-slide`, `/create-theme`, …) vêm do pacote core; no monorepo, sincronize o kit no app de slides:
+### Sync agent skills into the demo app (monorepo only)
 
 ```bash
 cd open-slide
 pnpm sync:kit:demo
 ```
 
-(Execute a partir de `open-slide/`; o alvo padrão é `apps/demo`.)
+Canonical skills live in `packages/core/.agent/`; `apps/demo/.agent/` is a generated copy.
 
-## Agentes e skills
+## Agents and skills
 
-| O quê | Onde |
-| ----- | ---- |
-| Slide kit canônico | `open-slide/packages/core/.agent/` (`SLIDE-KIT.md`, skills, workflows) |
-| Cópia no workspace de slides | `apps/demo/.agent/` após `sync:kit:demo` — gerada, não editar como fonte |
+| What | Where |
+| ---- | ----- |
+| Canonical slide kit | `open-slide/packages/core/.agent/` (`SLIDE-KIT.md`, skills, workflows) |
+| Workspace copy | `open-slide/apps/demo/.agent/` after `sync:kit:demo` — do not edit as source |
 
-Comandos úteis no monorepo: `pnpm check`, `pnpm test`, `pnpm build`. Mudanças publicáveis em `packages/core` ou `packages/cli` exigem **changeset** (ver [open-slide/CONTRIBUTING.md](open-slide/CONTRIBUTING.md)).
+Use `/create-slide`, `/create-theme`, and related workflows from your IDE after sync. Framework changes in `packages/core` or `packages/cli` need a **changeset** before release — see [open-slide/CONTRIBUTING.md](open-slide/CONTRIBUTING.md).
 
-## Documentação
+## Documentation
 
-- [docs/00_scope.md](docs/00_scope.md) — visão e limites do framework
-- [docs/05_architecture.md](docs/05_architecture.md) — mapa do sistema
-- [docs/architecture/instruction-surfaces.md](docs/architecture/instruction-surfaces.md) — onde ficam regras para humanos vs agentes
-- [docs/architecture/desktop-tauri-rig.md](docs/architecture/desktop-tauri-rig.md) — rascunho: app desktop Tauri + agente embutido (planejado)
-- Framework upstream e releases npm: [open-slide/README.md](open-slide/README.md), site [open-slide.dev](https://open-slide.dev)
+- [docs/00_scope.md](docs/00_scope.md) — product scope (framework + fork)
+- [docs/05_architecture.md](docs/05_architecture.md) — system map
+- [docs/architecture/instruction-surfaces.md](docs/architecture/instruction-surfaces.md) — human vs agent instruction surfaces
+- [docs/architecture/desktop-tauri-rig.md](docs/architecture/desktop-tauri-rig.md) — draft: Tauri desktop + embedded agent (planned)
+- Upstream framework readme: [open-slide/README.md](open-slide/README.md)
 
-## Upstream
+## Contributing framework changes upstream
 
-Mudanças em `open-slide/packages/core` e `open-slide/packages/cli` buscam permanecer **merge-friendly** com [1weiho/open-slide](https://github.com/1weiho/open-slide). Código derivado do projeto base segue **MIT**.
+1. Prefer small, focused diffs under `open-slide/packages/core` and `open-slide/packages/cli`.
+2. Run `pnpm check` and `pnpm test` from `open-slide/`.
+3. Open PRs here first; cherry-pick or PR equivalent changes to [1weiho/open-slide](https://github.com/1weiho/open-slide) when they belong in the public framework.
 
-## Licença
+## License
 
-MIT — ver licenças nos pacotes em `open-slide/packages/`.
+MIT — see package licenses under `open-slide/packages/`. Derived work from upstream open-slide remains MIT-compatible.
