@@ -75,6 +75,8 @@ import { remapNotesSessionCacheAfterReorder } from '../lib/inspector/use-notes';
 import type { SlideCanvasFormat, SlideModule } from '../lib/sdk';
 import { usePrefersReducedMotion } from '../lib/use-prefers-reduced-motion';
 import { useSlideModule } from '../lib/use-slide-module';
+import { useSlideRegistry } from '../lib/use-slide-registry';
+import { isExampleSlide } from '../lib/slide-collection';
 
 const { showSlideUi, showSlideBrowser, allowHtmlDownload } = config.build;
 
@@ -82,12 +84,18 @@ export function Slide() {
   const { slideId = '' } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const { slide, error } = useSlideModule(slideId);
+  const { slideCollections } = useSlideRegistry();
+  const isExampleDeck = isExampleSlide(slideId, slideCollections);
   const [playMode, setPlayMode] = useState<'window' | 'fullscreen' | null>(null);
   const [exporting, setExporting] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const linkCopiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [designOpen, setDesignOpen] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
+
+  useEffect(() => {
+    if (isExampleDeck) setDesignOpen(false);
+  }, [isExampleDeck, slideId]);
   const [, setWarmedTick] = useState(0);
   const handleAssetsWarmed = useCallback(() => {
     markDeckWarmed(slideId);
@@ -252,13 +260,13 @@ export function Slide() {
 
   const thumbnailActions = useMemo<ThumbnailActions | undefined>(
     () =>
-      import.meta.env.DEV
+      import.meta.env.DEV && !isExampleDeck
         ? {
             onDuplicate: duplicatePage,
             onDelete: deletePage,
           }
         : undefined,
-    [duplicatePage, deletePage],
+    [duplicatePage, deletePage, isExampleDeck],
   );
 
   useEffect(() => {
@@ -302,13 +310,13 @@ export function Slide() {
       } else if (e.key === 'p' || e.key === 'P') {
         if (slideId) openPresenterWindow(slideId);
         setPlayMode('window');
-      } else if (import.meta.env.DEV && (e.key === 'd' || e.key === 'D')) {
+      } else if (import.meta.env.DEV && !isExampleDeck && (e.key === 'd' || e.key === 'D')) {
         setDesignOpen((v) => !v);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [index, goTo, playMode, slideId, overviewOpen]);
+  }, [index, goTo, playMode, slideId, overviewOpen, isExampleDeck]);
 
   if (error) {
     return (
@@ -607,11 +615,11 @@ export function Slide() {
   return (
     <CanvasSizeProvider format={canvasFormat}>
       <HistoryProvider>
-        <InspectorProvider slideId={slideId} pageIndex={index}>
+        <InspectorProvider slideId={slideId} pageIndex={index} readOnly={isExampleDeck}>
           <SelectionReporter />
           <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
             {/* Editorial toolbar — three zones, hairline separators, mono-folio center */}
-            <header className="relative flex h-12 shrink-0 items-center gap-2 border-b border-hairline bg-sidebar/85 px-2 backdrop-blur-md md:px-3">
+            <header className="relative flex min-h-12 shrink-0 items-center gap-2 border-b border-hairline bg-sidebar/85 px-2 py-1.5 backdrop-blur-md md:px-3">
               <div className="flex flex-1 items-center gap-1.5 md:flex-none md:gap-2">
                 {showSlideBrowser && (
                   <Link
@@ -651,24 +659,39 @@ export function Slide() {
               {/* On md+ the title centers to the viewport via absolute positioning. On mobile the
                 two side groups each flex-1, so the in-flow title lands at the viewport center too —
                 and min-w-0 lets it truncate instead of overlapping the icons on narrow widths. */}
-              <div className="pointer-events-none relative flex min-w-0 justify-center px-2 md:absolute md:inset-x-0">
-                <div className="pointer-events-auto flex min-w-0 max-w-[34rem] flex-col items-center gap-1">
+              <div className="pointer-events-none relative flex min-w-0 flex-1 justify-center px-1 sm:flex-none md:absolute md:inset-x-0 md:flex-none">
+                <div
+                  className={cn(
+                    'pointer-events-auto flex min-w-0 max-w-[min(100%,32rem)] items-center gap-2 rounded-[6px] border border-hairline/80 bg-card/50 px-2 py-1 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)] sm:gap-2.5 sm:px-2.5',
+                    isExampleDeck && 'border-dashed',
+                  )}
+                  title={isExampleDeck ? t.slide.exampleDeckReadOnlyHint : undefined}
+                >
+                  {isExampleDeck && (
+                    <span className="hidden shrink-0 rounded-[4px] bg-muted px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground uppercase sm:inline">
+                      {t.slide.exampleDeckBadge}
+                    </span>
+                  )}
                   <InlineTitleEditor
                     title={title}
+                    readOnly={isExampleDeck}
                     onSubmit={(next) => renameSlide(slideId, next)}
                   />
                   {import.meta.env.DEV && (
-                    <CanvasFormatPicker
-                      value={slide.meta?.format ?? 'slide'}
-                      disabled={!slide}
-                      onChange={async (next) => {
-                        try {
-                          await setSlideFormat(slideId, next);
-                        } catch {
-                          toast.error(t.slide.canvasFormatChangeFailed);
-                        }
-                      }}
-                    />
+                    <>
+                      <span aria-hidden className="h-4 w-px shrink-0 bg-hairline" />
+                      <CanvasFormatPicker
+                        value={slide.meta?.format ?? 'slide'}
+                        disabled={!slide || isExampleDeck}
+                        onChange={async (next) => {
+                          try {
+                            await setSlideFormat(slideId, next);
+                          } catch {
+                            toast.error(t.slide.canvasFormatChangeFailed);
+                          }
+                        }}
+                      />
+                    </>
                   )}
                 </div>
               </div>
@@ -752,13 +775,13 @@ export function Slide() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
-                {view === 'slides' && (
+                {view === 'slides' && !isExampleDeck && (
                   <DesignToggleButton
                     active={designOpen}
                     onToggle={() => setDesignOpen((v) => !v)}
                   />
                 )}
-                {view === 'slides' && <InspectToggleButton />}
+                {view === 'slides' && !isExampleDeck && <InspectToggleButton />}
                 <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-hairline md:block" />
                 {view === 'slides' && (
                   <div className="inline-flex items-stretch">
@@ -854,9 +877,9 @@ export function Slide() {
                           disabled={prefersReducedMotion}
                         />
                       </SlideCanvas>
-                      <InspectOverlay />
-                      <SaveBar />
-                      {import.meta.env.DEV && <CommentWidget />}
+                      {!isExampleDeck && <InspectOverlay />}
+                      {!isExampleDeck && <SaveBar />}
+                      {import.meta.env.DEV && !isExampleDeck && <CommentWidget />}
                     </main>
                     {/* Mobile-only horizontal rail. Sits below the canvas and
                     pads its bottom for the iOS home indicator / Safari URL bar. */}
@@ -873,8 +896,10 @@ export function Slide() {
                         actions={thumbnailActions}
                       />
                     </div>
-                    <InspectorPanel />
-                    <DesignPanel open={designOpen} onClose={() => setDesignOpen(false)} />
+                    {!isExampleDeck && <InspectorPanel />}
+                    {!isExampleDeck && (
+                      <DesignPanel open={designOpen} onClose={() => setDesignOpen(false)} />
+                    )}
                   </div>
                   {import.meta.env.DEV && (
                     <NotesDrawer
@@ -1135,6 +1160,10 @@ function CanvasFormatPicker({
   onChange: (format: SlideCanvasFormat) => void | Promise<void>;
 }) {
   const t = useLocale();
+  const labels: Record<SlideCanvasFormat, string> = {
+    slide: t.slide.canvasFormatSlideShort,
+    '4x5': t.slide.canvasFormat4x5Short,
+  };
   return (
     <Select
       value={value}
@@ -1146,9 +1175,9 @@ function CanvasFormatPicker({
       <SelectTrigger
         size="sm"
         aria-label={t.slide.canvasFormatAria}
-        className="h-7 w-[148px] text-[11px] font-medium"
+        className="h-7 w-[4.25rem] shrink-0 border-hairline bg-background/80 px-2 text-[11px] font-medium tabular-nums shadow-none"
       >
-        <SelectValue />
+        <SelectValue>{labels[value]}</SelectValue>
       </SelectTrigger>
       <SelectContent align="center">
         <SelectItem value="slide">{t.slide.canvasFormatSlide}</SelectItem>
@@ -1160,9 +1189,11 @@ function CanvasFormatPicker({
 
 function InlineTitleEditor({
   title,
+  readOnly = false,
   onSubmit,
 }: {
   title: string;
+  readOnly?: boolean;
   onSubmit: (name: string) => Promise<void> | void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -1242,10 +1273,10 @@ function InlineTitleEditor({
     );
   }
 
-  if (!import.meta.env.DEV) {
+  if (!import.meta.env.DEV || readOnly) {
     return (
-      <div className="flex min-w-0 items-baseline justify-center">
-        <h1 className="truncate font-heading text-[13.5px] font-semibold tracking-[-0.01em]">
+      <div className="flex min-w-0 flex-1 items-baseline justify-center sm:justify-start">
+        <h1 className="truncate font-heading text-[13px] font-semibold tracking-[-0.02em] sm:text-[14px]">
           {title}
         </h1>
       </div>
@@ -1253,17 +1284,17 @@ function InlineTitleEditor({
   }
 
   return (
-    <div className="flex min-w-0 items-center justify-center">
+    <div className="flex min-w-0 flex-1 items-center justify-center sm:justify-start">
       <button
         type="button"
         onClick={() => setEditing(true)}
         aria-label={t.slide.renameSlide}
         className={cn(
-          'min-w-0 max-w-full cursor-text rounded-[5px] border border-transparent px-2 py-0.5 transition-colors',
-          'hover:border-foreground/30 hover:bg-card focus-visible:border-foreground/30 focus-visible:bg-card focus-visible:outline-none',
+          'min-w-0 max-w-full cursor-text rounded-[5px] border border-transparent px-1 py-0.5 transition-colors',
+          'hover:border-foreground/25 hover:bg-background/60 focus-visible:border-foreground/30 focus-visible:bg-background/60 focus-visible:outline-none',
         )}
       >
-        <h1 className="truncate font-heading text-[13.5px] font-semibold tracking-[-0.01em]">
+        <h1 className="truncate text-left font-heading text-[13px] font-semibold tracking-[-0.02em] sm:text-[14px]">
           {title}
         </h1>
       </button>

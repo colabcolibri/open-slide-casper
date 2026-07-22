@@ -138,9 +138,13 @@ export type Locale = {
     slidesTab: string;
     assetsTab: string;
     renameSlide: string;
+    exampleDeckBadge: string;
+    exampleDeckReadOnlyHint: string;
     canvasFormatAria: string;
     canvasFormatSlide: string;
     canvasFormat4x5: string;
+    canvasFormatSlideShort: string;
+    canvasFormat4x5Short: string;
     canvasFormatChangeFailed: string;
     loadingEyebrow: string;
     loadingAssetsEyebrow: string;

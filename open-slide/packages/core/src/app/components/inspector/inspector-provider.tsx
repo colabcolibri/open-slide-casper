@@ -278,10 +278,12 @@ export function useInspector(): InspectorCtx {
 export function InspectorProvider({
   slideId,
   pageIndex,
+  readOnly = false,
   children,
 }: {
   slideId: string;
   pageIndex: number;
+  readOnly?: boolean;
   children: ReactNode;
 }) {
   const [active, setActive] = useState(false);
@@ -916,16 +918,22 @@ export function InspectorProvider({
   }, [selected]);
 
   const toggle = useCallback(() => {
+    if (readOnly) return;
     setActive((a) => {
       if (a) setSelected(null);
       return !a;
     });
-  }, []);
+  }, [readOnly]);
 
   const cancel = useCallback(() => {
     setActive(false);
     setSelected(null);
   }, []);
+
+  useEffect(() => {
+    if (!readOnly) return;
+    cancel();
+  }, [readOnly, cancel]);
 
   const openReplace = useCallback((anchor: HTMLElement) => {
     const loc = anchor.dataset.slideLoc;
@@ -938,7 +946,7 @@ export function InspectorProvider({
   }, []);
 
   useEffect(() => {
-    if (import.meta.env.PROD) return;
+    if (import.meta.env.PROD || readOnly) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && e.target.matches('input, textarea')) return;
       if (e.key !== 'i' && e.key !== 'I') return;
@@ -946,7 +954,7 @@ export function InspectorProvider({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [toggle]);
+  }, [toggle, readOnly]);
 
   const openCrop = useCallback((anchor: HTMLImageElement) => {
     const loc = anchor.dataset.slideLoc;
